@@ -17,11 +17,11 @@
             <div class="mt-6 text-h2">
                Games
             </div>
+            <div class="mt-6 text-h4">Welcome back {{ username }}</div>
          </v-col>
       </v-row>
       <v-row>
-         <v-col v-if="!mobile" cols="1"></v-col>
-         <v-col :cols="mobile ? 12 : 10">
+         <v-col>
             <v-expansion-panels popout>
                <v-expansion-panel v-for="game of games" :key="game.id">
                   <v-expansion-panel-header
@@ -70,12 +70,6 @@
                                  <span class="ml-3">Pokemon</span>
                               </div>
                               <div class="mt-2">
-                                 <v-btn fab dark small @click="toRoute('rules', game.id)"
-                                    ><v-icon>mdi-book</v-icon></v-btn
-                                 >
-                                 <span class="ml-3">Rules</span>
-                              </div>
-                              <div class="mt-2">
                                  <v-btn fab dark small @click="toRoute('routes', game.id)"
                                     ><v-icon>mdi-routes</v-icon></v-btn
                                  >
@@ -87,6 +81,12 @@
                                  >
                                  <span class="ml-3">Gyms</span>
                               </div>
+                              <div class="mt-2">
+                                 <v-btn fab dark small @click="toRoute('rules', game.id)"
+                                    ><v-icon>mdi-book</v-icon></v-btn
+                                 >
+                                 <span class="ml-3">Rules</span>
+                              </div>
                            </v-col>
                         </v-row>
                      </v-container>
@@ -94,7 +94,6 @@
                </v-expansion-panel>
             </v-expansion-panels>
          </v-col>
-         <v-col v-if="!mobile" cols="1"></v-col>
       </v-row>
    </v-container>
 </template>
@@ -191,6 +190,9 @@ export default {
       },
       mobile() {
          return this.$store.state.mobile;
+      },
+      username() {
+         return this.$store.state.username;
       },
    },
 };
