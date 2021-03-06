@@ -1,6 +1,6 @@
 export default {
    methods: {
-      navigate(endpoint = { name: '', params: {} }) {
+      navigate(endpoint) {
          this.$router.push(endpoint);
       },
       getRouteInfo() {
@@ -11,7 +11,13 @@ export default {
          };
       },
       logout() {
-         alert('i want to logout!');
+         this.$store.commit('exitGame');
+         this.$store.commit('logout');
+      },
+      login() {
+         // FIXME: this is a dummy method to test the store
+         this.$store.commit('login', { username: 'dallen.baldwin' });
+         this.navigate({ name: 'games' });
       },
    },
 };

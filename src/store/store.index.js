@@ -6,18 +6,21 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
    state: {
-      game: {
-         name: 'dummy name',
-      },
-      username: 'dallen.baldwin',
+      game: null,
+      username: null,
       isLoggedIn: false,
       mobile: isMobile,
       drawer: false,
    },
    mutations: {
-      authenticate(state, payload) {
+      authenticate(state, payload) {},
+      login(state, payload) {
          state.isLoggedIn = true;
          state.username = payload.username;
+      },
+      logout(state) {
+         state.username = null;
+         state.isLoggedIn = false;
       },
       drawer(state) {
          state.drawer = !state.drawer;
