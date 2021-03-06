@@ -63,6 +63,12 @@ export default {
    data() {
       return {
          tab: null,
+         tabMap: {
+            0: 'pokemon',
+            1: 'routes',
+            2: 'gyms',
+            3: 'rules',
+         },
          links: [
             {
                label: 'Sign Out',
@@ -94,10 +100,8 @@ export default {
    },
    watch: {
       tab() {
-         let route = undefined;
-         const routeInfo = this.getRouteInfo();
-         if (this.tab === 0) {
-            route = 'pokemon';
+         let route = this.toRoute(this.tab);
+         if (route === 'pokemon') {
             this.links.splice(2);
             this.links.push({
                label: 'Filter',
@@ -107,8 +111,7 @@ export default {
                action: 'filter-pokemon',
                color: 'primary',
             });
-         } else if (this.tab === 1) {
-            route = 'routes';
+         } else if (route === 'routes') {
             this.links.splice(2);
             this.links.push({
                label: 'Filter',
@@ -118,8 +121,7 @@ export default {
                action: 'filter-routes',
                color: 'primary',
             });
-         } else if (this.tab === 2) {
-            route = 'gyms';
+         } else if (route === 'gyms') {
             this.links.splice(2);
             this.links.push({
                label: 'Filter',
@@ -129,8 +131,7 @@ export default {
                action: 'filter-gyms',
                color: 'primary',
             });
-         } else if (this.tab === 3) {
-            route = 'rules';
+         } else if (route === 'rules') {
             this.links.splice(2);
             this.links.push({
                label: 'Filter',
@@ -149,7 +150,6 @@ export default {
                color: 'green',
             });
          }
-         this.navigate({ name: route, params: { gameId: routeInfo.params.gameId } });
       },
    },
    methods: {
@@ -171,6 +171,16 @@ export default {
       createRule() {
          alert('i want to create a rule!');
       },
+      toTab(routeName) {
+         return [...Object.values(this.tabMap)].findIndex(route => route === routeName);
+      },
+      toRoute(tabIndex) {
+         return this.tabMap[tabIndex];
+      },
+   },
+   mounted() {
+      const routeInfo = this.getRouteInfo();
+      this.tab = this.toTab(routeInfo.name);
    },
 };
 </script>
