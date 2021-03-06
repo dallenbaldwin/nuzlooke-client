@@ -5,6 +5,7 @@
          <v-spacer></v-spacer>
       </v-app-bar>
       <v-main>
+         <div v-if="debug">{{ JSON.stringify(this.$store.state) }}</div>
          <v-container>
             <router-view></router-view>
          </v-container>
@@ -16,7 +17,7 @@
 export default {
    name: 'App',
    data() {
-      return {};
+      return { debug: true };
    },
    computed: {
       mobile() {
