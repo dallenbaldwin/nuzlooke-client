@@ -19,7 +19,7 @@
          <v-col><c-login-providers></c-login-providers> </v-col>
          <v-divider vertical v-if="!mobile"></v-divider>
          <v-col v-if="!mobile">
-            <v-btn @click="navigate({ name: 'games' })">games</v-btn>
+            <v-btn @click="login">games</v-btn>
          </v-col>
       </v-row>
    </v-container>
