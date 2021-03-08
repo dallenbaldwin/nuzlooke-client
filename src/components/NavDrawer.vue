@@ -39,63 +39,57 @@ export default {
    },
    data() {
       return {
-         gameLinks: ['Pokemon', 'Routes', 'Gyms', 'Rules', 'Games'],
+         inGameRoutes: ['pokemon', 'routes', 'gyms', 'rules'],
+         inGameLinks: ['Pokemon', 'Routes', 'Gyms', 'Rules', 'Games', 'Sign Out'],
+         outGameLinks: ['Sign Out'],
+         loggedOutLinks: ['Home', 'Sign In', 'Register'],
          links: [
             {
                label: 'Home',
                icon: 'mdi-home',
                route: 'home',
-               requiresLoginAccess: false,
             },
             {
                label: 'Sign In',
                icon: 'mdi-login',
                route: 'login',
-               requiresLoginAccess: false,
             },
             {
                label: 'Register',
                icon: 'mdi-account',
                route: 'register',
-               requiresLoginAccess: false,
-            },
-            {
-               label: 'Pokemon',
-               route: 'pokemon',
-               icon: 'mdi-pokeball',
-               requiresLoginAccess: true,
-            },
-            {
-               label: 'Routes',
-               route: 'routes',
-               icon: 'mdi-routes',
-               requiresLoginAccess: true,
-            },
-            {
-               label: 'Gyms',
-               route: 'gyms',
-               icon: 'mdi-domain',
-               requiresLoginAccess: true,
-            },
-            {
-               label: 'Rules',
-               route: 'rules',
-               icon: 'mdi-book',
-               requiresLoginAccess: true,
-            },
-            {
-               label: 'Games',
-               icon: 'mdi-format-list-bulleted',
-               route: 'games',
-               action: 'exit-game',
-               requiresLoginAccess: true,
             },
             {
                label: 'Sign Out',
                icon: 'mdi-logout',
                route: 'home',
                action: 'logout',
-               requiresLoginAccess: true,
+            },
+            {
+               label: 'Pokemon',
+               route: 'pokemon',
+               icon: 'mdi-pokeball',
+            },
+            {
+               label: 'Routes',
+               route: 'routes',
+               icon: 'mdi-routes',
+            },
+            {
+               label: 'Gyms',
+               route: 'gyms',
+               icon: 'mdi-domain',
+            },
+            {
+               label: 'Rules',
+               route: 'rules',
+               icon: 'mdi-book',
+            },
+            {
+               label: 'Games',
+               icon: 'mdi-format-list-bulleted',
+               route: 'games',
+               action: 'exit-game',
             },
          ],
       };
@@ -104,8 +98,8 @@ export default {
       clickLink(link) {
          if (link.action) {
             this.reactToAction(link.action);
-         } else if (this.gameLinks.includes(link.route)) {
-            this.navigate({ name: link.route, params: { gameId: game.id } });
+         } else if (this.inGameRoutes.includes(link.route)) {
+            this.navigate({ name: link.route, params: { gameId: this.game.id } });
          } else {
             this.navigate({ name: link.route });
          }
@@ -133,13 +127,20 @@ export default {
       pageLinks() {
          return this.links
             .filter(link => link.route !== this.$route.name)
-            .filter(link => link.requiresLoginAccess === this.isLoggedIn);
+            .filter(link => {
+               if (this.inGame) return this.inGameLinks.includes(link.label);
+               else if (this.outGame) return this.outGameLinks.includes(link.label);
+               else return this.loggedOutLinks.includes(link.label);
+            });
+      },
+      inGame() {
+         return this.$store.state.game !== null && this.$store.state.isLoggedIn;
+      },
+      outGame() {
+         return this.$store.state.game === null && this.$store.state.isLoggedIn;
       },
       game() {
          return this.$store.state.game;
-      },
-      gameExists() {
-         return this.$store.state.game !== null;
       },
       isLoggedIn() {
          return this.$store.state.isLoggedIn;

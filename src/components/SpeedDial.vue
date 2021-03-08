@@ -87,7 +87,8 @@ export default {
    methods: {
       linkActions(link) {
          if (link.action) this.$emit(link.action);
-         if (link.route) this.navigate({ name: link.route });
+         // hacky fix
+         if (link.route && link.route !== 'games') this.navigate({ name: link.route });
       },
    },
    computed: {

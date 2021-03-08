@@ -132,6 +132,7 @@ export default {
                },
             ];
          }
+         // FIXME: this throws a redundant navigation error... but it works so... i'm ok with it for now
          this.navigate({
             name: 'game',
             params: { gameId: this.game.id, tab: this.toRoute(this.tab) },
