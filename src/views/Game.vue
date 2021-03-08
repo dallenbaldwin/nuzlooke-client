@@ -1,11 +1,10 @@
 <template>
    <v-container>
-      <c-nav-drawer v-model="drawer" :links="links"></c-nav-drawer>
       <v-row>
          <v-col>
             <c-speed-dial
-               :links="links"
-               v-if="!mobile"
+               :actions="actions"
+               v-if="!mobile()"
                v-on:logout="logout"
                v-on:exit-game="exitGame"
                v-on:filter-pokemon="filterPokemon"
@@ -26,7 +25,7 @@
       <v-row>
          <v-col>
             <router-view></router-view>
-            <v-tabs v-model="tab" fixed-tabs icons-and-text>
+            <v-tabs v-model="tab" icons-and-text grow>
                <v-tab>
                   Pokemon
                   <v-icon dark>mdi-pokeball</v-icon>
@@ -69,31 +68,10 @@ export default {
             2: 'gyms',
             3: 'rules',
          },
-         links: [
-            {
-               label: 'Sign Out',
-               icon: 'mdi-logout',
-               route: 'home',
-               dark: true,
-               action: 'logout',
-            },
-            {
-               label: 'Games',
-               icon: 'mdi-format-list-bulleted',
-               route: 'games',
-               dark: true,
-               action: 'exit-game',
-            },
-         ],
+         actions: null,
       };
    },
    computed: {
-      drawer() {
-         return this.$store.state.drawer;
-      },
-      mobile() {
-         return this.$store.state.mobile;
-      },
       game() {
          return this.$store.state.game;
       },
@@ -102,60 +80,65 @@ export default {
       tab() {
          let route = this.toRoute(this.tab);
          if (route === 'pokemon') {
-            this.links.splice(2);
-            this.links.push({
-               label: 'Filter',
-               icon: 'mdi-filter',
-               route: null,
-               dark: true,
-               action: 'filter-pokemon',
-               color: 'primary',
-            });
+            this.actions = [
+               {
+                  label: 'Filter',
+                  icon: 'mdi-filter',
+                  route: null,
+                  dark: true,
+                  action: 'filter-pokemon',
+                  color: 'primary',
+               },
+            ];
          } else if (route === 'routes') {
-            this.links.splice(2);
-            this.links.push({
-               label: 'Filter',
-               icon: 'mdi-filter',
-               route: null,
-               dark: true,
-               action: 'filter-routes',
-               color: 'primary',
-            });
+            this.actions = [
+               {
+                  label: 'Filter',
+                  icon: 'mdi-filter',
+                  route: null,
+                  dark: true,
+                  action: 'filter-routes',
+                  color: 'primary',
+               },
+            ];
          } else if (route === 'gyms') {
-            this.links.splice(2);
-            this.links.push({
-               label: 'Filter',
-               icon: 'mdi-filter',
-               route: null,
-               dark: true,
-               action: 'filter-gyms',
-               color: 'primary',
-            });
+            this.actions = [
+               {
+                  label: 'Filter',
+                  icon: 'mdi-filter',
+                  route: null,
+                  dark: true,
+                  action: 'filter-gyms',
+                  color: 'primary',
+               },
+            ];
          } else if (route === 'rules') {
-            this.links.splice(2);
-            this.links.push({
-               label: 'Filter',
-               icon: 'mdi-filter',
-               route: null,
-               dark: true,
-               action: 'filter-rules',
-               color: 'primary',
-            });
-            this.links.push({
-               label: 'Create Rule',
-               icon: 'mdi-plus',
-               route: null,
-               dark: true,
-               action: 'create-rule',
-               color: 'green',
-            });
+            this.actions = [
+               {
+                  label: 'Filter',
+                  icon: 'mdi-filter',
+                  route: null,
+                  dark: true,
+                  action: 'filter-rules',
+                  color: 'primary',
+               },
+               {
+                  label: 'Create Rule',
+                  icon: 'mdi-plus',
+                  route: null,
+                  dark: true,
+                  action: 'create-rule',
+                  color: 'green',
+               },
+            ];
          }
+         this.navigate({
+            name: 'game',
+            params: { gameId: this.game.id, tab: this.toRoute(this.tab) },
+         });
       },
    },
    methods: {
-      exitGame() {
-         this.$store.commit('exitGame');
-      },
       filterPokemon() {
          alert('i want to filter my pokemon!');
       },
@@ -179,8 +162,7 @@ export default {
       },
    },
    mounted() {
-      const routeInfo = this.getRouteInfo();
-      this.tab = this.toTab(routeInfo.name);
+      this.tab = this.toTab(this.$route.params.tab);
    },
 };
 </script>

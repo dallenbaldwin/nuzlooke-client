@@ -1,8 +1,7 @@
 <template>
    <v-container>
-      <c-nav-drawer v-model="drawer" :links="links"></c-nav-drawer>
       <v-row>
-         <v-col> <c-speed-dial :links="links" v-if="!mobile"></c-speed-dial></v-col>
+         <v-col> <c-speed-dial :actions="null" v-if="!mobile()"></c-speed-dial></v-col>
       </v-row>
       <v-row
          ><v-col>
@@ -19,8 +18,8 @@
       </v-row>
       <v-row
          ><v-col><c-login-providers></c-login-providers></v-col>
-         <v-divider vertical v-if="!mobile"></v-divider>
-         <v-col v-if="!mobile">
+         <v-divider vertical v-if="!mobile()"></v-divider>
+         <v-col v-if="!mobile()">
             <v-btn @click="login">games</v-btn>
          </v-col></v-row
       >
@@ -40,31 +39,9 @@ export default {
       'c-login-providers': LoginProviders,
    },
    data() {
-      return {
-         links: [
-            {
-               label: 'Home',
-               icon: 'mdi-home',
-               route: 'home',
-               dark: true,
-            },
-            {
-               label: 'Login',
-               icon: 'mdi-login',
-               route: 'login',
-               dark: true,
-            },
-         ],
-      };
+      return {};
    },
-   computed: {
-      drawer() {
-         return this.$store.state.drawer;
-      },
-      mobile() {
-         return this.$store.state.mobile;
-      },
-   },
+   computed: {},
 };
 </script>
 

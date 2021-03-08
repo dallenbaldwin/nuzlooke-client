@@ -5,6 +5,10 @@ import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import Games from '../views/Games.vue';
 import Game from '../views/Game.vue';
+import Pokemon from '../views/Pokemon.vue';
+import Routes from '../views/Routes.vue';
+import Gyms from '../views/Gyms.vue';
+import Rules from '../views/Rules.vue';
 
 Vue.use(VueRouter);
 
@@ -30,24 +34,29 @@ const routes = [
       component: Games,
    },
    {
+      path: '/games/:gameId/:tab',
+      name: 'game',
+      component: Game,
+   },
+   {
       path: '/games/:gameId/pokemon',
       name: 'pokemon',
-      component: Game,
+      component: Pokemon,
    },
    {
       path: '/games/:gameId/rules',
       name: 'rules',
-      component: Game,
+      component: Rules,
    },
    {
       path: '/games/:gameId/routes',
       name: 'routes',
-      component: Game,
+      component: Routes,
    },
    {
       path: '/games/:gameId/gyms',
       name: 'gyms',
-      component: Game,
+      component: Gyms,
    },
 ];
 

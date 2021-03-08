@@ -1,19 +1,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { isMobile } from 'mobile-device-detect';
+import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+   plugins: [createPersistedState({ storage: window.sessionStorage })],
    state: {
       game: null,
       username: null,
       isLoggedIn: false,
-      mobile: isMobile,
-      drawer: false,
    },
    mutations: {
-      authenticate(state, payload) {},
       login(state, payload) {
          state.isLoggedIn = true;
          state.username = payload.username;
@@ -21,9 +19,6 @@ export default new Vuex.Store({
       logout(state) {
          state.username = null;
          state.isLoggedIn = false;
-      },
-      drawer(state) {
-         state.drawer = !state.drawer;
       },
       selectGame(state, payload) {
          state.game = payload;

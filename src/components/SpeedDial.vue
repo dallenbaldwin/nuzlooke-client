@@ -1,11 +1,5 @@
 <template>
    <div>
-      <div v-if="false" class="v-btn--floating float-right">
-         {{ username }}
-         <v-btn fab x-small color="orange" dark>
-            <v-icon>mdi-pencil</v-icon>
-         </v-btn>
-      </div>
       <v-speed-dial
          open-on-hover
          top
@@ -16,17 +10,34 @@
          <template v-slot:activator>
             <v-btn dark fab x-large @click.prevent.stop><v-icon>mdi-menu</v-icon></v-btn>
          </template>
+         <div v-if="isLoggedIn" class="v-btn--floating float-right">
+            <span>{{ username }}</span>
+            <v-btn fab x-small color="orange" dark>
+               <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+         </div>
          <v-btn
             fab
-            v-for="link of links"
+            v-for="link of pageLinks"
             :key="link.label"
-            :dark="link.dark"
+            dark
             @click="linkActions(link)"
             class="mb-5"
-            :color="link.color ? link.color : undefined"
          >
             <v-icon>{{ link.icon }}</v-icon>
             <div class="c-fab-bottom-text">{{ link.label }}</div>
+         </v-btn>
+         <v-btn
+            fab
+            v-for="action of actions"
+            :key="action.label"
+            dark
+            @click="linkActions(action)"
+            class="mb-5"
+            :color="action.color ? action.color : undefined"
+         >
+            <v-icon>{{ action.icon }}</v-icon>
+            <div class="c-fab-bottom-text">{{ action.label }}</div>
          </v-btn>
       </v-speed-dial>
    </div>
@@ -35,11 +46,43 @@
 <script>
 export default {
    name: 'SpeedDial',
+   props: ['actions'],
    data() {
-      return {};
-   },
-   props: {
-      links: Array,
+      return {
+         links: [
+            {
+               label: 'Home',
+               icon: 'mdi-home',
+               route: 'home',
+               requiresLoginAccess: false,
+            },
+            {
+               label: 'Sign In',
+               icon: 'mdi-login',
+               route: 'login',
+               requiresLoginAccess: false,
+            },
+            {
+               label: 'Register',
+               icon: 'mdi-account',
+               route: 'register',
+               requiresLoginAccess: false,
+            },
+            {
+               label: 'Games',
+               icon: 'mdi-format-list-bulleted',
+               route: 'games',
+               action: 'exit-game',
+               requiresLoginAccess: true,
+            },
+            {
+               label: 'Sign Out',
+               icon: 'mdi-logout',
+               action: 'logout',
+               requiresLoginAccess: true,
+            },
+         ],
+      };
    },
    methods: {
       linkActions(link) {
@@ -53,6 +96,11 @@ export default {
       },
       username() {
          return this.$store.state.username;
+      },
+      pageLinks() {
+         return this.links
+            .filter(link => link.route !== this.$route.name)
+            .filter(link => link.requiresLoginAccess === this.isLoggedIn);
       },
    },
 };

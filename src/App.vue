@@ -1,35 +1,37 @@
 <template>
-   <v-app>
-      <v-app-bar elevation="1" bottom app v-if="mobile">
-         <v-app-bar-nav-icon @click.stop="drawer"></v-app-bar-nav-icon>
+   <v-app :class="mobile() ? '' : 'c-mw'">
+      <v-app-bar elevation="1" bottom app v-if="mobile()">
+         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
          <v-spacer></v-spacer>
       </v-app-bar>
+      <c-nav-drawer v-model="drawer"></c-nav-drawer>
       <v-main>
-         <div v-if="debug">{{ JSON.stringify(this.$store.state) }}</div>
          <v-container>
-            <router-view></router-view>
+            <router-view> </router-view>
+            <pre>{{ JSON.stringify(this.$store.state, null, 2) }}</pre>
          </v-container>
       </v-main>
    </v-app>
 </template>
 
 <script>
+//
+import NavDrawer from './components/NavDrawer.vue';
+
 export default {
+   components: {
+      'c-nav-drawer': NavDrawer,
+   },
    name: 'App',
    data() {
-      return { debug: true };
-   },
-   computed: {
-      mobile() {
-         return this.$store.state.mobile;
-      },
-   },
-   methods: {
-      drawer() {
-         this.$store.commit('drawer');
-      },
+      return { debug: true, drawer: false };
    },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.c-mw {
+   max-width: 60%;
+   margin: auto;
+}
+</style>

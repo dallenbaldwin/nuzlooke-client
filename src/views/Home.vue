@@ -1,8 +1,7 @@
 <template>
    <v-container>
-      <c-nav-drawer v-model="drawer" :links="links"></c-nav-drawer>
       <v-row>
-         <v-col> <c-speed-dial :links="links" v-if="!mobile"></c-speed-dial></v-col>
+         <v-col> <c-speed-dial :actions="null" v-if="!mobile()"></c-speed-dial></v-col>
       </v-row>
       <v-row
          ><v-col>
@@ -28,40 +27,16 @@
 
 <script>
 import SpeedDial from '../components/SpeedDial.vue';
-import NavDrawer from '../components/NavDrawer.vue';
 
 export default {
    name: 'Home',
    components: {
       'c-speed-dial': SpeedDial,
-      'c-nav-drawer': NavDrawer,
    },
    data() {
-      return {
-         links: [
-            {
-               label: 'Sign In',
-               icon: 'mdi-login',
-               route: 'login',
-               dark: true,
-            },
-            {
-               label: 'Register',
-               icon: 'mdi-account',
-               route: 'register',
-               dark: true,
-            },
-         ],
-      };
+      return {};
    },
    methods: {},
-   computed: {
-      drawer() {
-         return this.$store.state.drawer;
-      },
-      mobile() {
-         return this.$store.state.mobile;
-      },
-   },
+   computed: {},
 };
 </script>

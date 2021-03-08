@@ -1,11 +1,10 @@
 <template>
    <v-container>
-      <c-nav-drawer v-model="drawer" :links="links"></c-nav-drawer>
       <v-row>
          <v-col>
             <c-speed-dial
-               :links="links"
-               v-if="!mobile"
+               :actions="actions"
+               v-if="!mobile()"
                v-on:logout="logout"
                v-on:filter-games="filterGames"
                v-on:create-game="createGame"
@@ -59,33 +58,17 @@
                            </v-col>
                            <v-col>
                               <div class="text">Game Links</div>
-                              <div class="mt-2">
-                                 <v-btn
-                                    fab
-                                    dark
-                                    small
-                                    @click="toRoute('pokemon', game.id)"
-                                    ><v-icon>mdi-pokeball</v-icon></v-btn
-                                 >
-                                 <span class="ml-3">Pokemon</span>
-                              </div>
-                              <div class="mt-2">
-                                 <v-btn fab dark small @click="toRoute('routes', game.id)"
-                                    ><v-icon>mdi-routes</v-icon></v-btn
-                                 >
-                                 <span class="ml-3">Routes</span>
-                              </div>
-                              <div class="mt-2">
-                                 <v-btn fab dark small @click="toRoute('gyms', game.id)"
-                                    ><v-icon>mdi-domain</v-icon></v-btn
-                                 >
-                                 <span class="ml-3">Gyms</span>
-                              </div>
-                              <div class="mt-2">
-                                 <v-btn fab dark small @click="toRoute('rules', game.id)"
-                                    ><v-icon>mdi-book</v-icon></v-btn
-                                 >
-                                 <span class="ml-3">Rules</span>
+                              <div v-for="btn of gameBtns" :key="btn.label">
+                                 <div class="mt-2">
+                                    <v-btn
+                                       fab
+                                       dark
+                                       small
+                                       @click="toGame(btn.route, game.id)"
+                                       ><v-icon>{{ btn.icon }}</v-icon></v-btn
+                                    >
+                                    <span class="ml-3">{{ btn.label }}</span>
+                                 </div>
                               </div>
                            </v-col>
                         </v-row>
@@ -110,27 +93,16 @@ export default {
    },
    data() {
       return {
-         links: [
-            {
-               label: 'Sign Out',
-               icon: 'mdi-logout',
-               route: 'home',
-               dark: true,
-               action: 'logout',
-            },
+         actions: [
             {
                label: 'Filter',
                icon: 'mdi-filter',
-               route: null,
-               dark: true,
                action: 'filter-games',
                color: 'primary',
             },
             {
                label: 'Create Game',
                icon: 'mdi-plus',
-               route: null,
-               dark: true,
                action: 'create-game',
                color: 'green',
             },
@@ -161,6 +133,12 @@ export default {
                version: { name: 'dummy version' },
             },
          ],
+         gameBtns: [
+            { label: 'Pokemon', route: 'pokemon', icon: 'mdi-pokeball' },
+            { label: 'Routes', route: 'routes', icon: 'mdi-routes' },
+            { label: 'Gyms', route: 'gyms', icon: 'mdi-domain' },
+            { label: 'Rules', route: 'rules', icon: 'mdi-book' },
+         ],
       };
    },
    methods: {
@@ -173,24 +151,22 @@ export default {
       editGameName(gameId) {
          alert(`i want to edit gameId: ${gameId}`);
       },
-      toRoute(route, gameId) {
+      toGame(route, gameId) {
          this.$store.commit(
             'selectGame',
             this.games.find(game => game.id === gameId)
          );
-         this.navigate({
-            name: route,
-            params: { gameId: gameId },
-         });
+         if (this.mobile()) {
+            this.navigate({
+               name: route,
+               params: { gameId: gameId },
+            });
+         } else {
+            this.navigate({ name: 'game', params: { gameId: gameId, tab: route } });
+         }
       },
    },
    computed: {
-      drawer() {
-         return this.$store.state.drawer;
-      },
-      mobile() {
-         return this.$store.state.mobile;
-      },
       username() {
          return this.$store.state.username;
       },
