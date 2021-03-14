@@ -9,19 +9,23 @@ export default new Vuex.Store({
    state: {
       apiURL: `${window.location.protocol}//${window.location.hostname}:3000/api`,
       game: null,
-      user: null,
+      userId: null,
+      username: null,
+      userGames: null,
       isLoggedIn: false,
    },
    mutations: {
       login(state, payload) {
          state.isLoggedIn = true;
-         state.user.id = payload.userId;
-         state.user.username = payload.username;
-         state.user.games = payload.games;
+         state.userId = payload.id;
+         state.username = payload.username;
+         state.userGames = payload.games;
       },
       logout(state) {
-         state.user = null;
          state.isLoggedIn = false;
+         state.userId = null;
+         state.username = null;
+         state.userGames = null;
       },
       selectGame(state, payload) {
          state.game = payload;
