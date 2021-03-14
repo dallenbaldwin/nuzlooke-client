@@ -78,21 +78,40 @@
             </v-expansion-panels>
          </v-col>
       </v-row>
+      <v-dialog v-model="createGameDialog" width="500">
+         <c-dialog-card
+            :props="createGameCard"
+            v-on:close-dialog="closeDialog"
+         ></c-dialog-card>
+      </v-dialog>
    </v-container>
 </template>
 
 <script>
 import NavDrawer from '../components/NavDrawer.vue';
 import SpeedDial from '../components/SpeedDial.vue';
+import DialogCard from '../components/DialogCard.vue';
 
 export default {
    name: 'Games',
    components: {
       'c-nav-drawer': NavDrawer,
       'c-speed-dial': SpeedDial,
+      'c-dialog-card': DialogCard,
    },
    data() {
       return {
+         createGameDialog: false,
+         createGameCard: {
+            title: 'Start a new Game',
+            details:
+               'Are you ready to set out on a new adventure? Give this playthrough a memorable name and pick a game version.',
+            btn: {
+               // icon: 'mdi-domain',
+               action: 'startGame',
+            },
+            formElements: [{}],
+         },
          actions: [
             {
                label: 'Filter',
@@ -105,32 +124,6 @@ export default {
                icon: 'mdi-plus',
                action: 'create-game',
                color: 'green',
-            },
-         ],
-         games: [
-            {
-               id: 123214,
-               name: 'dummy name 1',
-               icon: 'mdi-gamepad',
-               version: { name: 'dummy version' },
-            },
-            {
-               id: 35123,
-               name: 'dummy name 2',
-               icon: 'mdi-gamepad',
-               version: { name: 'dummy version' },
-            },
-            {
-               id: 52343,
-               name: 'dummy name 3',
-               icon: 'mdi-gamepad',
-               version: { name: 'dummy version' },
-            },
-            {
-               id: 35234,
-               name: 'dummy name 4',
-               icon: 'mdi-gamepad',
-               version: { name: 'dummy version' },
             },
          ],
          gameBtns: [
@@ -146,7 +139,7 @@ export default {
          alert('i want to filter my games!');
       },
       createGame() {
-         alert('i want to create a game!');
+         this.createGameDialog = true;
       },
       editGameName(gameId) {
          alert(`i want to edit gameId: ${gameId}`);
@@ -165,10 +158,16 @@ export default {
             this.navigate({ name: 'game', params: { gameId: gameId, tab: route } });
          }
       },
+      closeDialog() {
+         this.createGameDialog = false;
+      },
    },
    computed: {
       username() {
          return this.$store.state.username;
+      },
+      games() {
+         return this.$store.state.userGames;
       },
    },
 };
