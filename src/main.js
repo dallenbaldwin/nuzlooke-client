@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import App from './App.vue';
 import './registerServiceWorker';
-import router from './router/router.index';
-import store from './store/store.index';
+import router from './router/router.js';
+import store from './store/store.js';
 import vuetify from './plugins/vuetify';
 import util from './mixins/util.js';
 

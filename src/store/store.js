@@ -7,17 +7,20 @@ Vue.use(Vuex);
 export default new Vuex.Store({
    plugins: [createPersistedState({ storage: window.sessionStorage })],
    state: {
+      apiURL: `${window.location.protocol}//${window.location.hostname}:3000/api`,
       game: null,
-      username: null,
+      user: null,
       isLoggedIn: false,
    },
    mutations: {
       login(state, payload) {
          state.isLoggedIn = true;
-         state.username = payload.username;
+         state.user.id = payload.userId;
+         state.user.username = payload.username;
+         state.user.games = payload.games;
       },
       logout(state) {
-         state.username = null;
+         state.user = null;
          state.isLoggedIn = false;
       },
       selectGame(state, payload) {
