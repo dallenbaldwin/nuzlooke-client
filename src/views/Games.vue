@@ -82,7 +82,24 @@
          <c-dialog-card
             :props="createGameCard"
             v-on:close-dialog="closeDialog"
-         ></c-dialog-card>
+            v-on:start-game="startGame"
+         >
+            <div class="mt-3">
+               <v-text-field
+                  outlined
+                  v-model="newGame.label"
+                  :rules="[textFieldRules.required]"
+                  label="Name"
+               ></v-text-field>
+               <v-combobox
+                  label="Version"
+                  outlined
+                  v-model="newGame.version"
+                  :items="CONSTANTS.VERSIONS.map(v => v.label)"
+               >
+               </v-combobox>
+            </div>
+         </c-dialog-card>
       </v-dialog>
    </v-container>
 </template>
@@ -91,6 +108,7 @@
 import NavDrawer from '../components/NavDrawer.vue';
 import SpeedDial from '../components/SpeedDial.vue';
 import DialogCard from '../components/DialogCard.vue';
+import * as game from '../services/game.js';
 
 export default {
    name: 'Games',
@@ -101,16 +119,22 @@ export default {
    },
    data() {
       return {
+         newGame: {
+            label: null,
+            version: null,
+         },
+         textFieldRules: { required: value => !!value || 'Required' },
          createGameDialog: false,
          createGameCard: {
             title: 'Start a new Game',
-            details:
+            text:
                'Are you ready to set out on a new adventure? Give this playthrough a memorable name and pick a game version.',
-            btn: {
-               // icon: 'mdi-domain',
-               action: 'startGame',
+            confirmBtn: {
+               action: 'start-game',
             },
-            formElements: [{}],
+            // deleteBtn: {
+            //    action: 'delete-game',
+            // },
          },
          actions: [
             {
@@ -141,13 +165,22 @@ export default {
       createGame() {
          this.createGameDialog = true;
       },
+      startGame() {
+         const builtGame = this.buildGame(this.newGame.label, this.newGame.version);
+         game
+            .createGame(builtGame)
+            .then(res => this.toNewGame(res.data.response.data.id))
+            .catch(err => console.log(err.error));
+         alert(`hey look! values : ${JSON.stringify(builtGame)}`);
+      },
       editGameName(gameId) {
          alert(`i want to edit gameId: ${gameId}`);
+         this.createGameDialog = false;
       },
       toGame(route, gameId) {
          this.$store.commit(
             'selectGame',
-            this.games.find(game => game.id === gameId)
+            this.games.find(game => game.id === gameId) ||
          );
          if (this.mobile()) {
             this.navigate({
@@ -160,6 +193,8 @@ export default {
       },
       closeDialog() {
          this.createGameDialog = false;
+         this.newGame.label = null;
+         this.newGame.version = null;
       },
    },
    computed: {
