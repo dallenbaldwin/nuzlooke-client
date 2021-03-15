@@ -4,6 +4,19 @@ import store from '../store/store.js';
 import router from '../router/router.js';
 
 export default {
+   data() {
+      return {
+         CONSTANTS: {
+            VERSIONS: [
+               { label: `Let's Go Pikachu`, key: 'letsgopikachu' },
+               { label: `Let's Go Eevee`, key: 'letsgoeevee' },
+               { label: `Ruby`, key: 'ruby' },
+               { label: `Sapphire`, key: 'sapphire' },
+               { label: `Emerald`, key: 'emerald' },
+            ],
+         },
+      };
+   },
    methods: {
       navigate(endpoint) {
          console.log(`navigating to ${endpoint}`);
@@ -52,6 +65,12 @@ export default {
       },
       isUndefined(value) {
          return value === undefined || value === null;
+      },
+      buildGame(label, version) {
+         return {
+            label: label,
+            version: this.CONSTANTS.VERSIONS.find(x => x.label === version).key,
+         };
       },
    },
 };

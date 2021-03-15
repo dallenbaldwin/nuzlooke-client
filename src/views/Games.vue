@@ -180,7 +180,7 @@ export default {
       toGame(route, gameId) {
          this.$store.commit(
             'selectGame',
-            this.games.find(game => game.id === gameId) ||
+            this.games.find(game => game.id === gameId)
          );
          if (this.mobile()) {
             this.navigate({
