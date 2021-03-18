@@ -1,5 +1,5 @@
 import { isMobile } from 'mobile-device-detect';
-import { getUserById } from '../services/user.js';
+import * as userServices from '../services/user.js';
 import store from '../store/store.js';
 import router from '../router/router.js';
 
@@ -22,13 +22,6 @@ export default {
          console.log(`navigating to ${endpoint}`);
          router.push(endpoint);
       },
-      getRouteInfo() {
-         return {
-            name: router.currentRoute.name,
-            path: router.currentRoute.path,
-            params: router.currentRoute.params,
-         };
-      },
       logout() {
          store.commit('exitGame');
          store.commit('logout');
@@ -36,9 +29,11 @@ export default {
       },
       login() {
          // FIXME: this will need to be reworked when we get to authorization
-         getUserById('9d0f3fca-f516-479d-8d15-7260c33a55f8')
+         userServices
+            .getUserById('9d0f3fca-f516-479d-8d15-7260c33a55f8')
             .then(res => {
-               let user = res.data.response.data;
+               let user = this.getAPIResponse(res);
+               console.log(user);
                store.commit('login', {
                   id: user.id,
                   username: user.username || user.email,
@@ -71,6 +66,10 @@ export default {
             label: label,
             version: this.CONSTANTS.VERSIONS.find(x => x.label === version).key,
          };
+      },
+      getAPIResponse(object) {
+         if (object.data.data) return object.data.data;
+         if (object.data.error) return object.data.error;
       },
    },
 };
