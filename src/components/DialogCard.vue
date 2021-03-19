@@ -9,7 +9,7 @@
       </v-card-title>
 
       <v-card-text>
-         <div class="mt-3">{{ props.text }}</div>
+         <div v-if="props.text" class="mt-3 mb-3">{{ props.text }}</div>
          <slot></slot>
       </v-card-text>
 
@@ -17,15 +17,19 @@
 
       <v-card-actions>
          <v-spacer></v-spacer>
-         <v-btn text @click="action(props.confirmBtn.action)">
+         <v-btn v-if="props.successBtn" text @click="action(props.successBtn.action)">
             <v-icon color="success">{{
-               props.confirmBtn.icon || 'mdi-check-circle'
+               props.successBtn.icon || 'mdi-check-circle'
             }}</v-icon>
-            Start
+            {{ props.successBtn.text || 'Confirm' }}
+         </v-btn>
+         <v-btn v-if="props.dangerBtn" text @click="action(props.dangerBtn.action)">
+            <v-icon color="red">{{ props.dangerBtn.icon || 'mdi-minus-circle' }}</v-icon>
+            {{ props.dangerBtn.text || 'Delete' }}
          </v-btn>
          <v-btn text @click="close">
             <v-icon dark>mdi-close-circle</v-icon>
-            Cancel
+            {{ props.cancelBtn ? props.cancelBtn.text : 'Cancel' }}
          </v-btn>
       </v-card-actions>
    </v-card>

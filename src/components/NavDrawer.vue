@@ -1,47 +1,95 @@
 <template>
-   <v-navigation-drawer :value="value" absolute bottom temporary>
-      <v-list-item v-if="isLoggedIn">
-         <v-list-item-icon>
-            <v-btn fab x-small color="orange" dark @click="editUsername">
-               <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-         </v-list-item-icon>
-         <v-list-item-content>
-            {{ username }}
-         </v-list-item-content>
-      </v-list-item>
-      <v-divider></v-divider>
-      <v-list nav>
-         <v-list-item
-            v-for="link of pageLinks"
-            :key="link.label"
-            link
-            @click="clickLink(link)"
+   <div>
+      <v-app-bar elevation="1" bottom app v-if="mobile()">
+         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+         <v-spacer></v-spacer>
+         <v-btn
+            fab
+            small
+            color="green"
+            dark
+            v-if="outGame"
+            @click="newGame.createGameDialog = !newGame.createGameDialog"
          >
+            <v-icon>mdi-plus</v-icon>
+         </v-btn>
+      </v-app-bar>
+      <v-navigation-drawer v-model="drawer" absolute bottom temporary>
+         <v-list-item v-if="isLoggedIn">
             <v-list-item-icon>
-               <v-icon>{{ link.icon }}</v-icon>
+               <v-btn fab x-small color="orange" dark @click="editUsername">
+                  <v-icon>mdi-pencil</v-icon>
+               </v-btn>
             </v-list-item-icon>
-            <v-list-item-content class="text-right">
-               {{ link.label }}
+            <v-list-item-content>
+               {{ username }}
             </v-list-item-content>
          </v-list-item>
-      </v-list>
-   </v-navigation-drawer>
+         <v-divider></v-divider>
+         <v-list nav>
+            <v-list-item
+               v-for="link of pageLinks"
+               :key="link.label"
+               link
+               @click="clickLink(link)"
+            >
+               <v-list-item-icon>
+                  <v-icon :color="link.color">{{ link.icon }}</v-icon>
+               </v-list-item-icon>
+               <v-list-item-content class="text-right">
+                  {{ link.label }}
+               </v-list-item-content>
+            </v-list-item>
+         </v-list>
+      </v-navigation-drawer>
+      <v-dialog v-model="newGame.createGameDialog" width="500">
+         <c-dialog-card
+            :props="newGame.createGameCard"
+            v-on:start-game="startGame"
+            v-on:close-dialog="closeDialog"
+         >
+            <div v-if="newGame.creatingGame" class="text-center mt-3">
+               <v-progress-circular
+                  indeterminate
+                  size="100"
+                  color="primary"
+               ></v-progress-circular>
+            </div>
+            <div class="mt-3" v-if="!newGame.creatingGame">
+               <v-text-field
+                  outlined
+                  v-model="newGame.newGame.label"
+                  label="Name"
+               ></v-text-field>
+               <v-combobox
+                  label="Version"
+                  outlined
+                  v-model="newGame.newGame.version"
+                  :items="Object.values(VERSIONS).map(v => v.label)"
+               >
+               </v-combobox></div
+         ></c-dialog-card>
+      </v-dialog>
+   </div>
 </template>
 
 <script>
+import DialogCard from '../components/DialogCard.vue';
+import * as gameController from '../controllers/games.js';
+import * as gameServices from '../services/game.js';
+import * as userServices from '../services/user.js';
+
 export default {
    name: 'NavDrawer',
-   props: ['value'],
-   model: {
-      prop: 'value',
-      event: 'valueChange',
+   components: {
+      'c-dialog-card': DialogCard,
    },
    data() {
       return {
-         inGameRoutes: ['pokemon', 'routes', 'gyms', 'rules'],
+         drawer: false,
+         inGameRoutes: ['Pokemon', 'Routes', 'Gyms', 'Rules'],
          inGameLinks: ['Pokemon', 'Routes', 'Gyms', 'Rules', 'Games', 'Sign Out'],
-         outGameLinks: ['Sign Out'],
+         outGameLinks: ['Sign Out', 'Create Game'],
          loggedOutLinks: ['Home', 'Sign In', 'Register'],
          links: [
             {
@@ -92,6 +140,23 @@ export default {
                action: 'exit-game',
             },
          ],
+         newGame: {
+            creatingGame: false,
+            newGame: {
+               label: null,
+               version: null,
+            },
+            createGameDialog: false,
+            createGameCard: {
+               title: 'Start a new Game',
+               text:
+                  'Are you ready to set out on a new adventure? Give this playthrough a memorable name and pick a game version.',
+               successBtn: {
+                  text: 'Start',
+                  action: 'start-game',
+               },
+            },
+         },
       };
    },
    methods: {
@@ -114,16 +179,35 @@ export default {
       editUsername() {
          alert('i want to edit the username!');
       },
+      closeDialog() {
+         this.newGame.creatingGame = false;
+         this.newGame.createGameDialog = false;
+         this.newGame.newGame.label = null;
+         this.newGame.newGame.version = null;
+      },
+      async startGame() {
+         this.creatingGame = true;
+         try {
+            const gameToCreate = gameController.build(this.newGame.newGame);
+            let res = await gameServices.createGame(gameToCreate);
+            const createdGame = this.toAPIResponse(res);
+            const gameSnapshot = gameController.getSnapshot(createdGame);
+            this.games.push(gameSnapshot);
+            await userServices.updateUserById(this.userId, {
+               games: this.games,
+            });
+            this.$store.commit('selectGame', createdGame);
+            this.navigate({
+               name: 'routes',
+               params: { gameId: createdGame.id },
+            });
+         } catch (err) {
+            alert(err);
+         }
+         this.closeDialog();
+      },
    },
    computed: {
-      valueLocal: {
-         get() {
-            return this.value;
-         },
-         set(val) {
-            this.$emit('valueChange', val);
-         },
-      },
       pageLinks() {
          return this.links
             .filter(link => link.route !== this.$route.name)
@@ -147,6 +231,12 @@ export default {
       },
       username() {
          return this.$store.state.username;
+      },
+      userId() {
+         return this.$store.state.userId;
+      },
+      games() {
+         return this.$store.state.userGames;
       },
    },
 };

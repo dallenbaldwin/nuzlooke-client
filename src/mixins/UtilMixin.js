@@ -6,14 +6,21 @@ import router from '../router/router.js';
 export default {
    data() {
       return {
-         CONSTANTS: {
-            VERSIONS: [
-               { label: `Let's Go Pikachu`, key: 'letsgopikachu' },
-               { label: `Let's Go Eevee`, key: 'letsgoeevee' },
-               { label: `Ruby`, key: 'ruby' },
-               { label: `Sapphire`, key: 'sapphire' },
-               { label: `Emerald`, key: 'emerald' },
-            ],
+         VERSIONS: {
+            LETSGOPIKACHU: {
+               label: `Let's Go Pikachu`,
+               key: 'letsgopikachu',
+               generation: '7',
+            },
+            LETSGOEEVEE: { label: `Let's Go Eevee`, key: 'letsgoeevee', generation: '7' },
+            RUBY: { label: `Ruby`, key: 'ruby', generation: '3' },
+            SAPPHIRE: { label: `Sapphire`, key: 'sapphire', generation: '3' },
+            EMERALD: { label: `Emerald`, key: 'emerald', generation: '3' },
+         },
+         PARTYSTATE: {
+            PARTY: { id: 0, label: 'Party' },
+            PC: { id: 1, label: 'PC' },
+            GRAVEYARD: { id: 2, label: 'Graveyard' },
          },
       };
    },
@@ -32,7 +39,7 @@ export default {
          userServices
             .getUserById('9d0f3fca-f516-479d-8d15-7260c33a55f8')
             .then(res => {
-               let user = this.getAPIResponse(res);
+               let user = this.toAPIResponse(res);
                console.log(user);
                store.commit('login', {
                   id: user.id,
@@ -67,7 +74,7 @@ export default {
             version: this.CONSTANTS.VERSIONS.find(x => x.label === version).key,
          };
       },
-      getAPIResponse(object) {
+      toAPIResponse(object) {
          if (object.data.data) return object.data.data;
          if (object.data.error) return object.data.error;
       },

@@ -21,6 +21,9 @@ export default new Vuex.Store({
          state.username = payload.username;
          state.userGames = payload.games;
       },
+      setUserGames(state, payload) {
+         state.userGames = payload;
+      },
       logout(state) {
          state.isLoggedIn = false;
          state.userId = null;
