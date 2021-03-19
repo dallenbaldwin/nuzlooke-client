@@ -1,23 +1,20 @@
 <template>
    <v-container>
       <v-row>
-         <v-col>
-            <c-speed-dial
-               :actions="actions"
-               v-if="!mobile()"
-               v-on:logout="logout"
-               v-on:filter-games="filterDialog = !filterDialog"
-               v-on:create-game="createGameDialog = !createGameDialog"
-            ></c-speed-dial
-         ></v-col>
+         <c-speed-dial
+            class="c-speed-dial"
+            :actions="actions"
+            v-if="!mobile()"
+            v-on:logout="logout"
+            v-on:filter-games="filterDialog = !filterDialog"
+            v-on:create-game="createGameDialog = !createGameDialog"
+         ></c-speed-dial>
       </v-row>
-      <v-row
-         ><v-col>
-            <div class="mt-6 text-h2">
-               Games
-            </div>
-            <div class="mt-6 text-h4">Welcome back {{ username }}</div>
-         </v-col>
+      <v-row class="d-flex flex-column mb-1">
+         <div class="mt-6 text-h2">
+            Games
+         </div>
+         <div class="mt-6 text-h4">Welcome back {{ username }}</div>
       </v-row>
       <v-row>
          <v-expansion-panels popout>
@@ -46,7 +43,6 @@
                            outlined
                            class="mt-3"
                            v-model="editGame.label"
-                           :rules="[textFieldRules.required]"
                            label="Name"
                         ></v-text-field>
                      </c-dialog-card>
@@ -78,11 +74,12 @@
                         </v-btn>
                      </v-row>
                      <v-row class="d-flex justify-space-around">
-                        <div>
-                           <div class="mb-3">
+                        <div id="box-art">
+                           <div class="mb-1">
                               {{ game.version.label }}
                            </div>
                            <v-img
+                              class="mt-2"
                               :alt="game.version.label"
                               :lazy-src="game.version.artwork_url"
                               :src="game.version.artwork_url"
@@ -92,46 +89,55 @@
                               contain
                            ></v-img>
                         </div>
-                        <div v-if="game.party_icon_urls.length > 0">
-                           <div class="text mb-3">Party</div>
-                           <v-img
-                              v-for="url of game.party_icon_urls"
-                              :key="url"
-                              :lazy-src="url"
-                              :src="url"
-                              contain
+                        <div id="party">
+                           <div class="text mb-1">Party</div>
+                           <div
+                              v-for="(group, i) of ofSix(game.party_icon_urls)"
+                              :key="`${group}-${i}`"
+                              class="d-inline-flex flex-column mr-3"
                            >
-                           </v-img>
+                              <c-poke-spirte
+                                 v-for="(url, i) of group"
+                                 class="mt-2"
+                                 :key="`${url}-${i}`"
+                                 :src="url"
+                                 outlineColor=""
+                                 size="small"
+                              ></c-poke-spirte>
+                           </div>
                         </div>
-                        <div v-if="game.gym_badge_icon_urls.length > 0">
-                           <div class="text mb-3">Gym Badges</div>
-                           <v-img
-                              v-for="url of game.gym_badge_icon_urls"
-                              :key="url"
-                              :lazy-src="url"
-                              :src="url"
-                              contain
+                        <div id="gym-badges">
+                           <div class="text mb-1">Gym Badges</div>
+                           <div
+                              v-for="(group, i) of ofEight(game.gym_badge_icon_urls)"
+                              :key="`${group}-${i}`"
+                              class="d-inline-flex flex-column mr-3"
                            >
-                           </v-img>
+                              <c-badge-sprite
+                                 class="mt-2"
+                                 v-for="(url, i) of group"
+                                 :key="`${url}-${i}`"
+                                 :src="url"
+                              ></c-badge-sprite>
+                           </div>
                         </div>
-                        <div>
-                           <div class="text mb-3">Game Links</div>
+                        <div id="game-links">
+                           <div class="text mb-1">Game Links</div>
                            <div v-for="btn of gameBtns" :key="btn.label">
-                              <div class="mt-2">
-                                 <v-btn
-                                    fab
-                                    dark
-                                    small
-                                    @click="
-                                       toGame(
-                                          mobile() ? btn.mobileRoute : btn.desktopRoute,
-                                          game.game_id
-                                       )
-                                    "
-                                    ><v-icon>{{ btn.icon }}</v-icon></v-btn
-                                 >
-                                 <span class="ml-3">{{ btn.label }}</span>
-                              </div>
+                              <v-btn
+                                 class="mt-2"
+                                 fab
+                                 dark
+                                 small
+                                 @click="
+                                    toGame(
+                                       mobile() ? btn.mobileRoute : btn.desktopRoute,
+                                       game.game_id
+                                    )
+                                 "
+                                 ><v-icon>{{ btn.icon }}</v-icon></v-btn
+                              >
+                              <span class="ml-3">{{ btn.label }}</span>
                            </div>
                         </div>
                      </v-row>
@@ -154,12 +160,7 @@
                ></v-progress-circular>
             </div>
             <div class="mt-3" v-if="!creatingGame">
-               <v-text-field
-                  outlined
-                  v-model="newGame.label"
-                  :rules="[textFieldRules.required]"
-                  label="Name"
-               ></v-text-field>
+               <v-text-field outlined v-model="newGame.label" label="Name"></v-text-field>
                <v-combobox
                   label="Version"
                   outlined
@@ -176,12 +177,6 @@
             v-on:close-dialog="closeDialog"
             v-on:filter-games="confirmFilterOptions"
          >
-            <!-- what can we filter on?
-                  label
-                  game version
-                  is_finished
-                  game family
-                -->
             <v-text-field
                class="mt-3 mb-3"
                label="Name"
@@ -216,6 +211,8 @@
 <script>
 import SpeedDial from '../components/SpeedDial.vue';
 import DialogCard from '../components/DialogCard.vue';
+import PokeSprite from '../components/PokeSprite.vue';
+import BadgeSprite from '../components/BadgeSprite.vue';
 import * as gameController from '../controllers/games.js';
 import * as gameServices from '../services/game.js';
 import * as userServices from '../services/user.js';
@@ -223,12 +220,13 @@ import * as userServices from '../services/user.js';
 export default {
    name: 'Games',
    components: {
+      'c-poke-spirte': PokeSprite,
+      'c-badge-sprite': BadgeSprite,
       'c-speed-dial': SpeedDial,
       'c-dialog-card': DialogCard,
    },
    data() {
       return {
-         textFieldRules: { required: value => !!value || 'Required' },
          // create game
          creatingGame: false,
          newGame: {
@@ -315,6 +313,18 @@ export default {
       };
    },
    methods: {
+      ofSix(array) {
+         const twoD = [];
+         twoD.push(array.filter((e, i) => i / 6 < 0.5));
+         twoD.push(array.filter((e, i) => i / 6 >= 0.5));
+         return twoD;
+      },
+      ofEight(array) {
+         const twoD = [];
+         twoD.push(array.filter((e, i) => i / 9 < 0.44));
+         twoD.push(array.filter((e, i) => i / 9 > 0.44));
+         return twoD;
+      },
       async startGame() {
          this.creatingGame = true;
          try {
@@ -339,7 +349,6 @@ export default {
          this.editGameDialog = true;
       },
       async confirmEdits(gameId) {
-         // TODO
          if (!this.isUndefined(this.editGame.label)) {
             this.editingGame = true;
             try {
@@ -370,13 +379,16 @@ export default {
          this.$store.commit('selectGame', game);
          this.enterGame('routes', game.id);
       },
-      toGame(route, gameId) {
-         // TODO: awaitify
-         gameServices.getGameById(gameId).then(res => {
+      async toGame(route, gameId) {
+         // FIXME: enter route is borked for desktop
+         try {
+            let res = await gameServices.getGameById(gameId);
             let data = this.toAPIResponse(res);
             this.$store.commit('selectGame', data);
             this.enterGame(route, gameId);
-         });
+         } catch (err) {
+            alert(err);
+         }
       },
       async confirmDeleteGame(gameId) {
          this.deletingGame = true;
@@ -452,7 +464,7 @@ export default {
 <style>
 .v-speed-dial {
    position: absolute;
-   z-index: 1000;
+   /* z-index: 1; */
 }
 
 .v-btn--floating {

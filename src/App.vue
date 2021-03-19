@@ -4,13 +4,14 @@
       <v-main>
          <v-container>
             <router-view> </router-view>
+            <pre>{{ JSON.stringify(this.$store.state, null, 2) }}</pre>
          </v-container>
       </v-main>
    </v-app>
 </template>
 
 <script>
-// <pre>{{ JSON.stringify(this.$store.state, null, 2) }}</pre>
+//
 import NavDrawer from './components/NavDrawer.vue';
 
 export default {
@@ -26,7 +27,7 @@ export default {
 
 <style scoped>
 .c-mw {
-   max-width: 60%;
+   max-width: 1000px;
    margin: auto;
 }
 </style>
