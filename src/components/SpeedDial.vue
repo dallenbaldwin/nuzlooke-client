@@ -10,6 +10,7 @@
          <template v-slot:activator>
             <v-btn dark fab x-large @click.prevent.stop><v-icon>mdi-menu</v-icon></v-btn>
          </template>
+         <!-- FIXME: this should just be a link with a settings icon. I don't think I'll be able to get it working the way i want -->
          <div v-if="isLoggedIn" class="v-btn--floating float-right">
             <span>{{ username }}</span>
             <v-btn fab x-small color="orange" dark>
