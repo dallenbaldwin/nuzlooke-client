@@ -13,6 +13,11 @@ export default {
          return this.$store.state.game;
       },
    },
+   methods: {
+      // filterGyms() {
+      //    alert('i want to filter my gyms!');
+      // },
+   },
 };
 </script>
 

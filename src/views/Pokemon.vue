@@ -13,6 +13,11 @@ export default {
          return this.$store.state.game;
       },
    },
+   methods: {
+      // filterPokemon() {
+      //    alert('i want to filter my pokemon!');
+      // },
+   },
 };
 </script>
 

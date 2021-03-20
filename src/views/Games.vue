@@ -257,7 +257,7 @@ export default {
             title: 'Start a new Game',
             text:
                'Are you ready to set out on a new adventure? Give this playthrough a memorable name and pick a game version.',
-            successBtn: {
+            primaryBtn: {
                text: 'Start',
                action: 'start-game',
             },
@@ -270,7 +270,7 @@ export default {
          editGameDialog: false,
          editGameCard: {
             title: `Edit Game`,
-            successBtn: {
+            primaryBtn: {
                action: 'edit-game',
             },
          },
@@ -280,7 +280,7 @@ export default {
          deleteGameCard: {
             title: `Delete Game?`,
             text: 'This action cannot be undone. Are you sure you want to continue?',
-            dangerBtn: {
+            secondaryBtn: {
                action: 'delete-game',
             },
          },
@@ -288,7 +288,7 @@ export default {
          filterDialog: false,
          filterDialogCard: {
             title: 'Filter Games',
-            successBtn: {
+            primaryBtn: {
                action: 'filter-games',
             },
          },
