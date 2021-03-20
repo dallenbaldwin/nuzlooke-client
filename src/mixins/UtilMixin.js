@@ -17,7 +17,7 @@ export default {
             SAPPHIRE: { label: `Sapphire`, key: 'sapphire', generation: '3' },
             EMERALD: { label: `Emerald`, key: 'emerald', generation: '3' },
          },
-         PARTYSTATE: {
+         PARTY_STATE: {
             PARTY: { id: 0, label: 'Party' },
             PC: { id: 1, label: 'PC' },
             GRAVEYARD: { id: 2, label: 'Graveyard' },

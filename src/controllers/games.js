@@ -1,7 +1,7 @@
 import UtilMixin from '../mixins/UtilMixin.js';
 
 const VERSIONS = UtilMixin.data().VERSIONS;
-const PARTYSTATE = UtilMixin.data().PARTYSTATE;
+const PARTY_STATE = UtilMixin.data().PARTY_STATE;
 
 export const build = object => {
    const version = Object.values(VERSIONS).find(v => v.label === object.version).key;
@@ -14,7 +14,7 @@ export const build = object => {
 export const getSnapshot = game => {
    const partyIconUrls = game.pokemons
       ? game.pokemons
-           .filter(p => p.party_state === PARTYSTATE.PARTY.label)
+           .filter(p => p.party_state === PARTY_STATE.PARTY.label)
            .map(p => p.icon_url)
       : undefined;
    const gymBadgeIconsUrls = game.gyms
