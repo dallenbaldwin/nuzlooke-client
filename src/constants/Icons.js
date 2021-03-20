@@ -26,6 +26,7 @@ export default Object.freeze({
       LOGIN: 'mdi-login',
       REGISTER: 'mdi-account',
       HOME: 'mdi-home',
+      GAMES: 'mdi-format-list-bulleted',
    },
    CONSOLES: {
       GAMEBOY: 'mdi-nintendo-game-boy',
