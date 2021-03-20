@@ -27,10 +27,15 @@
          ></c-poke-sprite>
          <span>
             <v-card-title>{{ encounter.label }}</v-card-title>
-            <v-card-subtitle>{{ encounter.result.constant }}</v-card-subtitle>
+            <v-card-subtitle
+               >{{ encounter.result.constant
+               }}{{
+                  encounter.result.nickname ? `: ${encounter.result.nickname}` : ''
+               }}</v-card-subtitle
+            >
          </span>
       </div>
-      <v-card-actions>
+      <v-card-actions class="pt-0 pb-1">
          <v-spacer></v-spacer>
          <v-btn text @click="emitNewEncounter" v-if="isAvailable">
             <v-icon color="green" dark>{{ Icons.CONTROLS.EXCLAIM }}</v-icon>

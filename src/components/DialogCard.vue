@@ -1,12 +1,6 @@
 <template>
    <v-card>
-      <v-card-title class="headline grey lighten-2">
-         {{ props.title }}
-         <v-spacer></v-spacer>
-         <v-btn v-if="props.deleteBtn" text @click="action(props.deleteBtn.action)">
-            <v-icon color="red">mdi-minus-circle</v-icon>Delete Game
-         </v-btn>
-      </v-card-title>
+      <v-card-title class="headline grey lighten-2"> {{ props.title }}</v-card-title>
 
       <v-card-text>
          <div v-if="props.text" class="mt-3 mb-3">{{ props.text }}</div>
@@ -17,31 +11,38 @@
 
       <v-card-actions>
          <v-spacer></v-spacer>
-         <v-btn v-if="props.successBtn" text @click="action(props.successBtn.action)">
-            <v-icon color="success">{{
-               props.successBtn.icon || 'mdi-check-circle'
-            }}</v-icon>
-            {{ props.successBtn.text || 'Confirm' }}
+         <v-btn v-if="props.primaryBtn" text @click="action(primaryBtn.action)">
+            <v-icon :color="primaryBtn.color || 'success'">
+               {{ primaryBtn.icon || Icons.CONTROLS.CONFIRM }}
+            </v-icon>
+            {{ primaryBtn.text || 'Confirm' }}
          </v-btn>
-         <v-btn v-if="props.dangerBtn" text @click="action(props.dangerBtn.action)">
-            <v-icon color="red">{{ props.dangerBtn.icon || 'mdi-minus-circle' }}</v-icon>
-            {{ props.dangerBtn.text || 'Delete' }}
+         <v-btn v-if="props.secondaryBtn" text @click="action(secondaryBtn.action)">
+            <v-icon :color="secondaryBtn.color || 'red'">
+               {{ secondaryBtn.icon || Icons.CONTROLS.DELETE }}
+            </v-icon>
+            {{ secondaryBtn.text || 'Delete' }}
          </v-btn>
          <v-btn text @click="close">
-            <v-icon dark>mdi-close-circle</v-icon>
-            {{ props.cancelBtn ? props.cancelBtn.text : 'Cancel' }}
+            <v-icon :dark="!props.cancelBtn" :color="cancelBtn.color || undefined">
+               {{ cancelBtn.icon || Icons.CONTROLS.CLOSE }}
+            </v-icon>
+            {{ cancelBtn.text || 'Cancel' }}
          </v-btn>
       </v-card-actions>
    </v-card>
 </template>
 
 <script>
-// TODO: use icon constants
 export default {
    name: 'DialogCard',
    props: ['props'],
    data() {
-      return {};
+      return {
+         primaryBtn: this.props.primaryBtn ? this.props.primaryBtn : {},
+         secondaryBtn: this.props.secondaryBtn ? this.props.secondaryBtn : {},
+         cancelBtn: this.props.cancelBtn ? this.props.cancelBtn : {},
+      };
    },
    methods: {
       action(action) {
