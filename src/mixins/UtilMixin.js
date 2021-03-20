@@ -22,17 +22,63 @@ export default {
             PC: { id: 1, label: 'PC' },
             GRAVEYARD: { id: 2, label: 'Graveyard' },
          },
+         MDI_ICONS: {
+            BRANDS: {
+               GOOGLE: 'mdi-google',
+               APPLE: 'mdi-apple',
+               FACEBOOK: 'mdi-facebook',
+            },
+            CONTROLS: {
+               SETTINGS: 'mdi-cog',
+               EDIT: 'mdi-pencil',
+               EXCLAIM: 'mdi-exclamation-thick',
+               FILTER: 'mdi-filter',
+               MENU: 'mdi-menu',
+               CLOSE: 'mdi-close',
+               DELETE: 'mdi-minus',
+               CONFIRM: 'mdi-check',
+               TOMBSTONE: 'mdi-grave-stone',
+               STORAGE: 'mdi-archive',
+               PLUS: 'mdi-plus',
+            },
+            PAGES: {
+               POKEMON: 'mdi-pokeball',
+               GYM: 'mdi-pokemon-go',
+               ROUTES: 'mdi-routes',
+               RULES: 'mdi-gavel',
+               LOGOUT: 'mdi-logout',
+               LOGIN: 'mdi-login',
+               REGISTER: 'mdi-',
+               HOME: 'mdi-home',
+            },
+            CONSOLES: {
+               GAMEBOY: 'mdi-nintendo-game-boy',
+               SWITCH: 'mdi-nintendo-switch',
+               DESKTOP: 'mdi-monitor',
+               DEFAULT: 'mdi-gamepad-square',
+            },
+         },
+         PAGES: {
+            HOME: 'home',
+            LOGIN: 'login',
+            REGISTER: 'register',
+            GAMES: 'games',
+            GAME: 'game',
+            POKEMON: 'pokemon',
+            RULES: 'rules',
+            ROUTES: 'routes',
+            GYMS: 'gyms',
+         },
       };
    },
    methods: {
       navigate(endpoint) {
-         console.log(`navigating to ${endpoint}`);
-         router.push(endpoint);
+         router.replace(endpoint);
       },
       logout() {
          store.commit('exitGame');
          store.commit('logout');
-         this.navigate({ name: 'home' });
+         this.navigate({ name: this.PAGES.HOME });
       },
       login() {
          // FIXME: this will need to be reworked when we get to authorization
@@ -46,13 +92,13 @@ export default {
                   username: user.username || user.email,
                   games: user.games,
                });
-               this.navigate({ name: 'games' });
+               this.navigate({ name: this.PAGES.GAMES });
             })
             .catch(err => console.log);
       },
       exitGame() {
          store.commit('exitGame');
-         this.navigate({ name: 'games' });
+         this.navigate({ name: this.PAGES.GAMES });
       },
       mobile() {
          return isMobile;
@@ -67,12 +113,6 @@ export default {
       },
       isUndefined(value) {
          return value === undefined || value === null;
-      },
-      buildGame(label, version) {
-         return {
-            label: label,
-            version: this.CONSTANTS.VERSIONS.find(x => x.label === version).key,
-         };
       },
       toAPIResponse(object) {
          if (object.data.data) return object.data.data;
