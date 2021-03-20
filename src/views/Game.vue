@@ -13,13 +13,13 @@
             v-on:filter-gyms="filterGyms"
             v-on:filter-rules="filterRules" -->
       </v-row>
-      <v-row class="mt-6 mb-3">
+      <v-row class="mt-3 mb-3">
          <div class="text-h2">
             {{ game.label }}
          </div>
       </v-row>
-      <v-row>
-         <v-tabs v-model="tab" icons-and-text grow>
+      <v-row class="mt-3 mb-3">
+         <v-tabs v-model="tab" icons-and-text grow color="black">
             <v-tab v-for="tab of tabs" :key="tab.label">
                {{ tab.label }}
                <v-icon dark>{{ tab.icon }}</v-icon>
