@@ -36,6 +36,7 @@
 </template>
 
 <script>
+// TODO: use icon constants
 export default {
    name: 'DialogCard',
    props: ['props'],

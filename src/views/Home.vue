@@ -1,27 +1,28 @@
 <template>
    <v-container>
       <v-row>
-         <v-col> <c-speed-dial :actions="null" v-if="!mobile()"></c-speed-dial></v-col>
+         <v-col><c-speed-dial :actions="null" v-if="!mobile()"></c-speed-dial></v-col>
       </v-row>
-      <v-row
-         ><v-col>
+      <v-row>
+         <v-col>
             <div class="text-h2 text-center">Nuzlooke</div>
             <div class="mt-6 text-h4 text-center">A Nuzlocke Manager</div>
             <v-divider class="mt-6 mx-auto" inset></v-divider>
             <div class="mt-6 text-center">
-               <v-btn x-large @click="navigate({ name: PAGES.LOGIN })">
+               <v-btn x-large @click="navigate({ name: Pages.LOGIN })">
+                  <v-icon large class="mr-3">{{ Icons.PAGES.LOGIN }}</v-icon>
                   Sign In
-                  <v-icon large class="ml-3">mdi-login</v-icon>
                </v-btn>
             </div>
             <div class="mt-6 text-center">
-               <v-btn x-large @click="navigate({ name: PAGES.REGISTER })"
-                  >Register
-                  <v-icon large class="ml-3">mdi-account</v-icon>
+               <v-btn x-large @click="navigate({ name: Pages.REGISTER })">
+                  <v-icon large class="mr-3">{{ Icons.PAGES.REGISTER }}</v-icon>
+                  Register
                </v-btn>
             </div>
-            <v-divider class="mt-6 mx-auto" inset></v-divider> </v-col
-      ></v-row>
+            <v-divider class="mt-6 mx-auto" inset></v-divider>
+         </v-col>
+      </v-row>
    </v-container>
 </template>
 

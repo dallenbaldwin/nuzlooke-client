@@ -7,7 +7,7 @@ export default Object.freeze({
    CONTROLS: {
       SETTINGS: 'mdi-cog',
       EDIT: 'mdi-pencil',
-      EXCLAIM: 'mdi-exclamation-thick',
+      EXCLAIM: 'mdi-alert-circle',
       FILTER: 'mdi-filter',
       MENU: 'mdi-menu',
       CLOSE: 'mdi-close',
@@ -24,7 +24,7 @@ export default Object.freeze({
       RULES: 'mdi-gavel',
       LOGOUT: 'mdi-logout',
       LOGIN: 'mdi-login',
-      REGISTER: 'mdi-',
+      REGISTER: 'mdi-account',
       HOME: 'mdi-home',
    },
    CONSOLES: {

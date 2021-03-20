@@ -7,6 +7,7 @@ import PartyState from '../constants/PartyState.js';
 import Icons from '../constants/Icons.js';
 import Pages from '../constants/Pages.js';
 import TabMap from '../constants/TabMap.js';
+import EncounterResult from '../constants/EncounterResult.js';
 
 export default {
    data() {
@@ -16,6 +17,7 @@ export default {
          Icons: Icons,
          Pages: Pages,
          TabMap: TabMap,
+         EncounterResult: EncounterResult,
       };
    },
    methods: {
@@ -33,7 +35,6 @@ export default {
             .getUserById('9d0f3fca-f516-479d-8d15-7260c33a55f8')
             .then(res => {
                let user = this.toAPIResponse(res);
-               console.log(user);
                store.commit('login', {
                   id: user.id,
                   username: user.username || user.email,
@@ -64,6 +65,9 @@ export default {
       toAPIResponse(object) {
          if (object.data.data) return object.data.data;
          if (object.data.error) return object.data.error;
+      },
+      prettySON(json) {
+         return JSON.stringify(json, null, 2);
       },
    },
 };

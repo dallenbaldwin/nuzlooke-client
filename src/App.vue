@@ -10,7 +10,7 @@
 </template>
 
 <script>
-// <pre>{{ JSON.stringify(this.$store.state, null, 2) }}</pre>
+// <pre>{{ prettySON(this.$store.state) }}</pre>
 import NavDrawer from './components/NavDrawer.vue';
 
 export default {

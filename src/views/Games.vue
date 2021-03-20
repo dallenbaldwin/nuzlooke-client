@@ -44,6 +44,7 @@
                            class="mt-3"
                            v-model="editGame.label"
                            label="Name"
+                           clearable
                         ></v-text-field>
                      </c-dialog-card>
                   </v-dialog>
@@ -168,7 +169,12 @@
                ></v-progress-circular>
             </div>
             <div class="mt-3" v-if="!creatingGame">
-               <v-text-field outlined v-model="newGame.label" label="Name"></v-text-field>
+               <v-text-field
+                  clearable
+                  outlined
+                  v-model="newGame.label"
+                  label="Name"
+               ></v-text-field>
                <v-combobox
                   label="Version"
                   outlined
@@ -190,6 +196,7 @@
                label="Name"
                outlined
                v-model="filterValues.label"
+               clearable
             ></v-text-field>
             <v-combobox
                label="Version"
@@ -391,10 +398,7 @@ export default {
       },
       enterGame(route, gameId) {
          if (this.mobile()) {
-            this.navigate({
-               name: route,
-               params: { gameId: gameId },
-            });
+            this.navigate({ name: route, params: { gameId: gameId } });
          } else {
             this.navigate({ name: 'game', params: { gameId: gameId, tab: route } });
          }
@@ -404,7 +408,6 @@ export default {
          this.enterGame('routes', game.id);
       },
       async toGame(route, gameId) {
-         // FIXME: enter route is borked for desktop
          try {
             let res = await gameServices.getGameById(gameId);
             let data = this.toAPIResponse(res);
