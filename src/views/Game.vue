@@ -29,29 +29,31 @@
       <v-row class="d-flex" v-if="tab === TabMap.POKEMON">
          <pre>{{ prettySON(game.pokemons) }}</pre>
       </v-row>
-      <v-row class="d-flex justify-space-around flex-column" v-if="tab === TabMap.ROUTES">
-         <!-- need more to test this theory -->
-         <div class="d-flex justify-space-around flex-row">
-            <v-card
-               min-width="300"
-               max-width="300"
-               class="mr-3 ml-3 mt-3 mb-3"
-               elevation="1"
-               outlined
-               v-for="encounter of game.encounters"
-               :key="encounter.label"
-            >
-               <c-available-route
-                  v-if="encounter.result.result === EncounterResult.AVAILABLE"
-                  :encounter="encounter"
-                  v-on:new-encounter="newEncounter"
-               />
-               <c-result-route
-                  v-if="encounter.result.result !== EncounterResult.AVAILABLE"
-                  :encounter="encounter"
-               />
-            </v-card>
-         </div>
+      <v-row
+         class="d-flex justify-center align-content flex-row"
+         v-if="tab === TabMap.ROUTES"
+      >
+         <c-route-card
+            v-for="encounter of game.encounters"
+            :key="encounter.label"
+            :encounter="encounter"
+            v-on:new-encounter="newEncounter"
+            v-on:edit-encounter="editEncounter"
+         ></c-route-card>
+         <c-route-card
+            v-for="encounter of game.encounters"
+            :key="encounter.label"
+            :encounter="encounter"
+            v-on:new-encounter="newEncounter"
+            v-on:edit-encounter="editEncounter"
+         ></c-route-card>
+         <c-route-card
+            v-for="encounter of game.encounters"
+            :key="encounter.label"
+            :encounter="encounter"
+            v-on:new-encounter="newEncounter"
+            v-on:edit-encounter="editEncounter"
+         ></c-route-card>
          <v-dialog v-model="newEncounterDialog" width="500">
             <c-dialog-card
                :props="newEncounterDialogCard"
@@ -89,7 +91,7 @@
             <c-dialog-card
                :props="editEncounterDialogCard"
                v-on:close-dialog="closeDialog"
-               v-on:edit-encounter="editEncounter"
+               v-on:edit-encounter="confirmEditEncounter"
             >
             </c-dialog-card>
          </v-dialog>
@@ -118,9 +120,8 @@ import SpeedDial from '../components/SpeedDial.vue';
 import TabMap from '../constants/TabMap.js';
 import Icons from '../constants/Icons.js';
 import DialogCard from '../components/DialogCard.vue';
-import AvailableRoute from '../components/AvailableRoute.vue';
-import ResultRoute from '../components/ResultRoute.vue';
 import EncounterResult from '../constants/EncounterResult.js';
+import RouteCard from '../components/RouteCard.vue';
 
 export default {
    name: 'Game',
@@ -128,8 +129,7 @@ export default {
       'c-nav-drawer': NavDrawer,
       'c-speed-dial': SpeedDial,
       'c-dialog-card': DialogCard,
-      'c-available-route': AvailableRoute,
-      'c-result-route': ResultRoute,
+      'c-route-card': RouteCard,
    },
    data() {
       return {
@@ -142,10 +142,12 @@ export default {
          ],
          // both encounter dialogs
          encounterData: {
-            result: null,
+            result: {
+               constant: null,
+               species: null,
+               nickname: null,
+            },
             pokemons: null,
-            pokemon: null,
-            nickname: null,
             label: null,
          },
          // new encounter
@@ -243,14 +245,18 @@ export default {
       // filterRules() {
       //    alert('i want to filter my rules!');
       // },
-      editEncounter() {
+      editEncounter(payload) {
          this.editEncounterDialog = true;
+         this.encounterData.result = payload.result.result;
+         this.encounterData.pokemons = payload.pokemons.map(p => p.species);
+         this.encounterData.pokemon = payload.result.species;
+         this.encounterData.nickname = payload.result.nickname;
       },
       confirmEditEncounter() {
          this.closeDialog();
       },
       newEncounter(payload) {
-         this.encounterData.result = EncounterResult.AVAILABLE;
+         this.encounterData.constant = EncounterResult.AVAILABLE;
          this.encounterData.pokemons = payload.pokemons.map(p => p.species);
          this.encounterData.pokemon = null;
          this.encounterData.label = payload.label;

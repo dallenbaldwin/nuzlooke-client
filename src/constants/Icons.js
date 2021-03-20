@@ -6,7 +6,7 @@ export default Object.freeze({
    },
    CONTROLS: {
       SETTINGS: 'mdi-cog',
-      EDIT: 'mdi-pencil',
+      EDIT: 'mdi-pencil-circle',
       EXCLAIM: 'mdi-alert-circle',
       FILTER: 'mdi-filter',
       MENU: 'mdi-menu',

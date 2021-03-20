@@ -15,7 +15,21 @@
 <script>
 export default {
    name: 'PokeSprite',
-   props: ['src', 'size', 'outlineColor'],
+   props: {
+      src: {
+         type: String,
+         required: true,
+      },
+      size: {
+         type: String,
+         default: '',
+      },
+      'outline-color': {
+         type: String,
+         default: 'black',
+      },
+   },
+   // props: ['src', 'size', 'outlineColor'],
    data() {
       return {};
    },

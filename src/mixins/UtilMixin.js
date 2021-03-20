@@ -42,7 +42,7 @@ export default {
                });
                this.navigate({ name: Pages.GAMES });
             })
-            .catch(err => console.log);
+            .catch(err => alert(err));
       },
       exitGame() {
          store.commit('exitGame');
