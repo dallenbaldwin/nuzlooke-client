@@ -29,24 +29,29 @@
       <v-row class="d-flex" v-if="tab === TabMap.POKEMON">
          <pre>{{ prettySON(game.pokemons) }}</pre>
       </v-row>
-      <v-row class="d-flex justify-space-around" v-if="tab === TabMap.ROUTES">
-         <v-card
-            min-width="300"
-            elevation="1"
-            outlined
-            v-for="encounter of game.encounters"
-            :key="encounter.label"
-         >
-            <c-available-route
-               v-if="encounter.result === EncounterResult.AVAILABLE"
-               :encounter="encounter"
-               v-on:new-encounter="newEncounter"
-            />
-            <c-result-route
-               v-if="encounter.result !== EncounterResult.AVAILABLE"
-               :encounter="encounter"
-            />
-         </v-card>
+      <v-row class="d-flex justify-space-around flex-column" v-if="tab === TabMap.ROUTES">
+         <!-- need more to test this theory -->
+         <div class="d-flex justify-space-around flex-row">
+            <v-card
+               min-width="300"
+               max-width="300"
+               class="mr-3 ml-3 mt-3 mb-3"
+               elevation="1"
+               outlined
+               v-for="encounter of game.encounters"
+               :key="encounter.label"
+            >
+               <c-available-route
+                  v-if="encounter.result.result === EncounterResult.AVAILABLE"
+                  :encounter="encounter"
+                  v-on:new-encounter="newEncounter"
+               />
+               <c-result-route
+                  v-if="encounter.result.result !== EncounterResult.AVAILABLE"
+                  :encounter="encounter"
+               />
+            </v-card>
+         </div>
          <v-dialog v-model="newEncounterDialog" width="500">
             <c-dialog-card
                :props="newEncounterDialogCard"

@@ -1,11 +1,11 @@
 <template>
    <div class="c-circle" :class="outlineClass">
       <v-img
-         class="c-scaled"
          :lazy-src="src"
          :src="src"
          :width="radius"
          :height="radius"
+         contain
          position="center center"
       >
       </v-img>
@@ -23,11 +23,11 @@ export default {
       radius() {
          switch (this.size) {
             case 'small':
-               return 40;
+               return 36;
             case 'large':
-               return 160;
+               return 100;
             default:
-               return 80;
+               return 68;
          }
       },
       outlineClass() {
@@ -36,8 +36,8 @@ export default {
                return 'c-red';
             case 'green':
                return 'c-green';
-            case 'yellow':
-               return 'c-yellow';
+            case 'orange':
+               return 'c-orange';
             default:
                return 'c-black';
          }
@@ -47,20 +47,24 @@ export default {
 </script>
 
 <style scoped>
-.c-scaled {
-   transform: scale(0.8, 0.8);
-}
 .c-circle {
    border-radius: 50%;
    border-width: 2px;
-   max-height: 40px;
-   max-width: 40px;
    border-style: solid;
    /* stolen from v-btn */
    box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%),
       0px 1px 18px 0px rgb(0 0 0 / 12%);
 }
 .c-black {
-   border-color: black;
+   border-color: #272727;
+}
+.c-green {
+   border-color: #4caf50;
+}
+.c-orange {
+   border-color: #ff9800;
+}
+.c-red {
+   border-color: #f44336;
 }
 </style>

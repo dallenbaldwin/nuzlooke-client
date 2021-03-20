@@ -16,6 +16,7 @@
          </div>
          <div class="mt-6 text-h4">Welcome back {{ username }}</div>
       </v-row>
+      <!-- TODO: add some text here inviting people to add games if the list is empty -->
       <v-row>
          <v-expansion-panels popout>
             <v-expansion-panel v-for="game of games" :key="game.id">
@@ -245,7 +246,6 @@ export default {
    },
    data() {
       return {
-         // TODO: put these into objects to make it easier to deal with
          // create game
          creatingGame: false,
          newGame: {
