@@ -1,20 +1,28 @@
-import UtilMixin from '../mixins/UtilMixin.js';
-
-const VERSIONS = UtilMixin.data().VERSIONS;
-const PARTY_STATE = UtilMixin.data().PARTY_STATE;
+import Versions from '../constants/Versions.js';
+import PartyState from '../constants/PartyState.js';
+import Icons from '../constants/Icons.js';
 
 export const build = object => {
-   const version = Object.values(VERSIONS).find(v => v.label === object.version).key;
+   const version = Object.values(Versions).find(v => v.label === object.version).key;
    return {
       label: object.label,
       version: version,
    };
 };
 
+export const getConsoleIcon = family => {
+   const familyToConsole = {
+      letsgo: Icons.CONSOLES.SWITCH,
+      rubysapphire: Icons.CONSOLES.DEFAULT,
+      emerald: Icons.CONSOLES.DEFAULT,
+   };
+   return familyToConsole[family];
+};
+
 export const getSnapshot = game => {
    const partyIconUrls = game.pokemons
       ? game.pokemons
-           .filter(p => p.party_state === PARTY_STATE.PARTY.label)
+           .filter(p => p.party_state === PartyState.PARTY.label)
            .map(p => p.icon_url)
       : undefined;
    const gymBadgeIconsUrls = game.gyms

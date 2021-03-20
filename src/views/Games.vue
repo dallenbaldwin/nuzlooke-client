@@ -20,7 +20,7 @@
          <v-expansion-panels popout>
             <v-expansion-panel v-for="game of games" :key="game.id">
                <v-expansion-panel-header
-                  expand-icon="mdi-controller-classic"
+                  :expand-icon="toConsoleIcon(game.version.family)"
                   disable-icon-rotate
                   class="text-h6"
                   >{{ game.label }}
@@ -124,20 +124,28 @@
                         <div id="game-links">
                            <div class="text mb-1">Game Links</div>
                            <div v-for="btn of gameBtns" :key="btn.label">
-                              <v-btn
-                                 class="mt-2"
-                                 fab
-                                 dark
-                                 small
-                                 @click="
-                                    toGame(
-                                       mobile() ? btn.mobileRoute : btn.desktopRoute,
-                                       game.game_id
-                                    )
-                                 "
-                                 ><v-icon>{{ btn.icon }}</v-icon></v-btn
-                              >
-                              <span class="ml-3">{{ btn.label }}</span>
+                              <div v-if="mobile()">
+                                 <v-btn
+                                    class="mt-2"
+                                    fab
+                                    dark
+                                    small
+                                    @click="toGame(btn.mobileRoute, game.game_id)"
+                                    ><v-icon>{{ btn.icon }}</v-icon></v-btn
+                                 >
+                                 <span class="ml-3">{{ btn.label }}</span>
+                              </div>
+                              <div v-if="!mobile()">
+                                 <v-btn
+                                    class="mt-2"
+                                    fab
+                                    dark
+                                    small
+                                    @click="toGame(btn.desktopRoute, game.game_id)"
+                                    ><v-icon>{{ btn.icon }}</v-icon></v-btn
+                                 >
+                                 <span class="ml-3">{{ btn.label }}</span>
+                              </div>
                            </div>
                         </div>
                      </v-row>
@@ -165,7 +173,7 @@
                   label="Version"
                   outlined
                   v-model="newGame.version"
-                  :items="Object.values(VERSIONS).map(v => v.label)"
+                  :items="Object.values(Versions).map(v => v.label)"
                >
                </v-combobox>
             </div>
@@ -186,7 +194,7 @@
             <v-combobox
                label="Version"
                outlined
-               :items="Object.values(VERSIONS).map(v => v.label)"
+               :items="Object.values(Versions).map(v => v.label)"
                clearable
                v-model="filterValues.version"
             ></v-combobox>
@@ -194,7 +202,7 @@
                class="mt-3"
                label="Generation"
                outlined
-               :items="Object.values(VERSIONS).map(v => v.generation)"
+               :items="Object.values(Versions).map(v => v.generation)"
                clearable
                v-model="filterValues.generation"
             ></v-combobox>
@@ -216,6 +224,9 @@ import BadgeSprite from '../components/BadgeSprite.vue';
 import * as gameController from '../controllers/games.js';
 import * as gameServices from '../services/game.js';
 import * as userServices from '../services/user.js';
+import TabMap from '../constants/TabMap.js';
+import Pages from '../constants/Pages.js';
+import Icons from '../constants/Icons.js';
 
 export default {
    name: 'Games',
@@ -227,6 +238,7 @@ export default {
    },
    data() {
       return {
+         // TODO: put these into objects to make it easier to deal with
          // create game
          creatingGame: false,
          newGame: {
@@ -289,7 +301,7 @@ export default {
             // },
             {
                label: 'Create Game',
-               icon: 'mdi-plus',
+               icon: Icons.CONTROLS.PLUS,
                action: 'create-game',
                color: 'green',
             },
@@ -297,22 +309,35 @@ export default {
          gameBtns: [
             {
                label: 'Pokemon',
-               mobileRoute: 'pokemon',
-               desktopRoute: 0,
-               icon: 'mdi-pokeball',
+               mobileRoute: Pages.POKEMON,
+               desktopRoute: TabMap.POKEMON,
+               icon: Icons.PAGES.POKEMON,
             },
             {
                label: 'Routes',
-               mobileRoute: 'routes',
-               desktopRoute: 1,
-               icon: 'mdi-routes',
+               mobileRoute: Pages.ROUTES,
+               desktopRoute: TabMap.ROUTES,
+               icon: Icons.PAGES.ROUTES,
             },
-            { label: 'Gyms', mobileRoute: 'gyms', desktopRoute: 2, icon: 'mdi-domain' },
-            { label: 'Rules', mobileRoute: 'rules', desktopRoute: 3, icon: 'mdi-book' },
+            {
+               label: 'Gyms',
+               mobileRoute: Pages.GYMS,
+               desktopRoute: TabMap.GYMS,
+               icon: Icons.PAGES.GYM,
+            },
+            {
+               label: 'Rules',
+               mobileRoute: Pages.RULES,
+               desktopRoute: TabMap.RULES,
+               icon: Icons.PAGES.RULES,
+            },
          ],
       };
    },
    methods: {
+      toConsoleIcon(family) {
+         return gameController.getConsoleIcon(family);
+      },
       ofSix(array) {
          const twoD = [];
          twoD.push(array.filter((e, i) => i / 6 < 0.5));
@@ -371,7 +396,6 @@ export default {
                params: { gameId: gameId },
             });
          } else {
-            route = 2;
             this.navigate({ name: 'game', params: { gameId: gameId, tab: route } });
          }
       },

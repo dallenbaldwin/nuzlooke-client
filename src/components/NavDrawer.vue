@@ -65,7 +65,7 @@
                   label="Version"
                   outlined
                   v-model="newGame.newGame.version"
-                  :items="Object.values(VERSIONS).map(v => v.label)"
+                  :items="Object.values(Versions).map(v => v.label)"
                >
                </v-combobox></div
          ></c-dialog-card>
@@ -92,6 +92,7 @@ export default {
          outGameLinks: ['Sign Out', 'Create Game'],
          loggedOutLinks: ['Home', 'Sign In', 'Register'],
          links: [
+            // FIXME: use constants here
             {
                label: 'Home',
                icon: 'mdi-home',

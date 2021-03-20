@@ -1,57 +1,52 @@
 <template>
    <v-container>
-      <v-row>
-         <v-col>
-            <c-speed-dial
-               :actions="actions"
-               v-if="!mobile()"
-               v-on:logout="logout"
-               v-on:exit-game="exitGame"
-               v-on:filter-pokemon="filterPokemon"
-               v-on:filter-routes="filterRoutes"
-               v-on:filter-gyms="filterGyms"
-               v-on:filter-rules="filterRules"
-               v-on:create-rule="createRule"
-            ></c-speed-dial
-         ></v-col>
+      <v-row class="mt-6 mb-3">
+         <c-speed-dial
+            :actions="actions"
+            v-if="!mobile()"
+            v-on:logout="logout"
+            v-on:exit-game="exitGame"
+            v-on:filter-pokemon="filterPokemon"
+            v-on:filter-routes="filterRoutes"
+            v-on:filter-gyms="filterGyms"
+            v-on:filter-rules="filterRules"
+            v-on:create-rule="createRule"
+         ></c-speed-dial>
       </v-row>
-      <v-row
-         ><v-col>
-            <div class="mt-6 text-h2">
-               {{ game.name }}
-            </div>
-         </v-col>
+      <v-row class="mt-6 mb-3">
+         <div class="text-h2">
+            {{ game.label }}
+         </div>
       </v-row>
       <v-row>
-         <v-col>
-            <router-view></router-view>
-            <v-tabs v-model="tab" icons-and-text grow>
-               <v-tab>
-                  Pokemon
-                  <v-icon dark>mdi-pokeball</v-icon>
-               </v-tab>
-               <v-tab>
-                  Routes
-                  <v-icon dark>mdi-routes</v-icon>
-               </v-tab>
-               <v-tab>
-                  Gyms
-                  <v-icon dark>mdi-domain</v-icon>
-               </v-tab>
-               <v-tab>
-                  Rules
-                  <v-icon dark>mdi-book</v-icon>
-               </v-tab>
-            </v-tabs>
-         </v-col>
+         <v-tabs v-model="tab" icons-and-text grow>
+            <v-tab v-for="tab of tabs" :key="tab.label">
+               {{ tab.label }}
+               <v-icon dark>{{ tab.icon }}</v-icon>
+            </v-tab>
+         </v-tabs>
       </v-row>
-      <v-row><v-col> content</v-col></v-row>
+      <v-row v-if="tab === TabMap.POKEMON">
+         <pre>{{ JSON.stringify(game.pokemons, null, 2) }}</pre>
+      </v-row>
+      <v-row v-if="tab === TabMap.ROUTES"
+         ><pre>{{ JSON.stringify(game.encounters, null, 2) }}</pre></v-row
+      >
+      <v-row v-if="tab === TabMap.GYMS"
+         ><pre>{{ JSON.stringify(game.gyms, null, 2) }}</pre></v-row
+      >
+      <v-row v-if="tab === TabMap.RULES"
+         ><pre>{{ JSON.stringify(game.game_rules, null, 2) }}</pre></v-row
+      >
    </v-container>
 </template>
 
 <script>
 import NavDrawer from '../components/NavDrawer.vue';
 import SpeedDial from '../components/SpeedDial.vue';
+import TabMap from '../constants/TabMap.js';
+import Pages from '../constants/Pages.js';
+import Icons from '../constants/Icons.js';
 
 export default {
    name: 'Game',
@@ -62,13 +57,13 @@ export default {
    data() {
       return {
          tab: null,
-         tabMap: {
-            0: 'pokemon',
-            1: 'routes',
-            2: 'gyms',
-            3: 'rules',
-         },
          actions: null,
+         tabs: [
+            { label: 'Pokemon', icon: Icons.PAGES.POKEMON },
+            { label: 'Routes', icon: Icons.PAGES.ROUTES },
+            { label: 'Gyms', icon: Icons.PAGES.GYM },
+            { label: 'Rules', icon: Icons.PAGES.RULES },
+         ],
       };
    },
    computed: {
@@ -134,7 +129,7 @@ export default {
          }
          // FIXME: this throws a redundant navigation error... but it works so... i'm ok with it for now
          this.navigate({
-            name: 'game',
+            name: Pages.GAME,
             params: { gameId: this.game.id, tab: this.tab },
          });
       },
@@ -156,10 +151,10 @@ export default {
          alert('i want to create a rule!');
       },
       toTab(routeName) {
-         return [...Object.values(this.tabMap)].findIndex(route => route === routeName);
+         return [...Object.values(TabMap)].findIndex(route => route === routeName);
       },
       toRoute(tabIndex) {
-         return this.tabMap[tabIndex];
+         return TabMap[tabIndex];
       },
    },
    mounted() {

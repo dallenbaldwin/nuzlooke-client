@@ -1,0 +1,36 @@
+export default Object.freeze({
+   BRANDS: {
+      GOOGLE: 'mdi-google',
+      APPLE: 'mdi-apple',
+      FACEBOOK: 'mdi-facebook',
+   },
+   CONTROLS: {
+      SETTINGS: 'mdi-cog',
+      EDIT: 'mdi-pencil',
+      EXCLAIM: 'mdi-exclamation-thick',
+      FILTER: 'mdi-filter',
+      MENU: 'mdi-menu',
+      CLOSE: 'mdi-close',
+      DELETE: 'mdi-minus',
+      CONFIRM: 'mdi-check',
+      TOMBSTONE: 'mdi-grave-stone',
+      STORAGE: 'mdi-archive',
+      PLUS: 'mdi-plus',
+   },
+   PAGES: {
+      POKEMON: 'mdi-pokeball',
+      GYM: 'mdi-pokemon-go',
+      ROUTES: 'mdi-routes',
+      RULES: 'mdi-gavel',
+      LOGOUT: 'mdi-logout',
+      LOGIN: 'mdi-login',
+      REGISTER: 'mdi-',
+      HOME: 'mdi-home',
+   },
+   CONSOLES: {
+      GAMEBOY: 'mdi-nintendo-game-boy',
+      SWITCH: 'mdi-nintendo-switch',
+      DESKTOP: 'mdi-monitor',
+      DEFAULT: 'mdi-gamepad-square',
+   },
+});

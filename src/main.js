@@ -4,10 +4,10 @@ import './registerServiceWorker';
 import router from './router/router.js';
 import store from './store/store.js';
 import vuetify from './plugins/vuetify';
-import UtilMixin from './mixins/UtilMixin.js';
 
 Vue.config.productionTip = false;
 
+import UtilMixin from './mixins/UtilMixin';
 Vue.mixin(UtilMixin);
 
 new Vue({
