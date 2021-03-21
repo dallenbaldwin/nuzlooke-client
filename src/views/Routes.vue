@@ -259,8 +259,6 @@ export default {
                   )
                )
                .build();
-
-            console.log(pokeData, evoData, newPokemon);
             if (pokemonController.getPartyLength() < 6) {
                newPokemon.party_state = PartyState.PARTY;
             } else {
