@@ -1,17 +1,17 @@
-import http from './http.js';
+import nuzlooke from './nuzlooke.js';
 
 export function createGame(game) {
-   return http().post('/games', game);
+   return nuzlooke().post('/games', game);
 }
 
 export function getGameById(id) {
-   return http().get(`/games/${id}`);
+   return nuzlooke().get(`/games/${id}`);
 }
 
 export function updateGameById(id, game) {
-   return http().put(`/games/${id}`, game);
+   return nuzlooke().put(`/games/${id}`, game);
 }
 
 export function deleteGameById(id) {
-   return http().delete(`/games/${id}`);
+   return nuzlooke().delete(`/games/${id}`);
 }

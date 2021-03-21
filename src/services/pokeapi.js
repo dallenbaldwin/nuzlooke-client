@@ -1,15 +1,13 @@
-import Pokedex from 'pokeapi-js-wrapper';
+import axios from 'axios';
 
-const pokedex = new Pokedex.Pokedex();
+const pokeapi = axios.create({
+      baseURL: 'https://pokeapi.co/api/v2',
+      // headers: {
+      //    Authorization: auth.getToken()
+      // }
+   });
+}
 
-export async function getPokemonBySpecies(species, result) {
-   try {
-      const pokemon = await pokedex.getPokemonByName(species);
-      result({ message: 'got a pokemon by species', data: pokemon });
-   } catch (err) {
-      result({
-         message: 'there was an error getting pokemon by species',
-         error: err.stack,
-      });
-   }
+export function getPokemonBySpecies(species) {
+ 
 }
