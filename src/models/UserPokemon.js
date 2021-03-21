@@ -1,7 +1,6 @@
-import * as Util from '../mixins/UtilMixin.js';
+import * as util from '../util/util.js';
 import uuid_pkg from 'uuid';
 const { v4: uuid } = uuid_pkg;
-const arrayify = Util.default.methods.arrayify;
 
 export default class UserPokemon {
    constructor(species, icon_url, sprite_url, types, nickname, evolves_to, party_state) {
@@ -37,15 +36,15 @@ export default class UserPokemon {
       return this;
    }
    static withTypes(...vals) {
-      this.types = arrayify(...vals);
+      this.types = util.arrayify(...vals);
       return this;
    }
    static withNickname(val) {
       this.nickname = val;
       return this;
    }
-   static withEvolvesTo(val) {
-      this.evolves_to = val;
+   static withEvolvesTo(...vals) {
+      this.evolves_to = util.arrayify(...vals);
       return this;
    }
    static withPartyState(val) {

@@ -15,6 +15,8 @@
 
 <script>
 import DialogCardVue from '../components/DialogCard.vue';
+import * as util from '../util/util.js';
+
 export default {
    name: 'Rules',
    components: {
@@ -56,7 +58,7 @@ export default {
          this.createRuleDialog = true;
       },
       confirmCreateRule() {
-         alert(this.prettySON(this.createRuleData));
+         alert(util.prettySON(this.createRuleData));
          this.closeDialog();
       },
    },

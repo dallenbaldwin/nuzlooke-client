@@ -7,8 +7,8 @@ import vuetify from './plugins/vuetify';
 
 Vue.config.productionTip = false;
 
-import UtilMixin from './mixins/UtilMixin';
-Vue.mixin(UtilMixin);
+import globals from './mixins/globals';
+Vue.mixin(globals);
 
 new Vue({
    router,

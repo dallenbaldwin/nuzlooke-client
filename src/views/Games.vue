@@ -235,6 +235,7 @@ import * as userServices from '../services/user.js';
 import TabMap from '../constants/TabMap.js';
 import Pages from '../constants/Pages.js';
 import Icons from '../constants/Icons.js';
+import * as util from '../util/util.js';
 
 export default {
    name: 'Games',
@@ -362,7 +363,7 @@ export default {
          try {
             const gameToCreate = gameController.build(this.newGame);
             let res = await gameServices.createGame(gameToCreate);
-            const createdGame = this.toAPIResponse(res);
+            const createdGame = util.toAPIResponse(res);
             const gameSnapshot = gameController.getSnapshot(createdGame);
             this.games.push(gameSnapshot);
             await userServices.updateUserById(this.userId, {
@@ -381,7 +382,7 @@ export default {
          this.editGameDialog = true;
       },
       async confirmEdits(gameId) {
-         if (!this.isUndefined(this.editGame.label)) {
+         if (!util.isUndefined(this.editGame.label)) {
             this.editingGame = true;
             try {
                const userGamesId = this.games.findIndex(g => g.game_id === gameId);
@@ -397,10 +398,10 @@ export default {
          this.closeDialog();
       },
       enterGame(route, gameId) {
-         if (this.mobile()) {
-            this.navigate({ name: route, params: { gameId: gameId } });
+         if (util.mobile()) {
+            util.navigate({ name: route, params: { gameId: gameId } });
          } else {
-            this.navigate({ name: 'game', params: { gameId: gameId, tab: route } });
+            util.navigate({ name: 'game', params: { gameId: gameId, tab: route } });
          }
       },
       toNewGame(game) {
@@ -410,7 +411,7 @@ export default {
       async toGame(route, gameId) {
          try {
             let res = await gameServices.getGameById(gameId);
-            let data = this.toAPIResponse(res);
+            let data = util.toAPIResponse(res);
             this.$store.commit('selectGame', data);
             this.enterGame(route, gameId);
          } catch (err) {
