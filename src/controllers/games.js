@@ -21,9 +21,7 @@ export const getConsoleIcon = family => {
 
 export const getSnapshot = game => {
    const partyIconUrls = game.pokemons
-      ? game.pokemons
-           .filter(p => p.party_state === PartyState.PARTY.label)
-           .map(p => p.icon_url)
+      ? game.pokemons.filter(p => p.party_state === PartyState.PARTY).map(p => p.icon_url)
       : undefined;
    const gymBadgeIconsUrls = game.gyms
       ? game.gyms.filter(g => g.is_defeated).map(g => g.badge.sprite_url)

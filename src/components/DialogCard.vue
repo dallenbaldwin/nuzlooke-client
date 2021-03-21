@@ -12,18 +12,24 @@
       <v-card-actions>
          <v-spacer></v-spacer>
          <v-btn v-if="props.primaryBtn" text @click="action(primaryBtn.action)">
-            <v-icon :color="primaryBtn.color || 'success'">
+            <v-icon
+               :dark="primaryBtn.color === 'dark'"
+               :color="primaryBtn.color || 'success'"
+            >
                {{ primaryBtn.icon || Icons.CONTROLS.CONFIRM }}
             </v-icon>
             {{ primaryBtn.text || 'Confirm' }}
          </v-btn>
          <v-btn v-if="props.secondaryBtn" text @click="action(secondaryBtn.action)">
-            <v-icon :color="secondaryBtn.color || 'red'">
+            <v-icon
+               :dark="secondaryBtn.color === 'dark'"
+               :color="secondaryBtn.color || 'red'"
+            >
                {{ secondaryBtn.icon || Icons.CONTROLS.DELETE }}
             </v-icon>
             {{ secondaryBtn.text || 'Delete' }}
          </v-btn>
-         <v-btn text @click="close">
+         <v-btn v-if="!props.noCancel" text @click="close">
             <v-icon :dark="!props.cancelBtn" :color="cancelBtn.color || undefined">
                {{ cancelBtn.icon || Icons.CONTROLS.CLOSE }}
             </v-icon>
