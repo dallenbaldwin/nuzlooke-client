@@ -40,6 +40,28 @@
                :disabled="encounterData.result.constant !== EncounterResult.CAUGHT"
             >
             </v-text-field>
+            <div v-show="showPartyManagerOptions">
+               <v-radio-group
+                  transition="scale-transition"
+                  v-model="partyManagerData.decision"
+                  row
+                  mandatory
+               >
+                  <v-radio value="storage" label="Send to Storage"></v-radio>
+                  <v-radio value="party" label="Send to Party"></v-radio>
+               </v-radio-group>
+               <v-combobox
+                  transition="scale-transition"
+                  label="Party Member"
+                  outlined
+                  clearable
+                  :items="partyPokemons"
+                  v-model="partyManagerData.pokemon"
+                  :disabled="partyManagerData.decision === 'storage'"
+               >
+               </v-combobox>
+            </div>
+
             <p v-for="error of encounterData.errors" :key="error" class="red--text">
                <strong>{{ error }}</strong>
             </p>
@@ -84,19 +106,6 @@
             v-on:close-dialog="closeDialog"
             v-on:confirm-party-options="confirmPartyOptions"
          >
-            <v-radio-group v-model="partyManagerData.decision" row mandatory>
-               <v-radio value="storage" label="Send to Storage"></v-radio>
-               <v-radio value="party" label="Send to Party"></v-radio>
-            </v-radio-group>
-            <v-combobox
-               label="Party Member"
-               outlined
-               clearable
-               :items="partyPokemons"
-               v-model="partyManagerData.pokemon"
-               :disabled="partyManagerData.decision === 'storage'"
-            >
-            </v-combobox>
          </c-dialog-card>
       </v-dialog>
       <pre>{{ prettySON(game.encounters) }}</pre>
@@ -199,6 +208,16 @@ export default {
          return this.game.pokemons
             .filter(p => p.party_state === PartyState.PARTY)
             .map(p => Object({ value: p.id, text: p.species }));
+      },
+      showPartyManagerOptions() {
+         const partySize = pokemonController.getPartyLength() >= 1; // FIXME: change me back to 6
+         const nickname =
+            !util.isUndefined(this.encounterData.result.nickname) ||
+            !rulesController.isActive(RuleCodes.USE_NICKNAMES.code);
+         const caught = this.encounterData.result.constant === EncounterResult.CAUGHT;
+         const species = !util.isUndefined(this.encounterData.result.species);
+         console.log(partySize, nickname, caught, species);
+         return partySize && nickname && caught && species;
       },
    },
    methods: {
