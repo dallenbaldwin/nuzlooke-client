@@ -7,6 +7,8 @@
          v-on:new-encounter="newEncounter"
          v-on:edit-encounter="editEncounter"
       ></c-route-card>
+      <!-- FIXME: remove this when it's fully implemented -->
+      <v-btn @click="() => (partyManagerDialog = true)">test party manager</v-btn>
       <v-dialog v-model="newEncounterDialog" width="500">
          <c-dialog-card
             :props="newEncounterDialogCard"
@@ -38,6 +40,9 @@
                :disabled="encounterData.result.constant !== EncounterResult.CAUGHT"
             >
             </v-text-field>
+            <p v-for="error of encounterData.errors" :key="error" class="red--text">
+               <strong>{{ error }}</strong>
+            </p>
          </c-dialog-card>
       </v-dialog>
       <v-dialog v-model="editEncounterDialog" width="500">
@@ -73,7 +78,27 @@
             </v-text-field>
          </c-dialog-card>
       </v-dialog>
-      <v-dialog v-model="partyManagerDialog" width="500"></v-dialog>
+      <v-dialog v-model="partyManagerDialog" width="500" persistent>
+         <c-dialog-card
+            :props="partyManagerDialogCard"
+            v-on:close-dialog="closeDialog"
+            v-on:confirm-party-options="confirmPartyOptions"
+         >
+            <v-radio-group v-model="partyManagerData.decision" row mandatory>
+               <v-radio value="storage" label="Send to Storage"></v-radio>
+               <v-radio value="party" label="Send to Party"></v-radio>
+            </v-radio-group>
+            <v-combobox
+               label="Party Member"
+               outlined
+               clearable
+               :items="partyPokemons"
+               v-model="partyManagerData.pokemon"
+               :disabled="partyManagerData.decision === 'storage'"
+            >
+            </v-combobox>
+         </c-dialog-card>
+      </v-dialog>
       <pre>{{ prettySON(game.encounters) }}</pre>
    </v-row>
 </template>
@@ -83,6 +108,13 @@ import DialogCard from '../components/DialogCard.vue';
 import EncounterResult from '../constants/EncounterResult.js';
 import RouteCard from '../components/RouteCard.vue';
 import Icons from '../constants/Icons';
+import RuleCodes from '../constants/RuleCodes.js';
+import PartyState from '../constants/PartyState.js';
+import * as rulesController from '../controllers/rules.js';
+import * as pokemonController from '../controllers/pokemon.js';
+import UserPokemon from '../models/UserPokemon.js';
+import * as pokeapi from '../services/pokeapi.js';
+import * as util from '../util/util.js';
 
 export default {
    name: 'Routes',
@@ -96,11 +128,12 @@ export default {
          encounterData: {
             result: {
                constant: null,
-               species: null,
+               species: 'test',
                nickname: null,
             },
             pokemons: null,
             label: null,
+            errors: [],
          },
          // new encounter
          newEncounterDialog: false,
@@ -119,23 +152,53 @@ export default {
          partyManagerDialogCard: {
             title: 'You have 6 Pokemon in your Party!',
             text: `You can only keep up to 6 Pokemon in your Party. Would you like to switch a current party member for <insert nickname>?`,
-            primaryBtn: { icon: Icons.PAGES.POKEMON, action: 'to-party' },
-            cancelBtn: { icon: Icons.CONTROLS.STORAGE, action: 'to-storage' },
+            noCancel: true,
+            primaryBtn: { action: 'confirm-party-options' },
+            // cancelBtn: {
+            //    icon: Icons.CONTROLS.STORAGE,
+            //    action: 'to-storage',
+            //    text: 'Send to Storage',
+            // },
+         },
+         partyManagerData: {
+            decision: null,
+            pokemon: null,
+            errors: null,
          },
       };
    },
    watch: {
-      'encounterData.result.constant'(newVal, oldVal) {
-         console.log(newVal);
-         if (this.editEncounterDialog && newVal !== EncounterResult.CAUGHT) {
-            this.encounterData.result.species = null;
-            this.encounterData.result.nickname = null;
-         }
+      encounterData: {
+         handler(newVal, oldVal) {
+            if (
+               newVal.result.constant === EncounterResult.FLED ||
+               newVal.result.constant === EncounterResult.FAINTED
+            ) {
+               this.encounterData.result.nickname = null;
+            } else if (newVal.result.constant === EncounterResult.AVAILABLE) {
+               this.encounterData.result.nickname = null;
+               this.encounterData.result.species = null;
+            }
+         },
+         deep: true,
+      },
+      partyManagerData: {
+         handler(newVal, oldVal) {
+            if (newVal.decision === 'storage') {
+               this.partyManagerData.pokemon = null;
+            }
+         },
+         deep: true,
       },
    },
    computed: {
       game() {
          return this.$store.state.game;
+      },
+      partyPokemons() {
+         return this.game.pokemons
+            .filter(p => p.party_state === PartyState.PARTY)
+            .map(p => Object({ value: p.id, text: p.species }));
       },
    },
    methods: {
@@ -161,18 +224,52 @@ export default {
          this.newEncounterDialogCard.title = payload.label;
          this.encounterData.pokemons = payload.pokemons.map(p => p.species);
          this.encounterData.result.constant = EncounterResult.AVAILABLE;
-         this.encounterData.result.species = null;
+         this.encounterData.result.species = 'test';
          this.newEncounterDialog = true;
+         this.encounterData.errors = [];
       },
-      confirmNewEncounter() {
-         if (!confirm(this.prettySON(this.encounterData))) {
+      manageParty(payload) {
+         this.partyManagerDialog = true;
+      },
+      async confirmNewEncounter() {
+         if (!confirm(util.prettySON(this.encounterData))) {
             return;
          }
-         /* 
-            if !validate
-               display some error text in dialog
-               return
+         this.setEncounterErrors(this.encounterData.result);
+         if (this.encounterData.errors.length > 0) {
+            return;
+         }
+         if (this.encounterData.result.constant === EncounterResult.CAUGHT) {
+            const pokeData = await pokeapi.getPokemonBySpecies(
+               this.encounterData.result.species
+            );
+            const speciesData = await pokeapi.get(pokeData.species.url);
+            const evoData = await pokeapi.get(speciesData.evolution_chain.url);
+            const newPokemon = UserPokemon.builder()
+               .withSpecies(pokeapi.normalizeKabob(pokeData.species.name))
+               .withNickname(this.encounterData.result.nickname)
+               .withSpritUrl(pokeData.sprites.front_default)
+               .withIconUrl(
+                  pokeData.sprites.versions['generation-vii'].icons.front_default
+               )
+               .withTypes(pokeData.types.map(t => pokeapi.normalizeKabob(t.type.name)))
+               .withEvolvesTo(
+                  evoData.chain.evolves_to.map(e =>
+                     pokeapi.normalizeKabob(e.species.name)
+                  )
+               )
+               .build();
+
+            console.log(pokeData, evoData, newPokemon);
+            if (pokemonController.getPartyLength() < 6) {
+               newPokemon.party_state = PartyState.PARTY;
+            } else {
+            }
+         }
+         /*
+
             if caught
+               start loading spinner
                new UserPokemon(options)
                if pokemons.party.length < 6
                   UserPokemon.setParty()
@@ -185,9 +282,8 @@ export default {
                      ThatPokemon.setStorage()
                      update game.pokemons in store
                      UserPokemon.setParty()
-                  else 
+                  else
                      UserPokemon.setStorage()
-               start loading spinner
                push UserPokemon to game.pokemons in store
                search game.encounters by label
                update found encounter in store
@@ -198,16 +294,62 @@ export default {
          */
          this.closeDialog();
       },
+      confirmPartyOptions() {
+         if (!confirm(util.prettySON(this.partyManagerData))) {
+            return;
+         }
+         this.closeDialog();
+      },
       closeDialog() {
-         this.newEncounterDialogCard.title = 'New Encounter';
-         this.editEncounterDialogCard.title = 'Edit an Encounter?';
          // encounter data
-         this.encounterData.label = null;
-         this.encounterData.pokemons = [];
-         this.encounterData.result = {};
-         // encounter dialogs
          this.newEncounterDialog = false;
          this.editEncounterDialog = false;
+         this.partyManagerDialog = false;
+      },
+      setEncounterErrors(encounterResults) {
+         this.encounterData.errors = [];
+         if (encounterResults.constant === EncounterResult.CAUGHT) {
+            if (
+               rulesController.isActive(RuleCodes.USE_NICKNAMES.code) &&
+               util.isUndefined(encounterResults.nickname)
+            ) {
+               this.encounterData.errors.push(
+                  'You must give this captured Pokemon a nickname!'
+               );
+            }
+            if (util.isUndefined(encounterResults.species)) {
+               this.encounterData.errors.push(`You must select a Pokemon!`);
+            }
+         } else if (encounterResults.constant === EncounterResult.AVAILABLE) {
+            if (!util.isUndefined(encounterResults.species)) {
+               this.encounterData.errors.push(
+                  `Something went wrong. Must be Fainted, Fled, or Caught, to have a Pokemon.`
+               );
+            }
+            if (!util.isUndefined(encounterResults.nickname)) {
+               this.encounterData.errors.push(
+                  `Something went wrong. Must be Caught to have a nickname.`
+               );
+            }
+         } else if (
+            [EncounterResult.FAINTED, EncounterResult.FLED].includes(
+               encounterResults.constant
+            )
+         ) {
+            console.log('fainted or fled');
+            if (!util.isUndefined(encounterResults.nickname)) {
+               this.encounterData.errors.push(
+                  `Something went wrong. Must be Caught to have a nickname.`
+               );
+            }
+            if (util.isUndefined(encounterResults.species)) {
+               console.log(encounterResults);
+               this.encounterData.errors.push(`You must select a Pokemon!`);
+            }
+         }
+      },
+      getPartyManagerErrors(partyManagerData) {
+         return true;
       },
    },
 };
