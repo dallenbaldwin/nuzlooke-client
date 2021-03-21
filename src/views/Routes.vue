@@ -262,15 +262,18 @@ export default {
             if (pokemonController.getPartyLength() < 6) {
                newPokemon.party_state = PartyState.PARTY;
             } else {
+               this.partyManagerDialog = true;
             }
          }
          /*
-
+         FIXME: partyManagerDialog can't be it's own thing.
+         FIXME: partyManager needs to be a second stange of new dialog/edit dialog
+         FIXME: this logic is borked
             if caught
-               start loading spinner
-               new UserPokemon(options)
-               if pokemons.party.length < 6
-                  UserPokemon.setParty()
+               -- start loading spinner
+               -- new UserPokemon(options)
+               -- if pokemons.party.length < 6
+                  -- UserPokemon.setParty()
                else
                   closeDialog
                   open Party Manager Dialog
@@ -299,7 +302,6 @@ export default {
          this.closeDialog();
       },
       closeDialog() {
-         // encounter data
          this.newEncounterDialog = false;
          this.editEncounterDialog = false;
          this.partyManagerDialog = false;
