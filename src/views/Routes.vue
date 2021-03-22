@@ -7,8 +7,6 @@
          v-on:new-encounter="newEncounter"
          v-on:edit-encounter="editEncounter"
       ></c-route-card>
-      <!-- FIXME: remove this when it's fully implemented -->
-      <v-btn @click="() => (partyManagerDialog = true)">test party manager</v-btn>
       <v-dialog v-model="newEncounterDialog" width="500">
          <c-dialog-card
             :props="newEncounterDialogCard"
@@ -40,28 +38,31 @@
                :disabled="encounterData.result.constant !== EncounterResult.CAUGHT"
             >
             </v-text-field>
-            <div v-show="showPartyManagerOptions">
-               <v-radio-group
-                  transition="scale-transition"
-                  v-model="partyManagerData.decision"
-                  row
-                  mandatory
-               >
-                  <v-radio value="storage" label="Send to Storage"></v-radio>
-                  <v-radio value="party" label="Send to Party"></v-radio>
-               </v-radio-group>
-               <v-combobox
-                  transition="scale-transition"
-                  label="Party Member"
-                  outlined
-                  clearable
-                  :items="partyPokemons"
-                  v-model="partyManagerData.pokemon"
-                  :disabled="partyManagerData.decision === 'storage'"
-               >
-               </v-combobox>
-            </div>
-
+            <v-slide-y-transition>
+               <v-card elevation="0" v-show="showPartyManagerOptions" >
+                  <v-card-title>You have 6 Pokemon in your Party!</v-card-title>
+                  <v-card-subtitle>You can only keep up to 6 Pokemon in your Party. Would you like to switch a current party member for {{ encounterData.result.nickname }}?</v-card-subtitle>
+                  <v-card-text>
+                     <v-radio-group
+                        v-model="encounterData.result.replace"
+                        row
+                        mandatory
+                     >
+                        <v-radio value="storage" label="Send to Storage"></v-radio>
+                        <v-radio value="party" label="Send to Party"></v-radio>
+                     </v-radio-group>
+                     <v-combobox
+                        label="Party Member"
+                        outlined
+                        clearable
+                        :items="partyPokemons"
+                        v-model="encounterData.result.replacement"
+                        :disabled="encounterData.result.replace === 'storage'"
+                     >
+                     </v-combobox>
+                  </v-card-text>
+               </v-card>
+            </v-slide-y-transition>
             <p v-for="error of encounterData.errors" :key="error" class="red--text">
                <strong>{{ error }}</strong>
             </p>
@@ -100,14 +101,6 @@
             </v-text-field>
          </c-dialog-card>
       </v-dialog>
-      <v-dialog v-model="partyManagerDialog" width="500" persistent>
-         <c-dialog-card
-            :props="partyManagerDialogCard"
-            v-on:close-dialog="closeDialog"
-            v-on:confirm-party-options="confirmPartyOptions"
-         >
-         </c-dialog-card>
-      </v-dialog>
       <pre>{{ prettySON(game.encounters) }}</pre>
    </v-row>
 </template>
@@ -139,6 +132,8 @@ export default {
                constant: null,
                species: 'test',
                nickname: null,
+               replace: null,
+               replacement: null,
             },
             pokemons: null,
             label: null,
@@ -188,13 +183,8 @@ export default {
                this.encounterData.result.nickname = null;
                this.encounterData.result.species = null;
             }
-         },
-         deep: true,
-      },
-      partyManagerData: {
-         handler(newVal, oldVal) {
-            if (newVal.decision === 'storage') {
-               this.partyManagerData.pokemon = null;
+            if (newVal.result.replace === 'storage') {
+               this.encounterData.result.replacement = null;
             }
          },
          deep: true,
@@ -216,7 +206,6 @@ export default {
             !rulesController.isActive(RuleCodes.USE_NICKNAMES.code);
          const caught = this.encounterData.result.constant === EncounterResult.CAUGHT;
          const species = !util.isUndefined(this.encounterData.result.species);
-         console.log(partySize, nickname, caught, species);
          return partySize && nickname && caught && species;
       },
    },
@@ -244,6 +233,8 @@ export default {
          this.encounterData.pokemons = payload.pokemons.map(p => p.species);
          this.encounterData.result.constant = EncounterResult.AVAILABLE;
          this.encounterData.result.species = 'test';
+         this.encounterData.result.replace = null;
+         this.encounterData.result.replacement = null;
          this.newEncounterDialog = true;
          this.encounterData.errors = [];
       },
@@ -285,25 +276,16 @@ export default {
             }
          }
          /*
-         FIXME: partyManagerDialog can't be it's own thing.
-         FIXME: partyManager needs to be a second stange of new dialog/edit dialog
-         FIXME: this logic is borked
-            if caught
-               -- start loading spinner
-               -- new UserPokemon(options)
-               -- if pokemons.party.length < 6
-                  -- UserPokemon.setParty()
+         FIXME: fix logic
+            if caught && confirm
+               start loading spinner
+               new UserPokemon(options)
+               if not send to party
+                  UserPokemon.setStorage()
                else
-                  closeDialog
-                  open Party Manager Dialog
-                  if send to party
-                     choose pokemon to go to storage
-                     search pokemons for pokemon by id
-                     ThatPokemon.setStorage()
-                     update game.pokemons in store
-                     UserPokemon.setParty()
-                  else
-                     UserPokemon.setStorage()
+                  UserPokemon.setParty()
+                  replacement.setStorage()
+               update game.pokemons in store
                push UserPokemon to game.pokemons in store
                search game.encounters by label
                update found encounter in store

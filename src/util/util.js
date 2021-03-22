@@ -27,7 +27,7 @@ export const login = () => {
          });
          navigate({ name: Pages.GAMES });
       })
-      .catch(err => alert(err));
+      .catch(err => alert(err.stack));
 };
 export const exitGame = () => {
    store.commit('exitGame');
