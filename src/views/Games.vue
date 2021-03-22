@@ -229,7 +229,7 @@ import SpeedDial from '../components/SpeedDial.vue';
 import DialogCard from '../components/DialogCard.vue';
 import PokeSprite from '../components/PokeSprite.vue';
 import BadgeSprite from '../components/BadgeSprite.vue';
-import * as gameController from '../controllers/games.js';
+import * as gameController from '../controllers/game.js';
 import * as gameServices from '../services/game.js';
 import * as userServices from '../services/user.js';
 import TabMap from '../constants/TabMap.js';
