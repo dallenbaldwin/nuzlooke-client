@@ -3,7 +3,7 @@ import PartyState from '../constants/PartyState.js';
 import Icons from '../constants/Icons.js';
 import Pages from '../constants/Pages.js';
 import TabMap from '../constants/TabMap.js';
-import EncounterResult from '../constants/EncounterResult.js';
+import EncounterResultConst from '../constants/EncounterResultConst.js';
 import * as util from '../util/util.js';
 
 export default {
@@ -14,7 +14,7 @@ export default {
          Icons: Icons,
          Pages: Pages,
          TabMap: TabMap,
-         EncounterResult: EncounterResult,
+         EncounterResultConst: EncounterResultConst,
       };
    },
    methods: {

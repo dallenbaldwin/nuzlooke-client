@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import EncounterResult from '../constants/EncounterResult.js';
+import EncounterResultConst from '../constants/EncounterResultConst.js';
 import PokeSprite from '../components/PokeSprite.vue';
 
 export default {
@@ -76,12 +76,15 @@ export default {
 
    computed: {
       isAvailable() {
-         return this.encounter.result.constant === EncounterResult.AVAILABLE;
+         return this.encounter.result.constant === EncounterResultConst.AVAILABLE;
       },
       outLineColor() {
-         if (this.encounter.result.constant === EncounterResult.CAUGHT) return 'green';
-         if (this.encounter.result.constant === EncounterResult.FAINTED) return 'red';
-         if (this.encounter.result.constant === EncounterResult.FLED) return 'orange';
+         if (this.encounter.result.constant === EncounterResultConst.CAUGHT)
+            return 'green';
+         if (this.encounter.result.constant === EncounterResultConst.FAINTED)
+            return 'red';
+         if (this.encounter.result.constant === EncounterResultConst.FLED)
+            return 'orange';
       },
    },
 };
