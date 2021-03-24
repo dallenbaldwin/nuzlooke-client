@@ -91,6 +91,7 @@
                               contain
                            ></v-img>
                         </div>
+                        <!-- FIXME this isn't actually getting current party icon urls... -->
                         <div id="party">
                            <div class="text mb-1">Party</div>
                            <div
@@ -238,6 +239,7 @@ import Icons from '../constants/Icons.js';
 import * as util from '../util/util.js';
 
 export default {
+   // TODO: clean up this big boy
    name: 'Games',
    components: {
       'c-poke-spirte': PokeSprite,

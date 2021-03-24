@@ -196,6 +196,7 @@ export default {
                species: null,
                nickname: null,
             },
+
             id: null,
             pokemons: null,
             label: null,
@@ -226,6 +227,9 @@ export default {
          },
          deep: true,
       },
+      editEncounter: {
+         // TODO: add logic to watch the edit encounter (maybe)
+      },
    },
    computed: {
       game() {
@@ -239,13 +243,15 @@ export default {
             .filter(p => p.party_state === PartyState.PARTY)
             .map(p => Object({ value: p.id, text: p.species }));
       },
+      showEditWarning() {
+         // TODO: add logic to show the edit warning
+      },
       showPartyManagerOptions() {
-         // fixme: controllers
          const partySize = pokemonController.getPartyLength() >= 1; // FIXME: change me back to 6
          const nickname =
             !util.isUndefined(this.newEncounter.result.nickname) ||
             !rulesController.isActive(RuleCodes.USE_NICKNAMES.code);
-         const caught = this.newEncounter.result.constant === EncounterResultConst.CAUGHT;
+         const caught = encounterController.isCaught(this.newEncounter.result.constant);
          const species = !util.isUndefined(this.newEncounter.result.species);
          return partySize && nickname && caught && species;
       },
@@ -265,11 +271,9 @@ export default {
          this.editEncounterDialog = true;
       },
       confirmEditEncounter() {
-         if (!confirm(this.prettySON(this.editEncounter))) {
-            return;
-         }
-         /*
-         
+         if (!confirm(this.prettySON(this.editEncounter))) return;
+
+         /* TODO: figure out logic flow for editing an encounter
          
          */
          this.closeDialog();
@@ -289,7 +293,6 @@ export default {
          this.newEncounter.errors = [];
       },
       async confirmNewEncounter() {
-         // TODO test this big boy!
          // validate for data errors
          this.newEncounter.errors = encounterController.getEncounterErrors(
             this.newEncounter.result
@@ -310,6 +313,7 @@ export default {
             .withSpriteUrl(this.newEncounter.result.species.id)
             .withConstant(this.newEncounter.result.constant)
             .build();
+         // TODO: update encounters by ID after adding the pokemonID
          routeController.updateEncounterById(selectedEncounter);
          // handle capture situations
          if (encounterController.isCaught(this.newEncounter.result.constant)) {
