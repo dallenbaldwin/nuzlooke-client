@@ -4,8 +4,8 @@
          v-for="encounter of game.encounters"
          :key="encounter.label"
          :encounter="encounter"
-         v-on:new-encounter="newEncounter"
-         v-on:edit-encounter="editEncounter"
+         v-on:new-encounter="clickNewEncounter"
+         v-on:edit-encounter="clickEditEncounter"
       ></c-route-card>
       <v-dialog v-model="newEncounterDialog" width="500">
          <c-dialog-card
@@ -14,13 +14,13 @@
             v-on:new-encounter="confirmNewEncounter"
          >
             <v-slide-y-transition>
-               <div v-show="edittingEncounter">
+               <div v-show="processingEncounter">
                   <c-progress-spinner></c-progress-spinner>
                </div>
             </v-slide-y-transition>
             <v-slide-y-transition>
-               <div v-show="!edittingEncounter">
-                  <v-radio-group column v-model="encounterData.result.constant">
+               <div v-show="!processingEncounter">
+                  <v-radio-group column v-model="newEncounter.result.constant">
                      <v-radio
                         v-for="(result, i) of Object.values(EncounterResultConst)"
                         :key="`${result}-${i}`"
@@ -29,23 +29,23 @@
                      ></v-radio>
                   </v-radio-group>
                   <v-combobox
-                     v-model="encounterData.result.species"
-                     :items="encounterData.pokemons"
+                     v-model="newEncounter.result.species"
+                     :items="newEncounter.pokemons"
                      label="Pokemon"
                      outlined
                      clearable
                      :disabled="
-                        encounterData.result.constant === EncounterResultConst.AVAILABLE
+                        newEncounter.result.constant === EncounterResultConst.AVAILABLE
                      "
                   >
                   </v-combobox>
                   <v-text-field
                      label="Nickname"
-                     v-model="encounterData.result.nickname"
+                     v-model="newEncounter.result.nickname"
                      outlined
                      clearable
                      :disabled="
-                        encounterData.result.constant !== EncounterResultConst.CAUGHT
+                        newEncounter.result.constant !== EncounterResultConst.CAUGHT
                      "
                   >
                   </v-text-field>
@@ -55,11 +55,11 @@
                         <v-card-subtitle
                            >You can only keep up to 6 Pokemon in your Party. Would you
                            like to switch a current party member for
-                           {{ encounterData.result.nickname }}?</v-card-subtitle
+                           {{ newEncounter.result.nickname }}?</v-card-subtitle
                         >
                         <v-card-text>
                            <v-radio-group
-                              v-model="encounterData.result.destination"
+                              v-model="newEncounter.result.destination"
                               row
                               mandatory
                            >
@@ -77,16 +77,16 @@
                               outlined
                               clearable
                               :items="partyPokemons"
-                              v-model="encounterData.result.replacement"
+                              v-model="newEncounter.result.replacement"
                               :disabled="
-                                 encounterData.result.destination === PartyState.PC
+                                 newEncounter.result.destination === PartyState.PC
                               "
                            >
                            </v-combobox>
                         </v-card-text>
                      </v-card>
                   </v-slide-y-transition>
-                  <p v-for="error of encounterData.errors" :key="error" class="red--text">
+                  <p v-for="error of newEncounter.errors" :key="error" class="red--text">
                      <strong>{{ error }}</strong>
                   </p>
                </div>
@@ -99,33 +99,44 @@
             v-on:close-dialog="closeDialog"
             v-on:edit-encounter="confirmEditEncounter"
          >
-            <v-radio-group column v-model="encounterData.result.constant">
-               <v-radio
-                  v-for="(result, i) of Object.values(EncounterResultConst)"
-                  :key="`${result}-${i}`"
-                  :label="result"
-                  :value="result"
-               ></v-radio>
-            </v-radio-group>
-            <v-combobox
-               v-model="encounterData.result.species"
-               :items="encounterData.pokemons"
-               label="Pokemon"
-               outlined
-               clearable
-               :disabled="
-                  encounterData.result.constant === EncounterResultConst.AVAILABLE
-               "
-            >
-            </v-combobox>
-            <v-text-field
-               label="Nickname"
-               v-model="encounterData.result.nickname"
-               outlined
-               clearable
-               :disabled="encounterData.result.constant !== EncounterResultConst.CAUGHT"
-            >
-            </v-text-field>
+            <v-slide-y-transition>
+               <div v-show="processingEncounter">
+                  <c-progress-spinner></c-progress-spinner>
+               </div>
+            </v-slide-y-transition>
+            <v-slide-y-transition>
+               <div v-if="!processingEncounter">
+                  <v-radio-group column v-model="editEncounter.result.constant">
+                     <v-radio
+                        v-for="(result, i) of Object.values(EncounterResultConst)"
+                        :key="`${result}-${i}`"
+                        :label="result"
+                        :value="result"
+                     ></v-radio>
+                  </v-radio-group>
+                  <v-combobox
+                     v-model="editEncounter.result.species"
+                     :items="editEncounter.pokemons"
+                     label="Pokemon"
+                     outlined
+                     clearable
+                     :disabled="
+                        editEncounter.result.constant === EncounterResultConst.AVAILABLE
+                     "
+                  >
+                  </v-combobox>
+                  <v-text-field
+                     label="Nickname"
+                     v-model="editEncounter.result.nickname"
+                     outlined
+                     clearable
+                     :disabled="
+                        editEncounter.result.constant !== EncounterResultConst.CAUGHT
+                     "
+                  >
+                  </v-text-field>
+               </div>
+            </v-slide-y-transition>
          </c-dialog-card>
       </v-dialog>
       <pre>{{ prettySON(game.encounters) }}</pre>
@@ -133,22 +144,21 @@
 </template>
 
 <script>
+import ProgressSpinner from '../components/ProgressSpinner.vue';
+import RouteCard from '../components/RouteCard.vue';
 import DialogCard from '../components/DialogCard.vue';
 import EncounterResult from '../models/EncounterResult.js';
 import EncounterResultConst from '../constants/EncounterResultConst.js';
-import RouteCard from '../components/RouteCard.vue';
-import Icons from '../constants/Icons';
 import RuleCodes from '../constants/RuleCodes.js';
 import PartyState from '../constants/PartyState.js';
 import * as rulesController from '../controllers/rules.js';
 import * as pokemonController from '../controllers/pokemon.js';
-import * as routesController from '../controllers/route.js';
+import * as routeController from '../controllers/route.js';
 import * as pokeapiController from '../controllers/pokeapi.js';
 import * as userController from '../controllers/user.js';
+import * as encounterController from '../controllers/encounter.js';
+import * as gameController from '../controllers/game';
 import * as util from '../util/util.js';
-import * as gameServices from '../services/game.js';
-import * as userServices from '../services/user.js';
-import ProgressSpinner from '../components/ProgressSpinner.vue';
 
 export default {
    name: 'Routes',
@@ -159,9 +169,9 @@ export default {
    },
    data() {
       return {
-         // both encounter dialogs
-         edittingEncounter: false,
-         encounterData: {
+         processingEncounter: false,
+         // new encounter
+         newEncounter: {
             result: {
                constant: null,
                species: null,
@@ -172,54 +182,46 @@ export default {
             id: null,
             pokemons: null,
             label: null,
-            errors: [],
+            errors: null,
          },
-         // new encounter
          newEncounterDialog: false,
          newEncounterDialogCard: {
             title: 'New Encounter',
             primaryBtn: { action: 'new-encounter' },
          },
          // edit encounter
+         editEncounter: {
+            result: {
+               constant: null,
+               species: null,
+               nickname: null,
+            },
+            id: null,
+            pokemons: null,
+            label: null,
+            errors: null,
+         },
          editEncounterDialog: false,
          editEncounterDialogCard: {
             title: 'Edit Encounter',
             primaryBtn: { action: 'edit-encounter' },
          },
-         // party manager
-         partyManagerDialog: false,
-         partyManagerDialogCard: {
-            title: 'You have 6 Pokemon in your Party!',
-            text: `You can only keep up to 6 Pokemon in your Party. Would you like to switch a current party member for <insert nickname>?`,
-            noCancel: true,
-            primaryBtn: { action: 'confirm-party-options' },
-            // cancelBtn: {
-            //    icon: Icons.CONTROLS.STORAGE,
-            //    action: 'to-storage',
-            //    text: 'Send to Storage',
-            // },
-         },
-         partyManagerData: {
-            decision: null,
-            pokemon: null,
-            errors: null,
-         },
       };
    },
    watch: {
-      encounterData: {
+      newEncounter: {
          handler(newVal, oldVal) {
             if (
                newVal.result.constant === EncounterResultConst.FLED ||
                newVal.result.constant === EncounterResultConst.FAINTED
             ) {
-               this.encounterData.result.nickname = null;
+               this.newEncounter.result.nickname = null;
             } else if (newVal.result.constant === EncounterResultConst.AVAILABLE) {
-               this.encounterData.result.nickname = null;
-               this.encounterData.result.species = null;
+               this.newEncounter.result.nickname = null;
+               this.newEncounter.result.species = null;
             }
             if (newVal.result.destination === PartyState.PC) {
-               this.encounterData.result.replacement = null;
+               this.newEncounter.result.replacement = null;
             }
          },
          deep: true,
@@ -238,13 +240,13 @@ export default {
             .map(p => Object({ value: p.id, text: p.species }));
       },
       showPartyManagerOptions() {
+         // fixme: controllers
          const partySize = pokemonController.getPartyLength() >= 1; // FIXME: change me back to 6
          const nickname =
-            !util.isUndefined(this.encounterData.result.nickname) ||
+            !util.isUndefined(this.newEncounter.result.nickname) ||
             !rulesController.isActive(RuleCodes.USE_NICKNAMES.code);
-         const caught =
-            this.encounterData.result.constant === EncounterResultConst.CAUGHT;
-         const species = !util.isUndefined(this.encounterData.result.species);
+         const caught = this.newEncounter.result.constant === EncounterResultConst.CAUGHT;
+         const species = !util.isUndefined(this.newEncounter.result.species);
          return partySize && nickname && caught && species;
       },
    },
@@ -252,74 +254,73 @@ export default {
       // filterRoutes() {
       //    alert('i want to filter my routes!');
       // },
-      test() {},
-      editEncounter(payload) {
-         this.encounterData.label = payload.label;
+      clickEditEncounter(payload) {
          this.editEncounterDialogCard.title = `Edit ${payload.label}?`;
-         this.encounterData.pokemons = payload.pokemons.map(p => p.species);
-         this.encounterData.result.constant = payload.result.constant;
-         this.encounterData.result.species = payload.result.species;
-         this.encounterData.result.nickname = payload.result.nickname;
+         this.editEncounter.id = payload.id;
+         this.editEncounter.label = payload.label;
+         this.editEncounter.pokemons = payload.pokemons.map(p => p.species);
+         this.editEncounter.result.constant = payload.result.constant;
+         this.editEncounter.result.species = payload.result.species;
+         this.editEncounter.result.nickname = payload.result.nickname;
          this.editEncounterDialog = true;
       },
       confirmEditEncounter() {
-         if (!confirm(this.prettySON(this.encounterData))) {
+         if (!confirm(this.prettySON(this.editEncounter))) {
             return;
          }
+         /*
+         
+         
+         */
          this.closeDialog();
       },
-      newEncounter(payload) {
+      clickNewEncounter(payload) {
          this.newEncounterDialogCard.title = payload.label;
-         this.encounterData.label = payload.label;
-         this.encounterData.pokemons = payload.pokemons.map(p =>
+         this.newEncounter.label = payload.label;
+         this.newEncounter.pokemons = payload.pokemons.map(p =>
             Object({ value: p.sprite_url, text: p.species })
          );
-         this.encounterData.id = payload.id;
-         this.encounterData.result.constant = EncounterResultConst.AVAILABLE;
-         this.encounterData.result.species = null;
-         this.encounterData.result.destination = null;
-         this.encounterData.result.replacement = null;
+         this.newEncounter.id = payload.id;
+         this.newEncounter.result.constant = EncounterResultConst.AVAILABLE;
+         this.newEncounter.result.species = null;
+         this.newEncounter.result.destination = null;
+         this.newEncounter.result.replacement = null;
          this.newEncounterDialog = true;
-         this.encounterData.errors = [];
-      },
-      manageParty(payload) {
-         this.partyManagerDialog = true;
+         this.newEncounter.errors = [];
       },
       async confirmNewEncounter() {
-         // FIXME remove this line when it works
          // TODO test this big boy!
-         if (!confirm(util.prettySON(this.encounterData))) return;
          // validate for data errors
-         this.setEncounterErrors(this.encounterData.result);
-         if (this.encounterData.errors.length > 0) return;
+         this.newEncounter.errors = encounterController.getEncounterErrors(
+            this.newEncounter.result
+         );
+         if (util.isEmptyArray(this.newEncounter.errors)) return;
          // ignore when they confirm on available
-         if (this.encounterData.result.constant === EncounterResultConst.AVAILABLE) {
+         if (encounterController.isAvailable(this.newEncounter.result.constant)) {
             this.closeDialog();
             return;
          }
          // start process
-         this.edittingEncounter = true;
-         const selectedEncounter = routesController.getEncounterById(
-            this.encounterData.id
-         );
+         this.processingEncounter = true;
+         const selectedEncounter = routeController.getEncounterById(this.newEncounter.id);
          // set result
          selectedEncounter.result = EncounterResult.builder()
-            .withNickname(this.encounterData.result.nickname)
-            .withSpecies(this.encounterData.result.species.text)
-            .withSpriteUrl(this.encounterData.result.species.id)
-            .withConstant(this.encounterData.result.constant)
+            .withNickname(this.newEncounter.result.nickname)
+            .withSpecies(this.newEncounter.result.species.text)
+            .withSpriteUrl(this.newEncounter.result.species.id)
+            .withConstant(this.newEncounter.result.constant)
             .build();
-         routesController.updateEncounterById(selectedEncounter);
+         routeController.updateEncounterById(selectedEncounter);
          // handle capture situations
-         if (this.encounterData.result.constant === EncounterResultConst.CAUGHT) {
+         if (encounterController.isCaught(this.newEncounter.result.constant)) {
             // pokeapi and set new user pokemon
             const newPokemon = await pokeapiController.buildUserPokemon(
-               this.encounterData.result
+               this.newEncounter.result
             );
-            if (this.encounterData.result.destination === PartyState.PARTY) {
+            if (pokemonController.isParty(this.newEncounter.result.destination)) {
                newPokemon.party_state = PartyState.PARTY;
                const replacement = pokemonController.getPokemonById(
-                  this.encounterData.result.replacement.value
+                  this.newEncounter.result.replacement.value
                );
                replacement.party_state = PartyState.PC;
                pokemonController.updatePokemonById(replacement);
@@ -328,60 +329,16 @@ export default {
             }
             pokemonController.pushNewPokemon(newPokemon);
          }
-         await gameServices.updateGameById(this.game.id, {
-            pokemons: this.game.pokemons,
-            encounters: this.game.encounters,
-         });
+         await gameController.updateEncountersAndPokemons();
          userController.updateSnapshotPartyUrls(this.game.id);
-         await userServices.updateUserById(this.userId, { games: this.userGames });
-         this.edittingEncounter = false;
+         await userController.updateUserGames();
+         this.processingEncounter = false;
          this.closeDialog();
       },
       closeDialog() {
          this.newEncounterDialog = false;
          this.editEncounterDialog = false;
-         this.partyManagerDialog = false;
-         this.edittingEncounter = false;
-      },
-      setEncounterErrors(encounterResults) {
-         this.encounterData.errors = [];
-         if (encounterResults.constant === EncounterResultConst.CAUGHT) {
-            if (
-               rulesController.isActive(RuleCodes.USE_NICKNAMES.code) &&
-               util.isUndefined(encounterResults.nickname)
-            ) {
-               this.encounterData.errors.push(
-                  'You must give this captured Pokemon a nickname!'
-               );
-            }
-            if (util.isUndefined(encounterResults.species)) {
-               this.encounterData.errors.push(`You must select a Pokemon!`);
-            }
-         } else if (encounterResults.constant === EncounterResultConst.AVAILABLE) {
-            if (!util.isUndefined(encounterResults.species)) {
-               this.encounterData.errors.push(
-                  `Something went wrong. Must be Fainted, Fled, or Caught, to have a Pokemon.`
-               );
-            }
-            if (!util.isUndefined(encounterResults.nickname)) {
-               this.encounterData.errors.push(
-                  `Something went wrong. Must be Caught to have a nickname.`
-               );
-            }
-         } else if (
-            [EncounterResultConst.FAINTED, EncounterResultConst.FLED].includes(
-               encounterResults.constant
-            )
-         ) {
-            if (!util.isUndefined(encounterResults.nickname)) {
-               this.encounterData.errors.push(
-                  `Something went wrong. Must be Caught to have a nickname.`
-               );
-            }
-            if (util.isUndefined(encounterResults.species)) {
-               this.encounterData.errors.push(`You must select a Pokemon!`);
-            }
-         }
+         this.processingEncounter = false;
       },
    },
 };

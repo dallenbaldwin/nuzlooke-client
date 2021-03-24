@@ -1,7 +1,7 @@
 <template>
    <div class="c-circle" :class="outlineClass">
       <v-img
-         lazy-src=""
+         :lazy-src="defaultImagePath"
          :src="src"
          :width="radius"
          :height="radius"
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import Icons from '../constants/Icons.js';
+
 export default {
    name: 'PokeSprite',
    props: {
@@ -29,10 +31,9 @@ export default {
          default: 'black',
       },
    },
-   // props: ['src', 'size', 'outlineColor'],
    data() {
       return {
-         defaultImagePath: './public/img/icons/mstile-70x70.png',
+         defaultImagePath: Icons.MISC.NUZLOOKE,
       };
    },
    computed: {

@@ -44,6 +44,8 @@ export const deClassify = classObject => JSON.parse(JSON.stringify(classObject))
 
 export const isUndefined = value => value === undefined || value === null;
 
+export const isEmptyArray = array => array.length === 0;
+
 export const toAPIResponse = object => {
    if (object.data.data) return object.data.data;
    if (object.data.error) return object.data.error;

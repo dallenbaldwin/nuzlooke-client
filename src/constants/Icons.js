@@ -34,4 +34,7 @@ export default Object.freeze({
       DESKTOP: 'mdi-monitor',
       DEFAULT: 'mdi-gamepad-square',
    },
+   MISC: {
+      NUZLOOKE: './img/icons/mstile-70x70.png',
+   },
 });

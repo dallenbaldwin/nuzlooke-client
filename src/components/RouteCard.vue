@@ -14,7 +14,7 @@
                class="mx-1"
                v-for="pokemon of encounter.pokemons"
                :key="pokemon.species"
-               :src="pokemon.sprite_url || debugSprite"
+               :src="pokemon.sprite_url || defaultSprite"
                size="small"
             ></c-poke-sprite>
          </v-card-text>
@@ -52,6 +52,7 @@
 <script>
 import EncounterResultConst from '../constants/EncounterResultConst.js';
 import PokeSprite from '../components/PokeSprite.vue';
+import Icons from '../constants/Icons.js';
 
 export default {
    name: 'RouteCard',
@@ -61,8 +62,7 @@ export default {
    },
    data() {
       return {
-         debugSprite:
-            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-vii/icons/25.png',
+         defaultSprite: Icons.MISC.NUZLOOKE,
       };
    },
    methods: {

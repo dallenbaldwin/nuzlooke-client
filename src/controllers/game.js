@@ -2,6 +2,18 @@ import Versions from '../constants/Versions.js';
 import PartyState from '../constants/PartyState.js';
 import Icons from '../constants/Icons.js';
 import store from '../store/store.js';
+import * as services from '../services/game.js';
+
+export async function updateEncountersAndPokemons() {
+   try {
+      await services.updateGameById(store.game.id, {
+         pokemons: store.game.pokemons,
+         encounters: store.game.encounters,
+      });
+   } catch (err) {
+      alert(err);
+   }
+}
 
 export const build = object => {
    const version = Object.values(Versions).find(v => v.label === object.version).key;
