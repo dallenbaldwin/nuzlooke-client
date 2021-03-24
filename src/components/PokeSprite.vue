@@ -1,7 +1,7 @@
 <template>
    <div class="c-circle" :class="outlineClass">
       <v-img
-         :lazy-src="src"
+         lazy-src=""
          :src="src"
          :width="radius"
          :height="radius"
@@ -31,7 +31,9 @@ export default {
    },
    // props: ['src', 'size', 'outlineColor'],
    data() {
-      return {};
+      return {
+         defaultImagePath: './public/img/icons/mstile-70x70.png',
+      };
    },
    computed: {
       radius() {
