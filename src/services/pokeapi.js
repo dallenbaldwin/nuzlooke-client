@@ -14,8 +14,9 @@ export async function get(endpoint) {
 }
 
 export async function getPokemonBySpecies(species = 'ditto') {
+   species = species.toLowerCase();
    try {
-      let response = await pokeapi.get(`${baseURL}/pokemon/${species.toLowerCase()}`);
+      let response = await pokeapi.get(`${baseURL}/pokemon/${species}`);
       return response.data;
    } catch (err) {
       alert(err);

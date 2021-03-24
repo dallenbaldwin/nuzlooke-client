@@ -2,7 +2,7 @@ import * as pokeapiServices from '../services/pokeapi.js';
 import UserPokemon from '../models/UserPokemon.js';
 
 export async function buildUserPokemon(result) {
-   const pokeData = await pokeapiServices.getPokemonBySpecies(result.species);
+   const pokeData = await pokeapiServices.getPokemonBySpecies(result.species.text);
    const speciesData = await pokeapiServices.get(pokeData.species.url);
    const evoData = await pokeapiServices.get(speciesData.evolution_chain.url);
    return UserPokemon.builder()

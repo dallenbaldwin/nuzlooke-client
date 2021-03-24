@@ -13,68 +13,84 @@
             v-on:close-dialog="closeDialog"
             v-on:new-encounter="confirmNewEncounter"
          >
-            <v-radio-group column v-model="encounterData.result.constant">
-               <v-radio
-                  v-for="(result, i) of Object.values(EncounterResultConst)"
-                  :key="`${result}-${i}`"
-                  :label="result"
-                  :value="result"
-               ></v-radio>
-            </v-radio-group>
-            <v-combobox
-               v-model="encounterData.result.species"
-               :items="encounterData.pokemons"
-               label="Pokemon"
-               outlined
-               clearable
-               :disabled="
-                  encounterData.result.constant === EncounterResultConst.AVAILABLE
-               "
-            >
-            </v-combobox>
-            <v-text-field
-               label="Nickname"
-               v-model="encounterData.result.nickname"
-               outlined
-               clearable
-               :disabled="encounterData.result.constant !== EncounterResultConst.CAUGHT"
-            >
-            </v-text-field>
             <v-slide-y-transition>
-               <v-card elevation="0" v-show="showPartyManagerOptions">
-                  <v-card-title>You have 6 Pokemon in your Party!</v-card-title>
-                  <v-card-subtitle
-                     >You can only keep up to 6 Pokemon in your Party. Would you like to
-                     switch a current party member for
-                     {{ encounterData.result.nickname }}?</v-card-subtitle
-                  >
-                  <v-card-text>
-                     <v-radio-group
-                        v-model="encounterData.result.destination"
-                        row
-                        mandatory
-                     >
-                        <v-radio :value="PartyState.PC" label="Send to Storage"></v-radio>
-                        <v-radio
-                           :value="PartyState.PARTY"
-                           label="Send to Party"
-                        ></v-radio>
-                     </v-radio-group>
-                     <v-combobox
-                        label="Party Member"
-                        outlined
-                        clearable
-                        :items="partyPokemons"
-                        v-model="encounterData.result.replacement"
-                        :disabled="encounterData.result.destination === PartyState.PC"
-                     >
-                     </v-combobox>
-                  </v-card-text>
-               </v-card>
+               <div v-show="edittingEncounter">
+                  <c-progress-spinner></c-progress-spinner>
+               </div>
             </v-slide-y-transition>
-            <p v-for="error of encounterData.errors" :key="error" class="red--text">
-               <strong>{{ error }}</strong>
-            </p>
+            <v-slide-y-transition>
+               <div v-show="!edittingEncounter">
+                  <v-radio-group column v-model="encounterData.result.constant">
+                     <v-radio
+                        v-for="(result, i) of Object.values(EncounterResultConst)"
+                        :key="`${result}-${i}`"
+                        :label="result"
+                        :value="result"
+                     ></v-radio>
+                  </v-radio-group>
+                  <v-combobox
+                     v-model="encounterData.result.species"
+                     :items="encounterData.pokemons"
+                     label="Pokemon"
+                     outlined
+                     clearable
+                     :disabled="
+                        encounterData.result.constant === EncounterResultConst.AVAILABLE
+                     "
+                  >
+                  </v-combobox>
+                  <v-text-field
+                     label="Nickname"
+                     v-model="encounterData.result.nickname"
+                     outlined
+                     clearable
+                     :disabled="
+                        encounterData.result.constant !== EncounterResultConst.CAUGHT
+                     "
+                  >
+                  </v-text-field>
+                  <v-slide-y-transition>
+                     <v-card elevation="0" v-show="showPartyManagerOptions">
+                        <v-card-title>You have 6 Pokemon in your Party!</v-card-title>
+                        <v-card-subtitle
+                           >You can only keep up to 6 Pokemon in your Party. Would you
+                           like to switch a current party member for
+                           {{ encounterData.result.nickname }}?</v-card-subtitle
+                        >
+                        <v-card-text>
+                           <v-radio-group
+                              v-model="encounterData.result.destination"
+                              row
+                              mandatory
+                           >
+                              <v-radio
+                                 :value="PartyState.PC"
+                                 label="Send to Storage"
+                              ></v-radio>
+                              <v-radio
+                                 :value="PartyState.PARTY"
+                                 label="Send to Party"
+                              ></v-radio>
+                           </v-radio-group>
+                           <v-combobox
+                              label="Party Member"
+                              outlined
+                              clearable
+                              :items="partyPokemons"
+                              v-model="encounterData.result.replacement"
+                              :disabled="
+                                 encounterData.result.destination === PartyState.PC
+                              "
+                           >
+                           </v-combobox>
+                        </v-card-text>
+                     </v-card>
+                  </v-slide-y-transition>
+                  <p v-for="error of encounterData.errors" :key="error" class="red--text">
+                     <strong>{{ error }}</strong>
+                  </p>
+               </div>
+            </v-slide-y-transition>
          </c-dialog-card>
       </v-dialog>
       <v-dialog v-model="editEncounterDialog" width="500">
@@ -126,17 +142,20 @@ import RuleCodes from '../constants/RuleCodes.js';
 import PartyState from '../constants/PartyState.js';
 import * as rulesController from '../controllers/rules.js';
 import * as pokemonController from '../controllers/pokemon.js';
-import * as routesController from '../controllers/routes.js';
+import * as routesController from '../controllers/route.js';
 import * as pokeapiController from '../controllers/pokeapi.js';
+import * as userController from '../controllers/user.js';
 import * as util from '../util/util.js';
 import * as gameServices from '../services/game.js';
 import * as userServices from '../services/user.js';
+import ProgressSpinner from '../components/ProgressSpinner.vue';
 
 export default {
    name: 'Routes',
    components: {
       'c-dialog-card': DialogCard,
       'c-route-card': RouteCard,
+      'c-progress-spinner': ProgressSpinner,
    },
    data() {
       return {
@@ -255,6 +274,7 @@ export default {
          this.encounterData.pokemons = payload.pokemons.map(p =>
             Object({ value: p.sprite_url, text: p.species })
          );
+         this.encounterData.id = payload.id;
          this.encounterData.result.constant = EncounterResultConst.AVAILABLE;
          this.encounterData.result.species = null;
          this.encounterData.result.destination = null;
@@ -273,8 +293,10 @@ export default {
          this.setEncounterErrors(this.encounterData.result);
          if (this.encounterData.errors.length > 0) return;
          // ignore when they confirm on available
-         if (this.encounterData.result.constant === EncounterResultConst.AVAILABLE)
+         if (this.encounterData.result.constant === EncounterResultConst.AVAILABLE) {
+            this.closeDialog();
             return;
+         }
          // start process
          this.edittingEncounter = true;
          const selectedEncounter = routesController.getEncounterById(
@@ -287,7 +309,7 @@ export default {
             .withSpriteUrl(this.encounterData.result.species.id)
             .withConstant(this.encounterData.result.constant)
             .build();
-         routesController.updateEncounterById(selectedEncounter.id, selectedEncounter);
+         routesController.updateEncounterById(selectedEncounter);
          // handle capture situations
          if (this.encounterData.result.constant === EncounterResultConst.CAUGHT) {
             // pokeapi and set new user pokemon
@@ -315,16 +337,11 @@ export default {
          this.edittingEncounter = false;
          this.closeDialog();
       },
-      confirmPartyOptions() {
-         if (!confirm(util.prettySON(this.partyManagerData))) {
-            return;
-         }
-         this.closeDialog();
-      },
       closeDialog() {
          this.newEncounterDialog = false;
          this.editEncounterDialog = false;
          this.partyManagerDialog = false;
+         this.edittingEncounter = false;
       },
       setEncounterErrors(encounterResults) {
          this.encounterData.errors = [];
@@ -365,9 +382,6 @@ export default {
                this.encounterData.errors.push(`You must select a Pokemon!`);
             }
          }
-      },
-      getEncounterByLabel(label) {
-         return this.game.encounters.find(e => e.label === label);
       },
    },
 };
