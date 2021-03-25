@@ -51,6 +51,10 @@ export default new Vuex.Store({
          const i = state.userGames.findIndex(g => g.game_id === payload.game_id);
          if (i !== -1) state.userGames.splice(i, 1, payload);
       },
+      removePokemonFromPokemons(state, payload) {
+         const i = state.game.pokemons.findIndex(p => p.id === payload.id);
+         if (i !== -1) state.game.pokemons.splice(i, 1);
+      },
    },
    actions: {
       authenticate(context, payload) {
