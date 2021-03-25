@@ -14,7 +14,7 @@
                class="mx-1"
                v-for="pokemon of encounter.pokemons"
                :key="pokemon.species"
-               :src="pokemon.sprite_url || defaultSprite"
+               :src="pokemon.icon_url || defaultSprite"
                size="small"
             ></c-poke-sprite>
          </v-card-text>
@@ -73,7 +73,6 @@ export default {
          this.$emit('edit-encounter', this.encounter);
       },
    },
-
    computed: {
       isAvailable() {
          return this.encounter.result.constant === EncounterResultConst.AVAILABLE;
