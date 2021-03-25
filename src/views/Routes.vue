@@ -255,7 +255,7 @@ export default {
          return this.$store.state.userId;
       },
       partyPokemons() {
-         const ps = this.game.pokemons
+         return this.game.pokemons
             .filter(p => p.party_state === PartyState.PARTY)
             .map(p =>
                Object({
@@ -264,8 +264,6 @@ export default {
                   disabled: false,
                })
             );
-         console.log(ps);
-         return ps;
       },
       editConstantIsDifferent() {
          return (
