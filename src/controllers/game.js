@@ -3,15 +3,16 @@ import PartyState from '../constants/PartyState.js';
 import Icons from '../constants/Icons.js';
 import store from '../store/store.js';
 import * as services from '../services/game.js';
+import { errorCatch } from '../util/util.js';
 
 export async function updateEncountersAndPokemons() {
    try {
-      await services.updateGameById(store.game.id, {
-         pokemons: store.game.pokemons,
-         encounters: store.game.encounters,
+      await services.updateGameById(store.state.game.id, {
+         pokemons: store.state.game.pokemons,
+         encounters: store.state.game.encounters,
       });
    } catch (err) {
-      alert(err);
+      alert(errorCatch(err));
    }
 }
 
