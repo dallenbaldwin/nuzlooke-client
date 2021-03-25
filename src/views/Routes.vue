@@ -106,7 +106,7 @@
             </v-slide-y-transition>
             <v-slide-y-transition>
                <div v-if="!processingEncounter">
-                  <v-radio-group column v-model="editEncounter.result.constant">
+                  <v-radio-group column v-model="editEncounter.changes.constant">
                      <v-radio
                         v-for="(result, i) of Object.values(EncounterResultConst)"
                         :key="`${result}-${i}`"
@@ -115,26 +115,42 @@
                      ></v-radio>
                   </v-radio-group>
                   <v-combobox
-                     v-model="editEncounter.result.species"
+                     v-model="editEncounter.changes.species"
                      :items="editEncounter.pokemons"
                      label="Pokemon"
                      outlined
                      clearable
                      :disabled="
-                        editEncounter.result.constant === EncounterResultConst.AVAILABLE
+                        editEncounter.changes.constant === EncounterResultConst.AVAILABLE
                      "
                   >
                   </v-combobox>
                   <v-text-field
                      label="Nickname"
-                     v-model="editEncounter.result.nickname"
+                     v-model="editEncounter.changes.nickname"
                      outlined
                      clearable
                      :disabled="
-                        editEncounter.result.constant !== EncounterResultConst.CAUGHT
+                        editEncounter.changes.constant !== EncounterResultConst.CAUGHT
                      "
                   >
                   </v-text-field>
+                  <v-slide-y-transition>
+                     <v-card elevation="0" v-show="showEditWarning">
+                        <v-card-title>Warning!</v-card-title>
+                        <v-card-subtitle
+                           >These changes <i>cannot</i> be undone.</v-card-subtitle
+                        >
+                        <v-card-text>
+                           <v-switch
+                              label="I understand"
+                              v-model="editEncounter.changes.confirm"
+                              color="warning"
+                              inset
+                           ></v-switch>
+                        </v-card-text>
+                     </v-card>
+                  </v-slide-y-transition>
                </div>
             </v-slide-y-transition>
          </c-dialog-card>
@@ -156,7 +172,6 @@ import * as pokemonController from '../controllers/pokemon.js';
 import * as routeController from '../controllers/route.js';
 import * as pokeapiController from '../controllers/pokeapi.js';
 import * as userController from '../controllers/user.js';
-import * as encounterController from '../controllers/encounter.js';
 import * as gameController from '../controllers/game';
 import * as util from '../util/util.js';
 
@@ -191,12 +206,19 @@ export default {
          },
          // edit encounter
          editEncounter: {
-            result: {
+            changes: {
+               constant: null,
+               species: null,
+               nickname: null,
+               confirm: null,
+            },
+            originalValues: {
+               pokemon_id: null,
                constant: null,
                species: null,
                nickname: null,
             },
-
+            message: null,
             id: null,
             pokemons: null,
             label: null,
@@ -211,24 +233,18 @@ export default {
    },
    watch: {
       newEncounter: {
-         handler(newVal, oldVal) {
-            if (
-               newVal.result.constant === EncounterResultConst.FLED ||
-               newVal.result.constant === EncounterResultConst.FAINTED
-            ) {
+         handler(newVal) {
+            if (routeController.isFledFainted(newVal.result.constant)) {
                this.newEncounter.result.nickname = null;
-            } else if (newVal.result.constant === EncounterResultConst.AVAILABLE) {
+            } else if (routeController.isAvailable(newVal.result.constant)) {
                this.newEncounter.result.nickname = null;
                this.newEncounter.result.species = null;
             }
-            if (newVal.result.destination === PartyState.PC) {
+            if (pokemonController.isPC(newVal.result.destination)) {
                this.newEncounter.result.replacement = null;
             }
          },
          deep: true,
-      },
-      editEncounter: {
-         // TODO: add logic to watch the edit encounter (maybe)
       },
    },
    computed: {
@@ -239,19 +255,49 @@ export default {
          return this.$store.state.userId;
       },
       partyPokemons() {
-         return this.game.pokemons
+         const ps = this.game.pokemons
             .filter(p => p.party_state === PartyState.PARTY)
-            .map(p => Object({ value: p.id, text: p.species }));
+            .map(p =>
+               Object({
+                  value: p.id,
+                  text: p.species,
+                  disabled: false,
+               })
+            );
+         console.log(ps);
+         return ps;
+      },
+      editConstantIsDifferent() {
+         return (
+            this.editEncounter.changes.constant !==
+            this.editEncounter.originalValues.constant
+         );
+      },
+      editSpeciesIsDifferent() {
+         return (
+            this.editEncounter.changes.species !==
+            this.editEncounter.originalValues.species
+         );
+      },
+      editNicknameIsDifferent() {
+         return (
+            this.editEncounter.changes.nickname !==
+            this.editEncounter.originalValues.nickname
+         );
       },
       showEditWarning() {
-         // TODO: add logic to show the edit warning
+         return (
+            this.editConstantIsDifferent ||
+            this.editSpeciesIsDifferent ||
+            this.editNicknameIsDifferent
+         );
       },
       showPartyManagerOptions() {
-         const partySize = pokemonController.getPartyLength() >= 1; // FIXME: change me back to 6
+         const partySize = pokemonController.getPartyLength() >= 1; // 6;
          const nickname =
             !util.isUndefined(this.newEncounter.result.nickname) ||
             !rulesController.isActive(RuleCodes.USE_NICKNAMES.code);
-         const caught = encounterController.isCaught(this.newEncounter.result.constant);
+         const caught = routeController.isCaught(this.newEncounter.result.constant);
          const species = !util.isUndefined(this.newEncounter.result.species);
          return partySize && nickname && caught && species;
       },
@@ -265,16 +311,33 @@ export default {
          this.editEncounter.id = payload.id;
          this.editEncounter.label = payload.label;
          this.editEncounter.pokemons = payload.pokemons.map(p => p.species);
-         this.editEncounter.result.constant = payload.result.constant;
-         this.editEncounter.result.species = payload.result.species;
-         this.editEncounter.result.nickname = payload.result.nickname;
+         this.editEncounter.changes.constant = payload.result.constant;
+         this.editEncounter.changes.species = payload.result.species;
+         this.editEncounter.changes.nickname = payload.result.nickname;
+         this.editEncounter.originalValues.pokemon_id = payload.result.pokemon_id;
+         this.editEncounter.originalValues.constant = payload.result.constant;
+         this.editEncounter.originalValues.species = payload.result.species;
+         this.editEncounter.originalValues.nickname = payload.result.nickname;
+         this.editEncounter.changes.confirm = false;
          this.editEncounterDialog = true;
       },
-      confirmEditEncounter() {
+      async confirmEditEncounter() {
          if (!confirm(this.prettySON(this.editEncounter))) return;
-
+         if (this.showEditWarning) {
+            if (!this.editEncounter.changes.confirm) return;
+            // do logic
+         }
          /* TODO: figure out logic flow for editing an encounter
-         
+            get errors
+            if o-caught
+               if differentConstant 
+                  splice pokemon from pokemons list after find by id
+               else
+                  edit pokemon with c-values
+            else if c-caught
+               add pokemon to pokemon list with c-values
+            else 
+               update with c-values
          */
          this.closeDialog();
       },
@@ -293,13 +356,15 @@ export default {
          this.newEncounter.errors = [];
       },
       async confirmNewEncounter() {
+         if (!confirm(this.prettySON(this.newEncounter))) return;
          // validate for data errors
-         this.newEncounter.errors = encounterController.getEncounterErrors(
+         // FIXME: there's something wrong here
+         this.newEncounter.errors = routeController.getEncounterErrors(
             this.newEncounter.result
          );
-         if (util.isEmptyArray(this.newEncounter.errors)) return;
+         if (!util.isEmptyArray(this.newEncounter.errors)) return;
          // ignore when they confirm on available
-         if (encounterController.isAvailable(this.newEncounter.result.constant)) {
+         if (routeController.isAvailable(this.newEncounter.result.constant)) {
             this.closeDialog();
             return;
          }
@@ -310,17 +375,16 @@ export default {
          selectedEncounter.result = EncounterResult.builder()
             .withNickname(this.newEncounter.result.nickname)
             .withSpecies(this.newEncounter.result.species.text)
-            .withSpriteUrl(this.newEncounter.result.species.id)
             .withConstant(this.newEncounter.result.constant)
             .build();
-         // TODO: update encounters by ID after adding the pokemonID
-         routeController.updateEncounterById(selectedEncounter);
+         // pokeapi and set new user pokemon
+         const newPokemon = await pokeapiController.buildUserPokemon(
+            this.newEncounter.result
+         );
+         selectedEncounter.result.sprite_url = newPokemon.sprite_url;
          // handle capture situations
-         if (encounterController.isCaught(this.newEncounter.result.constant)) {
-            // pokeapi and set new user pokemon
-            const newPokemon = await pokeapiController.buildUserPokemon(
-               this.newEncounter.result
-            );
+         if (routeController.isCaught(this.newEncounter.result.constant)) {
+            selectedEncounter.result.pokemon_id = newPokemon.id;
             if (pokemonController.isParty(this.newEncounter.result.destination)) {
                newPokemon.party_state = PartyState.PARTY;
                const replacement = pokemonController.getPokemonById(
@@ -329,10 +393,11 @@ export default {
                replacement.party_state = PartyState.PC;
                pokemonController.updatePokemonById(replacement);
             } else {
-               newPokemon.party_state = PartyState.PC;
+               newPokemon.party_state = PartyState.PARTY;
             }
             pokemonController.pushNewPokemon(newPokemon);
          }
+         routeController.updateEncounterById(selectedEncounter);
          await gameController.updateEncountersAndPokemons();
          userController.updateSnapshotPartyUrls(this.game.id);
          await userController.updateUserGames();
