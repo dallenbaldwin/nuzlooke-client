@@ -51,4 +51,4 @@ export const prettySON = json => JSON.stringify(json, null, 2);
 
 export const mobile = () => isMobile;
 
-export const errorCatch = err => prettySON(err);
+export const errorCatch = err => prettySON([err, err.stack]);
