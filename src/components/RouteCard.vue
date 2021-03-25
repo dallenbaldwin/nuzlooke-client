@@ -14,7 +14,7 @@
                class="mx-1"
                v-for="pokemon of encounter.pokemons"
                :key="pokemon.species"
-               :src="pokemon.icon_url || defaultSprite"
+               :src="pokemon.icon_url"
                size="small"
             ></c-poke-sprite>
          </v-card-text>
@@ -61,9 +61,7 @@ export default {
       'c-poke-sprite': PokeSprite,
    },
    data() {
-      return {
-         defaultSprite: Icons.MISC.NUZLOOKE,
-      };
+      return {};
    },
    methods: {
       emitNewEncounter() {

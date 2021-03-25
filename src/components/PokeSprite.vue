@@ -2,7 +2,7 @@
    <div class="c-circle" :class="outlineClass">
       <v-img
          :lazy-src="defaultImagePath"
-         :src="src"
+         :src="src || defaultImagePath"
          :width="radius"
          :height="radius"
          contain
@@ -19,21 +19,18 @@ export default {
    name: 'PokeSprite',
    props: {
       src: {
-         type: String,
          required: true,
       },
       size: {
-         type: String,
          default: '',
       },
       'outline-color': {
-         type: String,
          default: 'black',
       },
    },
    data() {
       return {
-         defaultImagePath: Icons.MISC.NUZLOOKE,
+         defaultImagePath: Icons.MISC.POKEBALL,
       };
    },
    computed: {

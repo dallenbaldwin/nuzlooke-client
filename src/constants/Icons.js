@@ -36,5 +36,6 @@ export default Object.freeze({
    },
    MISC: {
       NUZLOOKE: './img/icons/mstile-70x70.png',
+      POKEBALL: './img/poke-ball.png',
    },
 });
