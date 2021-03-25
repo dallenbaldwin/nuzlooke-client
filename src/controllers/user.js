@@ -13,7 +13,7 @@ export async function updateUserGames() {
 }
 
 export const updateSnapshotPartyUrls = id => {
-   const snapshot = store.state.userGames.find(g => g.id === id);
+   const snapshot = store.state.userGames.find(g => g.game_id === id);
    // by now i should have an updated party list
    snapshot.party_icon_urls = gameController.getPartyIconUrls(store.state.game);
    store.commit('updateGameSnapshot', snapshot);

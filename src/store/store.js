@@ -48,7 +48,7 @@ export default new Vuex.Store({
          state.game.pokemons.push(payload);
       },
       updateGameSnapshot(state, payload) {
-         const i = state.userGames.findIndex(g => g.id === payload.id);
+         const i = state.userGames.findIndex(g => g.game_id === payload.game_id);
          if (i !== -1) state.userGames.splice(i, 1, payload);
       },
    },
