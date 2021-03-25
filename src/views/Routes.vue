@@ -327,8 +327,10 @@ export default {
          this.editEncounter.originalValues.nickname = payload.result.nickname;
          this.editEncounter.changes.confirm = false;
          this.editEncounterDialog = true;
+         this.editEncounter.errors = [];
       },
       async confirmEditEncounter() {
+         // if (!confirm(util.prettySON(this.editEncounter))) return;
          if (this.showEditWarning) {
             if (!this.editEncounter.changes.confirm) return;
             // errors
@@ -337,7 +339,6 @@ export default {
                true
             );
             if (!util.isEmptyArray(this.editEncounter.errors)) return;
-            this.editEncounter.errors = [];
             this.processingEncounter = true;
             // check for if it was originally caught
             let pokemon =
@@ -402,7 +403,7 @@ export default {
          this.newEncounter.errors = [];
       },
       async confirmNewEncounter() {
-         if (!confirm(this.prettySON(this.newEncounter))) return;
+         // if (!confirm(this.prettySON(this.newEncounter))) return;
          // validate for data errors
          this.newEncounter.errors = routeController.getEncounterErrors(
             this.newEncounter.result
