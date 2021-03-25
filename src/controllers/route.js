@@ -8,6 +8,7 @@ export const getEncounterById = id => {
    return store.state.game.encounters.find(e => id === e.id);
 };
 
+// FIXME this isn't by id anymore
 export const updateEncounterById = encounter => {
    store.commit('updateEncounterById', { encounter: encounter });
 };
@@ -19,11 +20,12 @@ export const isCaught = constant => constant === EncounterResultConst.CAUGHT;
 export const isFledFainted = constant =>
    [EncounterResultConst.FAINTED, EncounterResultConst.FLED].includes(constant);
 
-export const getEncounterErrors = results => {
+export const getEncounterErrors = (results, update = false) => {
    const errors = [];
-   const species = !util.isUndefined(results.species)
-      ? results.species.text
-      : results.species;
+   let species = results.species;
+   if (!util.isUndefined(results.species)) {
+      if (!util.isUndefined(results.species.text)) species = results.species.text;
+   }
    if (isCaught(results.constant)) {
       if (
          rulesController.isActive(RuleCodes.USE_NICKNAMES.code) &&
@@ -34,7 +36,7 @@ export const getEncounterErrors = results => {
       if (util.isUndefined(species)) {
          errors.push(`You must select a Pokemon!`);
       }
-   } else if (isAvailable(results.constant)) {
+   } else if (isAvailable(results.constant) && !update) {
       if (!util.isUndefined(species)) {
          errors.push(
             `Something went wrong. Must be Fainted, Fled, or Caught, to have a Pokemon.`
@@ -44,7 +46,7 @@ export const getEncounterErrors = results => {
          errors.push(`Something went wrong. Must be Caught to have a nickname.`);
       }
    } else if (isFledFainted(results.constant)) {
-      if (!util.isUndefined(results.nickname)) {
+      if (!util.isUndefined(results.nickname) && !update) {
          errors.push(`Something went wrong. Must be Caught to have a nickname.`);
       }
       if (util.isUndefined(species)) {
