@@ -93,6 +93,7 @@
             </v-slide-y-transition>
          </c-dialog-card>
       </v-dialog>
+      <!-- TODO this needs the party manager. might need to templatize?? -->
       <v-dialog v-model="editEncounterDialog" width="500">
          <c-dialog-card
             :props="editEncounterDialogCard"
@@ -139,7 +140,8 @@
                      <v-card elevation="0" v-show="showEditWarning">
                         <v-card-title>Warning!</v-card-title>
                         <v-card-subtitle
-                           >These changes <i>cannot</i> be undone.</v-card-subtitle
+                           >These changes <i>cannot</i> be undone. Disabled fields will be
+                           reset for {{ this.editEncounter.label }}</v-card-subtitle
                         >
                         <v-card-text>
                            <v-switch
@@ -151,6 +153,9 @@
                         </v-card-text>
                      </v-card>
                   </v-slide-y-transition>
+                  <p v-for="error of editEncounter.errors" :key="error" class="red--text">
+                     <strong>{{ error }}</strong>
+                  </p>
                </div>
             </v-slide-y-transition>
          </c-dialog-card>
@@ -211,6 +216,8 @@ export default {
                species: null,
                nickname: null,
                confirm: null,
+               destination: null,
+               replacement: null,
             },
             originalValues: {
                pokemon_id: null,
@@ -290,14 +297,16 @@ export default {
             this.editNicknameIsDifferent
          );
       },
+      partyIsFull() {
+         return pokemonController.getPartyLength() === PartyState.MAXSIZE;
+      },
       showPartyManagerOptions() {
-         const partySize = pokemonController.getPartyLength() >= 1; // 6;
          const nickname =
             !util.isUndefined(this.newEncounter.result.nickname) ||
             !rulesController.isActive(RuleCodes.USE_NICKNAMES.code);
          const caught = routeController.isCaught(this.newEncounter.result.constant);
          const species = !util.isUndefined(this.newEncounter.result.species);
-         return partySize && nickname && caught && species;
+         return this.partyIsFull && nickname && caught && species;
       },
    },
    methods: {
@@ -320,23 +329,62 @@ export default {
          this.editEncounterDialog = true;
       },
       async confirmEditEncounter() {
-         if (!confirm(this.prettySON(this.editEncounter))) return;
          if (this.showEditWarning) {
             if (!this.editEncounter.changes.confirm) return;
-            // do logic
+            // errors
+            this.editEncounter.errors = routeController.getEncounterErrors(
+               this.editEncounter.changes,
+               true
+            );
+            if (!util.isEmptyArray(this.editEncounter.errors)) return;
+            this.editEncounter.errors = [];
+            this.processingEncounter = true;
+            // check for if it was originally caught
+            let pokemon =
+               pokemonController.getPokemonById(
+                  this.editEncounter.originalValues.pokemon_id
+               ) || {}; // TODO: remove this when the logic is fixed for changing to caught
+            // was it originally caught and is no longer caught?
+            if (
+               routeController.isCaught(this.editEncounter.originalValues.constant) &&
+               this.editConstantIsDifferent
+            ) {
+               pokemonController.removeFromList(pokemon);
+            }
+            // is it now caught and wasn't before or did we change the species?
+            if (
+               (routeController.isCaught(this.editEncounter.changes.constant) &&
+                  this.editConstantIsDifferent) ||
+               this.editSpeciesIsDifferent
+            ) {
+               // convert species string to object for buildUserPokemon
+               this.editEncounter.changes.species = {
+                  text: this.editEncounter.changes.species,
+               };
+               pokemon = await pokeapiController.buildUserPokemon(
+                  this.editEncounter.changes
+               );
+            }
+            // did the nickname change?
+            if (this.editNicknameIsDifferent) {
+               pokemon.nickname = this.editEncounter.changes.nickname;
+            }
+            if (
+               routeController.isFledFainted(this.editEncounter.changes.constant) ||
+               routeController.isAvailable(this.editEncounter.changes.constant)
+            ) {
+               pokemon.nickname = null;
+            }
+            const encounter = routeController.getEncounterById(this.editEncounter.id);
+            encounter.result.species = pokemon.species;
+            encounter.result.constant = this.editEncounter.changes.constant;
+            encounter.result.sprite_url = pokemon.sprite_url;
+            encounter.result.nickname = pokemon.nickname;
+            routeController.updateEncounterById(encounter);
+            await gameController.updateEncountersAndPokemons();
+            userController.updateSnapshotPartyUrls(this.game.id);
+            await userController.updateUserGames();
          }
-         /* TODO: figure out logic flow for editing an encounter
-            get errors
-            if o-caught
-               if differentConstant 
-                  splice pokemon from pokemons list after find by id
-               else
-                  edit pokemon with c-values
-            else if c-caught
-               add pokemon to pokemon list with c-values
-            else 
-               update with c-values
-         */
          this.closeDialog();
       },
       clickNewEncounter(payload) {
@@ -356,7 +404,6 @@ export default {
       async confirmNewEncounter() {
          if (!confirm(this.prettySON(this.newEncounter))) return;
          // validate for data errors
-         // FIXME: there's something wrong here
          this.newEncounter.errors = routeController.getEncounterErrors(
             this.newEncounter.result
          );
@@ -399,7 +446,6 @@ export default {
          await gameController.updateEncountersAndPokemons();
          userController.updateSnapshotPartyUrls(this.game.id);
          await userController.updateUserGames();
-         this.processingEncounter = false;
          this.closeDialog();
       },
       closeDialog() {
