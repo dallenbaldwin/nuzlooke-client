@@ -16,7 +16,12 @@
          </div>
          <div class="mt-6 text-h4">Welcome back {{ username }}</div>
       </v-row>
-      <!-- TODO: add some text here inviting people to add games if the list is empty -->
+      <v-row v-if="games.length === 0">
+         <div class="mt-6 text-body">
+            It looks like you don't have any games... You should create a new game from
+            the menu!
+         </div>
+      </v-row>
       <v-row>
          <v-expansion-panels popout>
             <v-expansion-panel v-for="game of games" :key="game.id">
@@ -91,7 +96,6 @@
                               contain
                            ></v-img>
                         </div>
-                        <!-- FIXME this isn't actually getting current party icon urls... -->
                         <div id="party">
                            <div class="text mb-1">Party</div>
                            <div
