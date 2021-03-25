@@ -1,6 +1,8 @@
 import PartyState from '../constants/PartyState.js';
 import store from '../store/store.js';
 
+export const isPC = constant => constant === PartyState.PC;
+
 export const isParty = constant => constant === PartyState.PARTY;
 
 export const getPartyLength = () =>
