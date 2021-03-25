@@ -3,6 +3,7 @@ import store from '../store/store.js';
 import router from '../router/router.js';
 import * as userServices from '../services/user.js';
 import Pages from '../constants/Pages.js';
+import APIResponse from '../models/APIResponse.js';
 
 export const navigate = endpoint => {
    router.replace(endpoint);
@@ -19,7 +20,7 @@ export const login = () => {
    userServices
       .getUserById('dca794f5-c680-42c2-aedb-a33a40200c49')
       .then(res => {
-         let user = toAPIResponse(res);
+         let user = new APIResponse(res).data;
          store.commit('login', {
             id: user.id,
             username: user.username || user.email,
@@ -46,11 +47,8 @@ export const isUndefined = value => value === undefined || value === null;
 
 export const isEmptyArray = array => array.length === 0;
 
-export const toAPIResponse = object => {
-   if (object.data.data) return object.data.data;
-   if (object.data.error) return object.data.error;
-};
-
 export const prettySON = json => JSON.stringify(json, null, 2);
 
 export const mobile = () => isMobile;
+
+export const errorCatch = err => prettySON(err);

@@ -27,7 +27,6 @@ export default {
       deClassify: util.deClassify,
       isUndefined: util.isUndefined,
       isEmptyArray: util.isEmptyArray,
-      toAPIResponse: util.isUndefined,
       prettySON: util.prettySON,
    },
 };

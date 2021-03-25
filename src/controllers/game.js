@@ -15,14 +15,6 @@ export async function updateEncountersAndPokemons() {
    }
 }
 
-export const build = object => {
-   const version = Object.values(Versions).find(v => v.label === object.version).key;
-   return {
-      label: object.label,
-      version: version,
-   };
-};
-
 export const getConsoleIcon = family => {
    const familyToConsole = {
       letsgo: Icons.CONSOLES.SWITCH,
@@ -44,7 +36,7 @@ export const getSnapshot = game => {
       is_finished: game.is_finished,
       label: game.label,
       version: game.version,
-      party_icon_urls: getPartyIconUrls(),
-      gym_badge_icon_urls: getGymBadgeIconsUrls(),
+      party_icon_urls: getPartyIconUrls(game),
+      gym_badge_icon_urls: getGymBadgeIconsUrls(game),
    };
 };

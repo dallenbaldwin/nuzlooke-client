@@ -78,6 +78,8 @@ import DialogCard from '../components/DialogCard.vue';
 import * as gameController from '../controllers/game.js';
 import * as gameServices from '../services/game.js';
 import * as userServices from '../services/user.js';
+import APIResponse from '../models/APIResponse.js';
+import NewGame from '../models/NewGame.js';
 
 export default {
    name: 'NavDrawer',
@@ -152,7 +154,7 @@ export default {
                title: 'Start a new Game',
                text:
                   'Are you ready to set out on a new adventure? Give this playthrough a memorable name and pick a game version.',
-               successBtn: {
+               primaryBtn: {
                   text: 'Start',
                   action: 'start-game',
                },
@@ -187,11 +189,15 @@ export default {
          this.newGame.newGame.version = null;
       },
       async startGame() {
+         // FIXME: this should all be in the game controller so we only have to write it once
          this.creatingGame = true;
          try {
-            const gameToCreate = gameController.build(this.newGame.newGame);
+            const gameToCreate = NewGame.builder()
+               .withLabel(this.newGame.newGame.label)
+               .withVersion(this.newGame.newGame.version)
+               .build();
             let res = await gameServices.createGame(gameToCreate);
-            const createdGame = this.toAPIResponse(res);
+            const createdGame = new APIResponse(res).data;
             const gameSnapshot = gameController.getSnapshot(createdGame);
             this.games.push(gameSnapshot);
             await userServices.updateUserById(this.userId, {

@@ -237,6 +237,8 @@ import TabMap from '../constants/TabMap.js';
 import Pages from '../constants/Pages.js';
 import Icons from '../constants/Icons.js';
 import * as util from '../util/util.js';
+import APIResponse from '../models/APIResponse.js';
+import NewGame from '../models/NewGame.js';
 
 export default {
    // TODO: clean up this big boy
@@ -363,17 +365,20 @@ export default {
       async startGame() {
          this.creatingGame = true;
          try {
-            const gameToCreate = gameController.build(this.newGame);
+            const gameToCreate = NewGame.builder()
+               .withLabel(this.newGame.label)
+               .withVersion(this.newGame.version)
+               .build();
             let res = await gameServices.createGame(gameToCreate);
-            const createdGame = util.toAPIResponse(res);
-            const gameSnapshot = gameController.getSnapshot(createdGame);
+            const apiResponse = new APIResponse(res);
+            const gameSnapshot = gameController.getSnapshot(apiResponse.data);
             this.games.push(gameSnapshot);
             await userServices.updateUserById(this.userId, {
                games: this.games,
             });
-            this.toNewGame(createdGame);
+            this.toNewGame(apiResponse.data);
          } catch (err) {
-            alert(err);
+            alert(err.stack);
          }
          this.closeDialog();
       },
@@ -413,7 +418,7 @@ export default {
       async toGame(route, gameId) {
          try {
             let res = await gameServices.getGameById(gameId);
-            let data = util.toAPIResponse(res);
+            let data = new APIResponse(res).data;
             this.$store.commit('selectGame', data);
             this.enterGame(route, gameId);
          } catch (err) {
