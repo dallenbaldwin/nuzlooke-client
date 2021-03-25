@@ -4,6 +4,8 @@ import { errorCatch } from '../util/util.js';
 
 export async function buildUserPokemon(result) {
    try {
+      // FIXME need to handle situations where the mon is in the middle of the evolution chain (i.e. pikachu evolves from pichu so pichu is the first in the chain)
+      result.species.text = result.species.text.toLowerCase();
       const pokeData = await pokeapiServices.getPokemonBySpecies(result.species.text);
       const speciesData = await pokeapiServices.get(pokeData.species.url);
       const evoData = await pokeapiServices.get(speciesData.evolution_chain.url);

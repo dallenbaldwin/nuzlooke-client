@@ -5,6 +5,7 @@ import store from '../store/store.js';
 import * as services from '../services/game.js';
 import { errorCatch } from '../util/util.js';
 
+// TODO add something here that specifies this is a change to the database
 export async function updateEncountersAndPokemons() {
    try {
       await services.updateGameById(store.state.game.id, {
