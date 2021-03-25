@@ -43,7 +43,7 @@ export const arrayify = (...values) => {
 
 export const deClassify = classObject => JSON.parse(JSON.stringify(classObject));
 
-export const isUndefined = value => value === undefined || value === null;
+export const isUndefined = value => value === undefined || value === null || value === '';
 
 export const isEmptyArray = array => array.length === 0;
 
