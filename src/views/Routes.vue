@@ -298,7 +298,7 @@ export default {
          );
       },
       partyIsFull() {
-         return pokemonController.getPartyLength() === PartyState.MAXSIZE;
+         return pokemonController.getPartyLength() === PartyState.PARTY_MAX_SIZE;
       },
       showPartyManagerOptions() {
          const nickname =
