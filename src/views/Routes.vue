@@ -160,7 +160,7 @@
             </v-slide-y-transition>
          </c-dialog-card>
       </v-dialog>
-      <!-- <pre>{{ prettySON(game.encounters) }}</pre> -->
+      <pre>{{ prettySON(game.encounters) }}</pre>
    </v-row>
 </template>
 

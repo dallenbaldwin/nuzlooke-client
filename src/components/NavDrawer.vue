@@ -113,7 +113,7 @@ export default {
             },
             {
                label: 'Sign Out',
-               icon: Icons.PAGES.LOGOUT,
+               icon: Icons.CONTROLS.LOGOUT,
                route: 'home',
                action: 'logout',
             },

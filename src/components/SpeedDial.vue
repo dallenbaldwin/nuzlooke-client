@@ -8,16 +8,12 @@
          transition="scale-transition"
       >
          <template v-slot:activator>
-            <v-btn dark fab x-large @click.prevent.stop><v-icon>mdi-menu</v-icon></v-btn>
+            <v-btn dark fab x-large @click.prevent.stop
+               ><v-icon>{{ Icons.CONTROLS.MENU }}</v-icon></v-btn
+            >
          </template>
-         <!-- FIXME: this should just be a link with a settings icon. I don't think I'll be able to get it working the way i want -->
-         <div v-if="isLoggedIn" class="v-btn--floating float-right">
-            <span>{{ username }}</span>
-            <v-btn fab x-small color="orange" dark>
-               <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-         </div>
          <v-btn
+            :color="link.color"
             fab
             v-for="link of pageLinks"
             :key="link.label"
@@ -35,7 +31,7 @@
             dark
             @click="linkActions(action)"
             class="mb-5"
-            :color="action.color ? action.color : undefined"
+            :color="action.color"
          >
             <v-icon>{{ action.icon }}</v-icon>
             <div class="c-fab-bottom-text">{{ action.label }}</div>
@@ -45,6 +41,9 @@
 </template>
 
 <script>
+import Icons from '../constants/Icons';
+import Pages from '../constants/Pages';
+
 export default {
    name: 'SpeedDial',
    props: ['actions'],
@@ -53,32 +52,39 @@ export default {
          links: [
             {
                label: 'Home',
-               icon: 'mdi-home',
-               route: 'home',
+               icon: Icons.PAGES.HOME,
+               route: Pages.HOME,
                requiresLoginAccess: false,
             },
             {
                label: 'Sign In',
-               icon: 'mdi-login',
-               route: 'login',
+               icon: Icons.PAGES.LOGIN,
+               route: Pages.LOGIN,
                requiresLoginAccess: false,
             },
             {
                label: 'Register',
-               icon: 'mdi-account',
-               route: 'register',
+               icon: Icons.PAGES.REGISTER,
+               route: Pages.REGISTER,
                requiresLoginAccess: false,
             },
             {
+               label: 'Settings',
+               icon: Icons.CONTROLS.SETTINGS,
+               color: 'orange',
+               action: 'open-settings',
+               requiresLoginAccess: true,
+            },
+            {
                label: 'Games',
-               icon: 'mdi-format-list-bulleted',
-               route: 'games',
+               icon: Icons.PAGES.GAMES,
+               route: Pages.GAMES,
                action: 'exit-game',
                requiresLoginAccess: true,
             },
             {
                label: 'Sign Out',
-               icon: 'mdi-logout',
+               icon: Icons.CONTROLS.LOGOUT,
                action: 'logout',
                requiresLoginAccess: true,
             },
@@ -88,8 +94,17 @@ export default {
    methods: {
       linkActions(link) {
          if (link.action) this.$emit(link.action);
+         if (link.action === 'open-settings') {
+            this.openSettings();
+            return;
+         }
          // hacky fix
-         if (link.route && link.route !== 'games') this.navigate({ name: link.route });
+         if (link.route && link.route !== Pages.GAMES)
+            this.navigate({ name: link.route });
+      },
+      openSettings() {
+         // TODO user settings
+         alert('open settings!');
       },
    },
    computed: {
@@ -111,7 +126,7 @@ export default {
 <style scoped>
 .v-speed-dial {
    position: absolute;
-   z-index: 1000;
+   z-index: 2;
 }
 
 .v-btn--floating {
