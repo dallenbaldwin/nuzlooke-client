@@ -5,7 +5,7 @@
          :key="encounter.label"
          :encounter="encounter"
          v-on:new-encounter="clickNewEncounter"
-         v-on:edit-encounter="clickEditEncounter"
+         v-on:reset-encounter="clickResetEncounter"
       ></c-route-card>
       <v-dialog v-model="newEncounterDialog" width="500">
          <c-dialog-card
@@ -93,69 +93,15 @@
             </v-slide-y-transition>
          </c-dialog-card>
       </v-dialog>
-      <!-- TODO this needs the party manager. might need to templatize?? -->
-      <v-dialog v-model="editEncounterDialog" width="500">
+      <v-dialog v-model="resetEncounterDialog" width="500">
          <c-dialog-card
-            :props="editEncounterDialogCard"
+            :props="resetEncounterDialogCard"
             v-on:close-dialog="closeDialog"
-            v-on:edit-encounter="confirmEditEncounter"
+            v-on:reset-encounter="confirmResetEncounter"
          >
             <v-slide-y-transition>
                <div v-show="processingEncounter">
                   <c-progress-spinner></c-progress-spinner>
-               </div>
-            </v-slide-y-transition>
-            <v-slide-y-transition>
-               <div v-if="!processingEncounter">
-                  <v-radio-group column v-model="editEncounter.changes.constant">
-                     <v-radio
-                        v-for="(result, i) of Object.values(EncounterResultConst)"
-                        :key="`${result}-${i}`"
-                        :label="result"
-                        :value="result"
-                     ></v-radio>
-                  </v-radio-group>
-                  <v-combobox
-                     v-model="editEncounter.changes.species"
-                     :items="editEncounter.pokemons"
-                     label="Pokemon"
-                     outlined
-                     clearable
-                     :disabled="
-                        editEncounter.changes.constant === EncounterResultConst.AVAILABLE
-                     "
-                  >
-                  </v-combobox>
-                  <v-text-field
-                     label="Nickname"
-                     v-model="editEncounter.changes.nickname"
-                     outlined
-                     clearable
-                     :disabled="
-                        editEncounter.changes.constant !== EncounterResultConst.CAUGHT
-                     "
-                  >
-                  </v-text-field>
-                  <v-slide-y-transition>
-                     <v-card elevation="0" v-show="showEditWarning">
-                        <v-card-title>Warning!</v-card-title>
-                        <v-card-subtitle
-                           >These changes <i>cannot</i> be undone. Disabled fields will be
-                           reset for {{ this.editEncounter.label }}</v-card-subtitle
-                        >
-                        <v-card-text>
-                           <v-switch
-                              label="I understand"
-                              v-model="editEncounter.changes.confirm"
-                              color="warning"
-                              inset
-                           ></v-switch>
-                        </v-card-text>
-                     </v-card>
-                  </v-slide-y-transition>
-                  <p v-for="error of editEncounter.errors" :key="error" class="red--text">
-                     <strong>{{ error }}</strong>
-                  </p>
                </div>
             </v-slide-y-transition>
          </c-dialog-card>
@@ -209,32 +155,11 @@ export default {
             title: 'New Encounter',
             primaryBtn: { action: 'new-encounter' },
          },
-         // edit encounter
-         editEncounter: {
-            changes: {
-               constant: null,
-               species: null,
-               nickname: null,
-               confirm: null,
-               destination: null,
-               replacement: null,
-            },
-            originalValues: {
-               pokemon_id: null,
-               constant: null,
-               species: null,
-               nickname: null,
-            },
-            message: null,
-            id: null,
-            pokemons: null,
-            label: null,
-            errors: null,
-         },
-         editEncounterDialog: false,
-         editEncounterDialogCard: {
-            title: 'Edit Encounter',
-            primaryBtn: { action: 'edit-encounter' },
+         resetEncounterDialog: false,
+         resetEncounter: null,
+         resetEncounterDialogCard: {
+            title: 'Reset Encounter',
+            primaryBtn: { action: 'reset-encounter', color: 'orange', text: 'Reset' },
          },
       };
    },
@@ -249,6 +174,14 @@ export default {
             }
             if (pokemonController.isPC(newVal.result.destination)) {
                this.newEncounter.result.replacement = null;
+            }
+         },
+         deep: true,
+      },
+      editEncounter: {
+         handler(newVal) {
+            if (pokemonController.isPC(newVal.changes.destination)) {
+               this.editEncounter.changes.replacement = null;
             }
          },
          deep: true,
@@ -272,31 +205,6 @@ export default {
                })
             );
       },
-      editConstantIsDifferent() {
-         return (
-            this.editEncounter.changes.constant !==
-            this.editEncounter.originalValues.constant
-         );
-      },
-      editSpeciesIsDifferent() {
-         return (
-            this.editEncounter.changes.species !==
-            this.editEncounter.originalValues.species
-         );
-      },
-      editNicknameIsDifferent() {
-         return (
-            this.editEncounter.changes.nickname !==
-            this.editEncounter.originalValues.nickname
-         );
-      },
-      showEditWarning() {
-         return (
-            this.editConstantIsDifferent ||
-            this.editSpeciesIsDifferent ||
-            this.editNicknameIsDifferent
-         );
-      },
       partyIsFull() {
          return pokemonController.getPartyLength() === PartyState.PARTY_MAX_SIZE;
       },
@@ -313,79 +221,29 @@ export default {
       // filterRoutes() {
       //    alert('i want to filter my routes!');
       // },
-      clickEditEncounter(payload) {
-         this.editEncounterDialogCard.title = `Edit ${payload.label}?`;
-         this.editEncounter.id = payload.id;
-         this.editEncounter.label = payload.label;
-         this.editEncounter.pokemons = payload.pokemons.map(p => p.species);
-         this.editEncounter.changes.constant = payload.result.constant;
-         this.editEncounter.changes.species = payload.result.species;
-         this.editEncounter.changes.nickname = payload.result.nickname;
-         this.editEncounter.originalValues.pokemon_id = payload.result.pokemon_id;
-         this.editEncounter.originalValues.constant = payload.result.constant;
-         this.editEncounter.originalValues.species = payload.result.species;
-         this.editEncounter.originalValues.nickname = payload.result.nickname;
-         this.editEncounter.changes.confirm = false;
-         this.editEncounterDialog = true;
-         this.editEncounter.errors = [];
+      clickResetEncounter(payload) {
+         this.resetEncounterDialogCard.title = `Reset ${payload.label}?`;
+         this.resetEncounterDialogCard.text = `Are you sure you want to reset ${payload.label}? Any associated Pokemon will be removed from your list. This action cannot be undone.`;
+         this.resetEncounterDialog = true;
+         this.resetEncounter = payload;
       },
-      async confirmEditEncounter() {
-         // if (!confirm(util.prettySON(this.editEncounter))) return;
-         if (this.showEditWarning) {
-            if (!this.editEncounter.changes.confirm) return;
-            // errors
-            this.editEncounter.errors = routeController.getEncounterErrors(
-               this.editEncounter.changes,
-               true
-            );
-            if (!util.isEmptyArray(this.editEncounter.errors)) return;
-            this.processingEncounter = true;
-            // check for if it was originally caught
-            let pokemon =
-               pokemonController.getPokemonById(
-                  this.editEncounter.originalValues.pokemon_id
-               ) || {}; // TODO: remove this when the logic is fixed for changing to caught
-            // was it originally caught and is no longer caught?
-            if (
-               routeController.isCaught(this.editEncounter.originalValues.constant) &&
-               this.editConstantIsDifferent
-            ) {
-               pokemonController.removeFromList(pokemon);
-            }
-            // is it now caught and wasn't before or did we change the species?
-            if (
-               (routeController.isCaught(this.editEncounter.changes.constant) &&
-                  this.editConstantIsDifferent) ||
-               this.editSpeciesIsDifferent
-            ) {
-               // convert species string to object for buildUserPokemon
-               this.editEncounter.changes.species = {
-                  text: this.editEncounter.changes.species,
-               };
-               pokemon = await pokeapiController.buildUserPokemon(
-                  this.editEncounter.changes
-               );
-            }
-            // did the nickname change?
-            if (this.editNicknameIsDifferent) {
-               pokemon.nickname = this.editEncounter.changes.nickname;
-            }
-            if (
-               routeController.isFledFainted(this.editEncounter.changes.constant) ||
-               routeController.isAvailable(this.editEncounter.changes.constant)
-            ) {
-               pokemon.nickname = null;
-            }
-            const encounter = routeController.getEncounterById(this.editEncounter.id);
-            encounter.result.species = pokemon.species;
-            encounter.result.constant = this.editEncounter.changes.constant;
-            encounter.result.sprite_url = pokemon.sprite_url;
-            encounter.result.nickname = pokemon.nickname;
-            routeController.updateEncounterInStore(encounter);
-            await gameController.updateEncountersAndPokemonsInDB();
-            userController.updateSnapshotPartyUrls(this.game.id);
-            await userController.updateUserGames();
-         }
+      async confirmResetEncounter() {
+         if (!confirm(util.prettySON(this.resetEncounter))) return;
+         this.processingEncounter = true;
+         let pokemon = pokemonController.getPokemonById(
+            this.resetEncounter.result.pokemon_id
+         );
+         pokemonController.removeFromList(pokemon);
+         const encounter = routeController.getEncounterById(this.resetEncounter.id);
+         encounter.result.pokemon_id = null;
+         encounter.result.species = null;
+         encounter.result.constant = EncounterResultConst.AVAILABLE;
+         encounter.result.sprite_url = null;
+         encounter.result.nickname = null;
+         routeController.updateEncounterInStore(encounter);
+         await gameController.updateEncountersAndPokemonsInDB();
+         userController.updateSnapshotPartyUrls(this.game.id);
+         await userController.updateUserGames();
          this.closeDialog();
       },
       clickNewEncounter(payload) {
@@ -438,8 +296,10 @@ export default {
                );
                replacement.party_state = PartyState.PC;
                pokemonController.updatePokemonInStore(replacement);
-            } else {
+            } else if (!this.showPartyManagerOptions) {
                newPokemon.party_state = PartyState.PARTY;
+            } else {
+               newPokemon.party_state = PartyState.PC;
             }
             pokemonController.pushNewPokemon(newPokemon);
          }
@@ -451,7 +311,7 @@ export default {
       },
       closeDialog() {
          this.newEncounterDialog = false;
-         this.editEncounterDialog = false;
+         this.resetEncounterDialog = false;
          this.processingEncounter = false;
       },
    },

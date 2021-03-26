@@ -37,13 +37,14 @@
       </div>
       <v-card-actions class="pt-0 pb-0 mb-2">
          <v-spacer></v-spacer>
-         <v-btn text @click="emitNewEncounter" v-if="isAvailable">
+         <!-- TODO make all buttons outlined -->
+         <v-btn text @click="emitNewEncounter" v-if="isAvailable" outlined>
             <v-icon color="green" dark>{{ Icons.CONTROLS.EXCLAIM }}</v-icon>
-            New Encounter
+            Encounter
          </v-btn>
-         <v-btn text @click="emitEditEncounter" v-if="!isAvailable">
-            <v-icon color="orange" dark>{{ Icons.CONTROLS.EDIT }}</v-icon>
-            Edit Encounter
+         <v-btn text @click="emitResetEncounter" v-if="!isAvailable" outlined>
+            <v-icon color="orange" dark>{{ Icons.CONTROLS.EXCLAIM }}</v-icon>
+            Reset
          </v-btn>
       </v-card-actions>
    </v-card>
@@ -67,8 +68,8 @@ export default {
       emitNewEncounter() {
          this.$emit('new-encounter', this.encounter);
       },
-      emitEditEncounter() {
-         this.$emit('edit-encounter', this.encounter);
+      emitResetEncounter() {
+         this.$emit('reset-encounter', this.encounter);
       },
    },
    computed: {

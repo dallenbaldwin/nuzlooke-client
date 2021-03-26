@@ -3,6 +3,7 @@ import RuleCodes from '../constants/RuleCodes.js';
 import EncounterResultConst from '../constants/EncounterResultConst.js';
 import * as util from '../util/util.js';
 import * as rulesController from '../controllers/rules.js';
+import * as pokemonController from '../controllers/pokemon.js';
 
 export const getEncounterById = id => {
    return store.state.game.encounters.find(e => id === e.id);
@@ -34,6 +35,12 @@ export const getEncounterErrors = (results, update = false) => {
       }
       if (util.isUndefined(species)) {
          errors.push(`You must select a Pokemon!`);
+      }
+      if (
+         pokemonController.isParty(results.destination) &&
+         util.isUndefined(results.replacement)
+      ) {
+         errors.push(`You must select a Party Member!`);
       }
    } else if (isAvailable(results.constant) && !update) {
       if (!util.isUndefined(species)) {
