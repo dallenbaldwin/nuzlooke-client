@@ -19,6 +19,5 @@ export const pushNewPokemon = newPokemon => {
 };
 
 export const removeFromList = existingPokemon => {
-   console.log(existingPokemon);
    store.commit('removePokemonFromPokemons', existingPokemon);
 };
