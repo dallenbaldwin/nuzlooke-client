@@ -38,11 +38,11 @@
       <v-card-actions class="pt-0 pb-0 mb-2">
          <v-spacer></v-spacer>
          <!-- TODO make all buttons outlined -->
-         <v-btn text @click="emitNewEncounter" v-if="isAvailable" outlined>
+         <v-btn text @click="emitNewEncounter" v-if="isAvailable">
             <v-icon color="green" dark>{{ Icons.CONTROLS.EXCLAIM }}</v-icon>
             Encounter
          </v-btn>
-         <v-btn text @click="emitResetEncounter" v-if="!isAvailable" outlined>
+         <v-btn text @click="emitResetEncounter" v-if="!isAvailable">
             <v-icon color="orange" dark>{{ Icons.CONTROLS.EXCLAIM }}</v-icon>
             Reset
          </v-btn>
