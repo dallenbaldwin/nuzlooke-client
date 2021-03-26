@@ -8,9 +8,8 @@ export const getEncounterById = id => {
    return store.state.game.encounters.find(e => id === e.id);
 };
 
-// FIXME this isn't by id anymore
-export const updateEncounterById = encounter => {
-   store.commit('updateEncounterById', { encounter: encounter });
+export const updateEncounterInStore = encounter => {
+   store.commit('updateEncounter', { encounter: encounter });
 };
 
 export const isAvailable = constant => constant === EncounterResultConst.AVAILABLE;

@@ -381,8 +381,8 @@ export default {
             encounter.result.constant = this.editEncounter.changes.constant;
             encounter.result.sprite_url = pokemon.sprite_url;
             encounter.result.nickname = pokemon.nickname;
-            routeController.updateEncounterById(encounter);
-            await gameController.updateEncountersAndPokemons();
+            routeController.updateEncounterInStore(encounter);
+            await gameController.updateEncountersAndPokemonsInDB();
             userController.updateSnapshotPartyUrls(this.game.id);
             await userController.updateUserGames();
          }
@@ -437,14 +437,14 @@ export default {
                   this.newEncounter.result.replacement.value
                );
                replacement.party_state = PartyState.PC;
-               pokemonController.updatePokemonById(replacement);
+               pokemonController.updatePokemonInStore(replacement);
             } else {
                newPokemon.party_state = PartyState.PARTY;
             }
             pokemonController.pushNewPokemon(newPokemon);
          }
-         routeController.updateEncounterById(selectedEncounter);
-         await gameController.updateEncountersAndPokemons();
+         routeController.updateEncounterInStore(selectedEncounter);
+         await gameController.updateEncountersAndPokemonsInDB();
          userController.updateSnapshotPartyUrls(this.game.id);
          await userController.updateUserGames();
          this.closeDialog();

@@ -36,11 +36,11 @@ export default new Vuex.Store({
       exitGame(state) {
          state.game = null;
       },
-      updateEncounterById(state, payload) {
+      updateEncounter(state, payload) {
          const i = state.game.encounters.findIndex(e => e.id === payload.id);
          if (i !== -1) state.game.encounters.splice(i, 1, payload);
       },
-      updatePokemonById(state, payload) {
+      updatePokemon(state, payload) {
          const i = state.game.pokemons.findIndex(p => p.id === payload.id);
          if (i !== -1) state.game.pokemons.splice(i, 1, payload);
       },

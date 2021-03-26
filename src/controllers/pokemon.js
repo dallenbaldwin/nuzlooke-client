@@ -10,9 +10,8 @@ export const getPartyLength = () =>
 
 export const getPokemonById = id => store.state.game.pokemons.find(p => p.id === id);
 
-// FIXME remove the id part of it...
-export const updatePokemonById = pokemon => {
-   store.commit('updatePokemonById', pokemon);
+export const updatePokemonInStore = pokemon => {
+   store.commit('updatePokemon', pokemon);
 };
 
 export const pushNewPokemon = newPokemon => {
