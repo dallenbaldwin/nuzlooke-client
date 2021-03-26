@@ -37,7 +37,6 @@
       </div>
       <v-card-actions class="pt-0 pb-0 mb-2">
          <v-spacer></v-spacer>
-         <!-- TODO make all buttons outlined -->
          <v-btn text @click="emitNewEncounter" v-if="isAvailable">
             <v-icon color="green" dark>{{ Icons.CONTROLS.EXCLAIM }}</v-icon>
             Encounter

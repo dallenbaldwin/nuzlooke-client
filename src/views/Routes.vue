@@ -86,9 +86,12 @@
                         </v-card-text>
                      </v-card>
                   </v-slide-y-transition>
-                  <p v-for="error of newEncounter.errors" :key="error" class="red--text">
-                     <strong>{{ error }}</strong>
-                  </p>
+                  <c-errors
+                     v-for="(error, i) of newEncounter.errors"
+                     :key="i"
+                     :error="error"
+                  >
+                  </c-errors>
                </div>
             </v-slide-y-transition>
          </c-dialog-card>
@@ -106,7 +109,7 @@
             </v-slide-y-transition>
          </c-dialog-card>
       </v-dialog>
-      <pre>{{ prettySON(game.encounters) }}</pre>
+      <!-- <pre>{{ prettySON(game.encounters) }}</pre> -->
    </v-row>
 </template>
 
@@ -114,6 +117,7 @@
 import ProgressSpinner from '../components/ProgressSpinner.vue';
 import RouteCard from '../components/RouteCard.vue';
 import DialogCard from '../components/DialogCard.vue';
+import Errors from '../components/Errors.vue';
 import EncounterResult from '../models/EncounterResult.js';
 import EncounterResultConst from '../constants/EncounterResultConst.js';
 import RuleCodes from '../constants/RuleCodes.js';
@@ -132,6 +136,7 @@ export default {
       'c-dialog-card': DialogCard,
       'c-route-card': RouteCard,
       'c-progress-spinner': ProgressSpinner,
+      'c-errors': Errors,
    },
    data() {
       return {
@@ -155,6 +160,7 @@ export default {
             title: 'New Encounter',
             primaryBtn: { action: 'new-encounter' },
          },
+         // reset encounter
          resetEncounterDialog: false,
          resetEncounter: null,
          resetEncounterDialogCard: {
@@ -178,13 +184,11 @@ export default {
          },
          deep: true,
       },
-      editEncounter: {
-         handler(newVal) {
-            if (pokemonController.isPC(newVal.changes.destination)) {
-               this.editEncounter.changes.replacement = null;
-            }
-         },
-         deep: true,
+      showPartyManagerOptions(newVal) {
+         if (newVal === false) {
+            this.newEncounter.result.destination = null;
+            this.newEncounter.result.replacement = null;
+         }
       },
    },
    computed: {
@@ -209,12 +213,8 @@ export default {
          return pokemonController.getPartyLength() === PartyState.PARTY_MAX_SIZE;
       },
       showPartyManagerOptions() {
-         const nickname =
-            !util.isUndefined(this.newEncounter.result.nickname) ||
-            !rulesController.isActive(RuleCodes.USE_NICKNAMES.code);
          const caught = routeController.isCaught(this.newEncounter.result.constant);
-         const species = !util.isUndefined(this.newEncounter.result.species);
-         return this.partyIsFull && nickname && caught && species;
+         return this.partyIsFull && caught;
       },
    },
    methods: {
@@ -228,7 +228,6 @@ export default {
          this.resetEncounter = payload;
       },
       async confirmResetEncounter() {
-         if (!confirm(util.prettySON(this.resetEncounter))) return;
          this.processingEncounter = true;
          let pokemon = pokemonController.getPokemonById(
             this.resetEncounter.result.pokemon_id
