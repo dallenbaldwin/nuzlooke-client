@@ -53,7 +53,7 @@ export default {
          tabs: [
             { label: 'Pokemon', icon: Icons.PAGES.POKEMON },
             { label: 'Routes', icon: Icons.PAGES.ROUTES },
-            { label: 'Gyms', icon: Icons.PAGES.GYM },
+            { label: 'Gyms', icon: Icons.PAGES.GYMS },
             { label: 'Rules', icon: Icons.PAGES.RULES },
          ],
       };

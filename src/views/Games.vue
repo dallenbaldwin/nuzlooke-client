@@ -339,7 +339,7 @@ export default {
                label: 'Gyms',
                mobileRoute: Pages.GYMS,
                desktopRoute: TabMap.GYMS,
-               icon: Icons.PAGES.GYM,
+               icon: Icons.PAGES.GYMS,
             },
             {
                label: 'Rules',

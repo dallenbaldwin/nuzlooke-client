@@ -1,5 +1,5 @@
 <template>
-   <div>
+   <v-container>
       <v-app-bar elevation="1" bottom app v-if="mobile()">
          <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
          <v-spacer></v-spacer>
@@ -70,7 +70,7 @@
                </v-combobox></div
          ></c-dialog-card>
       </v-dialog>
-   </div>
+   </v-container>
 </template>
 
 <script>
@@ -80,6 +80,8 @@ import * as gameServices from '../services/game.js';
 import * as userServices from '../services/user.js';
 import APIResponse from '../models/APIResponse.js';
 import NewGame from '../models/NewGame.js';
+import Icons from '../constants/Icons';
+import * as util from '../util/util';
 
 export default {
    name: 'NavDrawer',
@@ -94,51 +96,50 @@ export default {
          outGameLinks: ['Sign Out', 'Create Game'],
          loggedOutLinks: ['Home', 'Sign In', 'Register'],
          links: [
-            // FIXME: use constants here
             {
                label: 'Home',
-               icon: 'mdi-home',
+               icon: Icons.PAGES.HOME,
                route: 'home',
             },
             {
                label: 'Sign In',
-               icon: 'mdi-login',
+               icon: Icons.PAGES.LOGIN,
                route: 'login',
             },
             {
                label: 'Register',
-               icon: 'mdi-account',
+               icon: Icons.PAGES.REGISTER,
                route: 'register',
             },
             {
                label: 'Sign Out',
-               icon: 'mdi-logout',
+               icon: Icons.PAGES.LOGOUT,
                route: 'home',
                action: 'logout',
             },
             {
                label: 'Pokemon',
+               icon: Icons.PAGES.POKEMON,
                route: 'pokemon',
-               icon: 'mdi-pokeball',
             },
             {
                label: 'Routes',
+               icon: Icons.PAGES.ROUTES,
                route: 'routes',
-               icon: 'mdi-routes',
             },
             {
                label: 'Gyms',
+               icon: Icons.PAGES.GYMS,
                route: 'gyms',
-               icon: 'mdi-domain',
             },
             {
                label: 'Rules',
+               icon: Icons.PAGES.RULES,
                route: 'rules',
-               icon: 'mdi-book',
             },
             {
                label: 'Games',
-               icon: 'mdi-format-list-bulleted',
+               icon: Icons.PAGES.GAMES,
                route: 'games',
                action: 'exit-game',
             },
@@ -167,16 +168,16 @@ export default {
          if (link.action) {
             this.reactToAction(link.action);
          } else if (this.inGameRoutes.includes(link.route)) {
-            this.navigate({ name: link.route, params: { gameId: this.game.id } });
+            util.navigate({ name: link.route, params: { gameId: this.game.id } });
          } else {
-            this.navigate({ name: link.route });
+            util.navigate({ name: link.route });
          }
       },
       reactToAction(action) {
          if (action === 'logout') {
-            this.logout();
+            util.logout();
          } else if (action === 'exit-game') {
-            this.exitGame();
+            util.exitGame();
          }
       },
       editUsername() {
@@ -204,7 +205,7 @@ export default {
                games: this.games,
             });
             this.$store.commit('selectGame', createdGame);
-            this.navigate({
+            util.navigate({
                name: 'routes',
                params: { gameId: createdGame.id },
             });

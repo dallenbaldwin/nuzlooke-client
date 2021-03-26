@@ -19,7 +19,7 @@ export default Object.freeze({
    },
    PAGES: {
       POKEMON: 'mdi-pokeball',
-      GYM: 'mdi-pokemon-go',
+      GYMS: 'mdi-pokemon-go',
       ROUTES: 'mdi-routes',
       RULES: 'mdi-gavel',
       LOGOUT: 'mdi-logout',

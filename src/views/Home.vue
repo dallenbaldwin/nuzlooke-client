@@ -85,7 +85,7 @@ export default {
             },
             {
                text: 'Gym Reference',
-               icon: Icons.PAGES.GYM,
+               icon: Icons.PAGES.GYMS,
             },
          ],
       };
