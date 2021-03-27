@@ -1,18 +1,17 @@
 <template>
    <v-card>
       <v-card-title class="headline grey lighten-2"> {{ props.title }}</v-card-title>
-
       <v-card-text>
          <div v-if="props.text" class="mt-3 mb-3">{{ props.text }}</div>
          <slot></slot>
       </v-card-text>
-
       <v-divider></v-divider>
-
       <v-card-actions>
          <v-spacer></v-spacer>
+         <!-- these buttons are too involved to use the custom button -->
          <v-btn v-if="props.primaryBtn" text @click="action(primaryBtn.action)">
             <v-icon
+               class="mr-1"
                :dark="primaryBtn.color === 'dark'"
                :color="primaryBtn.color || 'success'"
             >
@@ -22,6 +21,7 @@
          </v-btn>
          <v-btn v-if="props.secondaryBtn" text @click="action(secondaryBtn.action)">
             <v-icon
+               class="mr-1"
                :dark="secondaryBtn.color === 'dark'"
                :color="secondaryBtn.color || 'red'"
             >
@@ -30,7 +30,11 @@
             {{ secondaryBtn.text || 'Delete' }}
          </v-btn>
          <v-btn v-if="!props.noCancel" text @click="close">
-            <v-icon :dark="!props.cancelBtn" :color="cancelBtn.color || undefined">
+            <v-icon
+               class="mr-1"
+               :dark="!props.cancelBtn"
+               :color="cancelBtn.color || undefined"
+            >
                {{ cancelBtn.icon || Icons.CONTROLS.CLOSE }}
             </v-icon>
             {{ cancelBtn.text || 'Cancel' }}

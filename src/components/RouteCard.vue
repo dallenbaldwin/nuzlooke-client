@@ -38,14 +38,22 @@
          </div>
          <v-card-actions class="pt-0 pb-0 mb-2">
             <v-spacer></v-spacer>
-            <v-btn text @click="emitNewEncounter" v-if="isAvailable">
-               <v-icon color="green" dark>{{ Icons.CONTROLS.EXCLAIM }}</v-icon>
+            <c-btn
+               v-if="isAvailable"
+               color="green"
+               :icon="Icons.CONTROLS.EXCLAIM"
+               :click="emitNewEncounter"
+            >
                Encounter
-            </v-btn>
-            <v-btn text @click="emitResetEncounter" v-if="!isAvailable">
-               <v-icon color="orange" dark>{{ Icons.CONTROLS.EXCLAIM }}</v-icon>
+            </c-btn>
+            <c-btn
+               v-if="!isAvailable"
+               :click="emitResetEncounter"
+               color="orange"
+               :icon="Icons.CONTROLS.EXCLAIM"
+            >
                Reset
-            </v-btn>
+            </c-btn>
          </v-card-actions>
       </v-card>
    </v-fade-transition>
@@ -54,13 +62,14 @@
 <script>
 import EncounterResultConst from '../constants/EncounterResultConst.js';
 import PokeSprite from '../components/PokeSprite.vue';
-import Icons from '../constants/Icons.js';
+import Button from '../components/Button.vue';
 
 export default {
    name: 'RouteCard',
    props: ['encounter'],
    components: {
       'c-poke-sprite': PokeSprite,
+      'c-btn': Button,
    },
    data() {
       return {};
