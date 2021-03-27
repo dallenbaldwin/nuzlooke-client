@@ -5,6 +5,7 @@ import Pages from '../constants/Pages.js';
 import TabMap from '../constants/TabMap.js';
 import EncounterResultConst from '../constants/EncounterResultConst.js';
 import * as util from '../util/util.js';
+import PokemonType from '../constants/PokemonType.js';
 
 export default {
    data() {
@@ -15,6 +16,7 @@ export default {
          Pages: Pages,
          TabMap: TabMap,
          EncounterResultConst: EncounterResultConst,
+         PokemonType: PokemonType,
       };
    },
    methods: {

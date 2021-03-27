@@ -17,16 +17,11 @@
             <div>
                <v-card-text class="pb-1 pt-0">{{ pokemon.species }}</v-card-text>
                <v-card-text class="pb-1 pt-0 pr-0">
-                  <!-- TODO make this into a component -->
-                  <v-chip
-                     outlined
-                     :ripple="false"
-                     small
-                     class="mx-1"
+                  <c-pokemon-type
                      v-for="(type, i) of pokemon.types"
                      :key="i"
-                     >{{ type }}
-                  </v-chip>
+                     :type="type"
+                  ></c-pokemon-type>
                </v-card-text>
                <v-card-text class="pb-1 pt-0">From: {{ route.label }}</v-card-text>
                <v-card-text
@@ -34,38 +29,13 @@
                   v-if="pokemon.part_state === PartyState.GRAVEYARD"
                   >{{ pokemon.fainted_message }}</v-card-text
                >
-               <!-- TODO make button components -->
-               <v-btn
-                  text
-                  v-if="pokemon.party_state === PartyState.PARTY"
-                  @click="clickEvolve"
-               >
-                  <v-icon color="primary" dark>{{ Icons.CONTROLS.EVOLVE }}</v-icon
-                  >Evolve</v-btn
-               >
-               <v-btn
-                  text
-                  v-if="pokemon.party_state === PartyState.PARTY"
-                  @click="clickStorage"
-               >
-                  <v-icon dark>{{ Icons.CONTROLS.STORAGE }}</v-icon
-                  >To Storage</v-btn
-               >
-               <v-btn
-                  text
-                  v-if="pokemon.party_state === PartyState.PARTY"
-                  @click="clickGraveyard"
-               >
-                  <v-icon dark>{{ Icons.CONTROLS.TOMBSTONE }}</v-icon>
-                  To Graveyard</v-btn
-               >
-               <v-btn
-                  text
-                  v-if="pokemon.party_state === PartyState.PC"
-                  @click="clickParty"
-               >
-                  <v-icon dark>{{ Icons.PAGES.POKEMON }}</v-icon
-                  >To Party</v-btn
+               <c-btn
+                  v-for="button of currentButtons"
+                  :key="button.label"
+                  :color="button.color"
+                  :icon="button.icon"
+                  :click="button.action"
+                  >{{ button.label }}</c-btn
                >
             </div>
          </v-card-text>
@@ -77,18 +47,57 @@
 import * as routeController from '../controllers/route';
 import * as pokemonController from '../controllers/pokemon';
 import PokeSprite from './PokeSprite.vue';
+import PokemonType from './PokemonType.vue';
+import Button from './Button.vue';
+import Icons from '../constants/Icons';
+import PartyState from '../constants/PartyState';
 
 export default {
    name: 'PokemonCard',
    components: {
       'c-poke-sprite': PokeSprite,
+      'c-pokemon-type': PokemonType,
+      'c-btn': Button,
    },
    props: {
       pokemon: { required: true },
    },
+   data() {
+      return {
+         buttons: [
+            {
+               label: 'Evolve',
+               color: 'primary',
+               icon: Icons.CONTROLS.EVOLVE,
+               action: this.clickEvolve,
+               state: PartyState.PARTY,
+            },
+            {
+               label: 'To Storage',
+               icon: Icons.CONTROLS.STORAGE,
+               action: this.clickStorage,
+               state: PartyState.PARTY,
+            },
+            {
+               label: 'To Graveyard',
+               icon: Icons.CONTROLS.TOMBSTONE,
+               action: this.clickGraveyard,
+               state: PartyState.PARTY,
+            },
+            {
+               label: 'To Party',
+               icon: Icons.PAGES.POKEMON,
+               action: this.clickParty,
+               state: PartyState.PC,
+            },
+         ],
+      };
+   },
    methods: {
       clickEvolve() {
-         alert(`i want to evolve ${this.pokemon.nickname}!`);
+         alert(
+            `i want to evolve ${this.pokemon.nickname} to ${this.pokemon.evolves_to}!`
+         );
       },
       clickStorage() {
          pokemonController.sendToStorage(this.pokemon);
@@ -103,6 +112,9 @@ export default {
    computed: {
       route() {
          return routeController.getRouteByPokemonId(this.pokemon.id);
+      },
+      currentButtons() {
+         return this.buttons.filter(b => b.state === this.pokemon.party_state);
       },
    },
 };
