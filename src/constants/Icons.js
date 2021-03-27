@@ -14,9 +14,10 @@ export default Object.freeze({
       DELETE: 'mdi-minus-circle',
       CONFIRM: 'mdi-check-circle',
       TOMBSTONE: 'mdi-grave-stone',
-      STORAGE: 'mdi-archive',
+      STORAGE: 'mdi-monitor',
       PLUS: 'mdi-plus',
       LOGOUT: 'mdi-logout',
+      EVOLVE: 'mdi-arrow-up-circle',
    },
    PAGES: {
       POKEMON: 'mdi-pokeball',
