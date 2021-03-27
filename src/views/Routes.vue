@@ -1,5 +1,5 @@
 <template>
-   <v-row class="d-flex justify-center align-content flex-row">
+   <v-row class="d-flex justify-center align-content flex-row mt-3">
       <c-route-card
          v-for="encounter of game.encounters"
          :key="encounter.label"
