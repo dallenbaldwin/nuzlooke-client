@@ -9,6 +9,10 @@ export const getEncounterById = id => {
    return store.state.game.encounters.find(e => id === e.id);
 };
 
+export const getRouteByPokemonId = id => {
+   return store.state.game.encounters.find(e => e.result.pokemon_id === id);
+};
+
 export const updateEncounterInStore = encounter => {
    store.commit('updateEncounter', { encounter: encounter });
 };
