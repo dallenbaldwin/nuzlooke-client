@@ -71,12 +71,29 @@
                   </v-dialog>
                   <v-container>
                      <v-row class="d-flex justify-end mb-3">
+                        <!-- TODO use custom buttons when you build gamecordians -->
+                        <!-- <c-btn
+                           :click="deleteGame(game.game_id)"
+                           color="red"
+                           :icon="Icons.CONTROLS.DELETE"
+                           >Delete</c-btn
+                        >
+                        <c-btn
+                           :click="editGameName(game.game_id)"
+                           color="warning"
+                           :icon="Icons.CONTROLS.EDIT"
+                           >Edit</c-btn
+                        > -->
                         <v-btn text @click="deleteGame(game.game_id)">
-                           <v-icon dark color="red">mdi-minus-circle</v-icon>
+                           <v-icon class="mr-1" dark color="red">{{
+                              Icons.CONTROLS.DELETE
+                           }}</v-icon>
                            Delete
                         </v-btn>
                         <v-btn text @click="editGameName(game.game_id)">
-                           <v-icon dark color="warning">mdi-pencil-circle</v-icon>
+                           <v-icon class="mr-1" dark color="warning">{{
+                              Icons.CONTROLS.EDIT
+                           }}</v-icon>
                            Edit
                         </v-btn>
                      </v-row>
@@ -234,6 +251,7 @@ import SpeedDial from '../components/SpeedDial.vue';
 import DialogCard from '../components/DialogCard.vue';
 import PokeSprite from '../components/PokeSprite.vue';
 import BadgeSprite from '../components/BadgeSprite.vue';
+import Button from '../components/Button.vue';
 import * as gameController from '../controllers/game.js';
 import * as gameServices from '../services/game.js';
 import * as userServices from '../services/user.js';
@@ -246,12 +264,14 @@ import NewGame from '../models/NewGame.js';
 
 export default {
    // TODO: clean up this big boy
+   // TODO you could easily build a Gamecordian component to abstract a lot of this page
    name: 'Games',
    components: {
       'c-poke-spirte': PokeSprite,
       'c-badge-sprite': BadgeSprite,
       'c-speed-dial': SpeedDial,
       'c-dialog-card': DialogCard,
+      'c-btn': Button,
    },
    data() {
       return {
