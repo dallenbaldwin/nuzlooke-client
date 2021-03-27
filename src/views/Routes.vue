@@ -210,7 +210,7 @@ export default {
             );
       },
       partyIsFull() {
-         return pokemonController.getPartyLength() === PartyState.PARTY_MAX_SIZE;
+         return pokemonController.getPartyLength() === pokemonController.PARTY_MAX_SIZE;
       },
       showPartyManagerOptions() {
          const caught = routeController.isCaught(this.newEncounter.result.constant);
@@ -232,7 +232,7 @@ export default {
          let pokemon = pokemonController.getPokemonById(
             this.resetEncounter.result.pokemon_id
          );
-         pokemonController.removeFromList(pokemon);
+         if (pokemon) pokemonController.removeFromList(pokemon);
          const encounter = routeController.getEncounterById(this.resetEncounter.id);
          encounter.result.pokemon_id = null;
          encounter.result.species = null;
