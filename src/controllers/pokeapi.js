@@ -2,25 +2,46 @@ import * as pokeapiServices from '../services/pokeapi.js';
 import UserPokemon from '../models/UserPokemon.js';
 import { errorCatch } from '../util/util.js';
 
-export async function buildUserPokemon(result) {
+export async function buildUserPokemon(species, nickname, partyState) {
    try {
-      // FIXME need to handle situations where the mon is in the middle of the evolution chain (i.e. pikachu evolves from pichu so pichu is the first in the chain)
-      result.species.text = result.species.text.toLowerCase();
-      const pokeData = await pokeapiServices.getPokemonBySpecies(result.species.text);
+      species = species.toLowerCase();
+      const pokeData = await pokeapiServices.getPokemonBySpecies(species);
       const speciesData = await pokeapiServices.get(pokeData.species.url);
       const evoData = await pokeapiServices.get(speciesData.evolution_chain.url);
+      const evolvesTo = getNextEvolution(evoData.chain, species);
+      console.log(evolvesTo);
       return UserPokemon.builder()
          .withSpecies(normalizeKabob(pokeData.species.name))
-         .withNickname(result.nickname)
+         .withNickname(nickname)
+         .withPartyState(partyState)
          .withSpritUrl(pokeData.sprites.front_default)
          .withIconUrl(pokeData.sprites.versions['generation-vii'].icons.front_default)
          .withTypes(pokeData.types.map(t => normalizeKabob(t.type.name)))
-         .withEvolvesTo(evoData.chain.evolves_to.map(e => normalizeKabob(e.species.name)))
+         .withEvolvesTo(evolvesTo)
          .build();
    } catch (err) {
       alert(errorCatch(err));
    }
 }
+
+const getNextEvolution = (chain, currentSpecies) => {
+   // debugger;
+   if (chain.species.name === currentSpecies) {
+      let evolvesTo = chain.evolves_to.map(e => normalizeKabob(e.species.name));
+      return evolvesTo;
+   } else {
+      // don't know why i have to do this...
+      if (chain.evolves_to.length > 1) {
+         chain.evolves_to.forEach(chain => {
+            return getNextEvolution(chain, currentSpecies);
+         });
+      } else if (chain.evolves_to.length == 1) {
+         return getNextEvolution(chain.evolves_to[0], currentSpecies);
+      } else {
+         return;
+      }
+   }
+};
 
 const normalizeKabob = (string = '') =>
    string

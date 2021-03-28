@@ -282,7 +282,9 @@ export default {
             .build();
          // pokeapi and set new user pokemon
          const newPokemon = await pokeapiController.buildUserPokemon(
-            this.newEncounter.result
+            this.newEncounter.result.species.text,
+            this.newEncounter.result.nickname,
+            undefined
          );
          selectedEncounter.result.sprite_url = newPokemon.sprite_url;
          // handle capture situations
