@@ -2,8 +2,10 @@ import PartyState from '../constants/PartyState.js';
 import * as util from '../util/util.js';
 import * as gameServices from '../services/game.js';
 import * as userController from '../controllers/user.js';
+import UserPokemon from '../models/UserPokemon.js';
 import store from '../store/store.js';
 import Icons from '../constants/Icons.js';
+import * as pokeapiController from './pokeapi.js';
 
 export const PARTY_MAX_SIZE = 6;
 
@@ -18,11 +20,21 @@ export const getPartyLength = () =>
 
 export const getPokemonById = id => store.state.game.pokemons.find(p => p.id === id);
 
-export const updatePokemonsAndGame = pokemon => {
+export const evolvePokemon = async (pokemon, evolvesTo) => {
+   const evolved = await pokeapiController.buildUserPokemon(
+      evolvesTo,
+      pokemon.nickname,
+      pokemon.party_state
+   );
+   evolved.id = pokemon.id;
+   await updatePokemonsAndGame(evolved);
+};
+
+export const updatePokemonsAndGame = async pokemon => {
    updatePokemonInStore(pokemon);
    updatePokemonsInDB();
    userController.updateSnapshotPartyUrls(store.state.game.id);
-   userController.updateUserGames();
+   await userController.updateUserGames();
 };
 
 export const sendToStorage = pokemon => {
@@ -33,6 +45,11 @@ export const sendToStorage = pokemon => {
 export const sendToParty = pokemon => {
    pokemon.party_state = PartyState.PARTY;
    updatePokemonsAndGame(pokemon);
+};
+
+export const sendToGraveyard = async pokemon => {
+   pokemon.party_state = PartyState.GRAVEYARD;
+   await updatePokemonsAndGame(pokemon);
 };
 
 export const updatePokemonInStore = pokemon => {

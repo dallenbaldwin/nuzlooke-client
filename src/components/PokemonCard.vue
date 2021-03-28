@@ -1,8 +1,8 @@
 <template>
    <v-scale-transition>
       <v-card
-         min-width="325"
-         max-width="325"
+         min-width="350"
+         max-width="350"
          elevation="1"
          outlined
          class="align-self-start mt-3 mx-3"
@@ -16,7 +16,7 @@
             ></c-poke-sprite>
             <div>
                <v-card-text class="pb-1 pt-0">{{ pokemon.species }}</v-card-text>
-               <v-card-text class="pb-1 pt-0 pr-0">
+               <v-card-text class="pb-1 pt-0">
                   <c-pokemon-type
                      v-for="(type, i) of pokemon.types"
                      :key="i"
@@ -26,7 +26,7 @@
                <v-card-text class="pb-1 pt-0">From: {{ route.label }}</v-card-text>
                <v-card-text
                   class="pb-1 pt-0"
-                  v-if="pokemon.part_state === PartyState.GRAVEYARD"
+                  v-if="pokemon.party_state === PartyState.GRAVEYARD"
                   >{{ pokemon.fainted_message }}</v-card-text
                >
                <c-btn
@@ -95,18 +95,19 @@ export default {
    },
    methods: {
       clickEvolve() {
-         alert(
-            `i want to evolve ${this.pokemon.nickname} to ${this.pokemon.evolves_to}!`
-         );
+         this.$emit('click-evolve', this.pokemon);
       },
       clickStorage() {
          pokemonController.sendToStorage(this.pokemon);
       },
       clickGraveyard() {
-         alert(`i want to kill ${this.pokemon.nickname}`);
+         this.$emit('click-graveyard', this.pokemon);
       },
       clickParty() {
          pokemonController.sendToParty(this.pokemon);
+      },
+      canEvolve() {
+         return this.pokemon.evolves_to.filter(e => e).length > 0;
       },
    },
    computed: {
@@ -114,7 +115,9 @@ export default {
          return routeController.getRouteByPokemonId(this.pokemon.id);
       },
       currentButtons() {
-         return this.buttons.filter(b => b.state === this.pokemon.party_state);
+         return this.buttons
+            .filter(b => b.state === this.pokemon.party_state)
+            .filter(b => (this.canEvolve() ? true : b.label !== 'Evolve'));
       },
    },
 };

@@ -1,11 +1,5 @@
 <template>
-   <v-chip
-      outlined
-      :ripple="false"
-      :color="PokemonType[upperType].color"
-      small
-      class="mr-1 black--text"
-   >
+   <v-chip outlined :color="PokemonType[upperType].color" small class="mr-1">
       <v-img
          class="mr-1"
          :lazy-src="Icons.MISC.POKEBALL"
