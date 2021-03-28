@@ -37,6 +37,7 @@ export const updatePokemonsAndGame = async pokemon => {
    await userController.updateUserGames();
 };
 
+// TODO shouldn't be able to send to storage if party length === 1
 export const sendToStorage = pokemon => {
    pokemon.party_state = PartyState.PC;
    updatePokemonsAndGame(pokemon);
