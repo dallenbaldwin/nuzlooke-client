@@ -94,6 +94,7 @@ export default {
       };
    },
    methods: {
+      // TODO can I keep these emits inside the card???
       clickEvolve() {
          this.$emit('click-evolve', this.pokemon);
       },
@@ -109,6 +110,9 @@ export default {
       canEvolve() {
          return this.pokemon.evolves_to.filter(e => e).length > 0;
       },
+      canSendToPC() {
+         return pokemonController.getPartyLength() !== 1;
+      },
    },
    computed: {
       route() {
@@ -117,6 +121,7 @@ export default {
       currentButtons() {
          return this.buttons
             .filter(b => b.state === this.pokemon.party_state)
+            .filter(b => (this.canSendToPC() ? true : b.label !== 'To Storage'))
             .filter(b => (this.canEvolve() ? true : b.label !== 'Evolve'));
       },
    },

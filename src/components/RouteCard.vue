@@ -75,6 +75,7 @@ export default {
       return {};
    },
    methods: {
+      // TODO can i avoid emitting?
       emitNewEncounter() {
          this.$emit('new-encounter', this.encounter);
       },
