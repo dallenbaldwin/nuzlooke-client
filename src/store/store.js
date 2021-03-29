@@ -21,6 +21,9 @@ export default new Vuex.Store({
          state.username = payload.username;
          state.userGames = payload.games;
       },
+      setUsername(state, payload) {
+         state.username = payload;
+      },
       setUserGames(state, payload) {
          state.userGames = payload;
       },
@@ -35,6 +38,17 @@ export default new Vuex.Store({
       },
       exitGame(state) {
          state.game = null;
+      },
+      updateGameLabel(state, payload) {
+         let userGame = state.userGames.find(ug => ug.game_id === payload.gameId);
+         userGame.label = payload.label;
+      },
+      deleteExistingGame(state, payload) {
+         const i = state.userGames.findIndex(g => g.game_id === payload);
+         if (i !== -1) state.userGames.splice(i, 1);
+      },
+      addGameSnapshot(state, payload) {
+         state.userGames.push(payload);
       },
       updateEncounter(state, payload) {
          const i = state.game.encounters.findIndex(e => e.id === payload.id);
