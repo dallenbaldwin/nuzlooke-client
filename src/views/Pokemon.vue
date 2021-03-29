@@ -191,6 +191,7 @@ export default {
          else if (pokemonController.isGraveyard(partyState)) return this.graveyard;
       },
       clickEvolve(pokemon) {
+         this.evolveData.evolvesTo = null;
          this.evolveData.pokemon = pokemon;
          this.evolveData.dialogCard.title = `Evolve ${pokemon.nickname}?`;
          this.evolveData.dialogCard.text = `Are you sure you want to evolve ${pokemon.nickname}? This action cannot be undone!`;

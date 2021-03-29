@@ -4,7 +4,7 @@
          open-on-hover
          top
          right
-         direction="bottom"
+         direction="left"
          transition="scale-transition"
       >
          <template v-slot:activator>
@@ -19,7 +19,7 @@
             :key="link.label"
             dark
             @click="linkActions(link)"
-            class="mb-5"
+            class="mx-6"
          >
             <v-icon>{{ link.icon }}</v-icon>
             <div class="c-fab-bottom-text">{{ link.label }}</div>
@@ -30,25 +30,81 @@
             :key="action.label"
             dark
             @click="linkActions(action)"
-            class="mb-5"
+            class="mx-6"
             :color="action.color"
          >
             <v-icon>{{ action.icon }}</v-icon>
             <div class="c-fab-bottom-text">{{ action.label }}</div>
          </v-btn>
       </v-speed-dial>
+      <v-dialog v-model="settingsDialog.flag" width="500">
+         <c-dialog-card
+            :props="settingsDialog.dialogCard"
+            v-on:close-dialog="closeDialog"
+            v-on:save-settings="saveSettings"
+         >
+            <v-fade-transition>
+               <c-progress-spinner
+                  v-show="settingsDialog.processing"
+               ></c-progress-spinner>
+            </v-fade-transition>
+            <v-fade-transition>
+               <div v-show="!settingsDialog.processing">
+                  <v-text-field
+                     clearable
+                     outlined
+                     label="Username"
+                     v-model="settingsDialog.options.username"
+                  >
+                  </v-text-field>
+                  <c-error
+                     v-for="(error, i) of settingsDialog.errors.errors"
+                     :key="i"
+                     :error="error"
+                  ></c-error>
+               </div>
+            </v-fade-transition>
+         </c-dialog-card>
+      </v-dialog>
    </div>
 </template>
 
 <script>
+import DialogCard from './DialogCard.vue';
+import ProgressSpinner from './ProgressSpinner.vue';
+import Errors from './Errors.vue';
 import Icons from '../constants/Icons';
 import Pages from '../constants/Pages';
+import * as appController from '../controllers/application.js';
 
 export default {
    name: 'SpeedDial',
    props: ['actions'],
+   components: {
+      'c-dialog-card': DialogCard,
+      'c-progress-spinner': ProgressSpinner,
+      'c-error': Errors,
+   },
    data() {
       return {
+         settingsDialog: {
+            flag: false,
+            processing: false,
+            options: {
+               username: null,
+            },
+            errors: {
+               errors: [],
+               hasErrors: null,
+            },
+            dialogCard: {
+               title: 'Application Settings',
+               text: 'Edit application settings',
+               primaryBtn: {
+                  action: 'save-settings',
+               },
+            },
+         },
          links: [
             {
                label: 'Home',
@@ -71,7 +127,6 @@ export default {
             {
                label: 'Settings',
                icon: Icons.CONTROLS.SETTINGS,
-               color: 'orange',
                action: 'open-settings',
                requiresLoginAccess: true,
             },
@@ -92,6 +147,27 @@ export default {
       };
    },
    methods: {
+      closeDialog() {
+         this.settingsDialog.options = {};
+         this.settingsDialog.errors = {};
+         this.settingsDialog.flag = false;
+         this.settingsDialog.processing = false;
+      },
+      openSettings() {
+         this.settingsDialog.options.username = this.username;
+         this.settingsDialog.flag = true;
+      },
+      async saveSettings() {
+         // validate settings
+         this.settingsDialog.errors = appController.getValidationErrors(
+            this.settingsDialog.options
+         );
+         if (this.settingsDialog.errors.hasErrors) return;
+         // save settings
+         this.settingsDialog.processing = true;
+         await appController.saveSettings(this.settingsDialog.options);
+         this.closeDialog();
+      },
       linkActions(link) {
          if (link.action) this.$emit(link.action);
          if (link.action === 'open-settings') {
@@ -101,10 +177,6 @@ export default {
          // hacky fix
          if (link.route && link.route !== Pages.GAMES)
             this.navigate({ name: link.route });
-      },
-      openSettings() {
-         // TODO user settings
-         alert('open settings!');
       },
    },
    computed: {

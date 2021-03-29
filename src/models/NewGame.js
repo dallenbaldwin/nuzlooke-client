@@ -1,10 +1,8 @@
 import { arrayify } from '../util/util';
-import Versions from '../constants/Versions.js';
-
 export default class NewGame {
    constructor(label, version, rules) {
       this.label = label;
-      this.version = translateVersion(version);
+      this.version = version;
       this.rules = rules;
    }
    static builder() {
@@ -29,6 +27,3 @@ export default class NewGame {
       return new NewGame(this.label, this.version, this.rules);
    }
 }
-
-export const translateVersion = version =>
-   Object.values(Versions).find(v => v.label === version).key;

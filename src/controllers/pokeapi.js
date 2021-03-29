@@ -9,7 +9,6 @@ export async function buildUserPokemon(species, nickname, partyState) {
       const speciesData = await pokeapiServices.get(pokeData.species.url);
       const evoData = await pokeapiServices.get(speciesData.evolution_chain.url);
       const evolvesTo = getNextEvolution(evoData.chain, species);
-      console.log(evolvesTo);
       return UserPokemon.builder()
          .withSpecies(normalizeKabob(pokeData.species.name))
          .withNickname(nickname)
@@ -30,7 +29,7 @@ const getNextEvolution = (chain, currentSpecies) => {
       let evolvesTo = chain.evolves_to.map(e => normalizeKabob(e.species.name));
       return evolvesTo;
    } else {
-      // don't know why i have to do this...
+      // don't know why i have to do this... it feels REALLY hacky
       if (chain.evolves_to.length > 1) {
          chain.evolves_to.forEach(chain => {
             return getNextEvolution(chain, currentSpecies);
