@@ -6,8 +6,8 @@
             :actions="actions"
             v-if="!mobile()"
             v-on:logout="logout"
-            v-on:filter-games="filterDialog = !filterDialog"
-            v-on:create-game="createGameDialog = !createGameDialog"
+            v-on:filter-games="filter.flag = !filter.flag"
+            v-on:create-game="createGame.flag = !createGame.flag"
          ></c-speed-dial>
       </v-row>
       <v-row class="d-flex flex-column mb-1">
@@ -24,193 +24,52 @@
       </v-row>
       <v-row>
          <v-expansion-panels popout>
-            <v-expansion-panel v-for="game of games" :key="game.id">
-               <v-expansion-panel-header
-                  :expand-icon="toConsoleIcon(game.version.family)"
-                  disable-icon-rotate
-                  class="text-h6"
-                  >{{ game.label }}
-               </v-expansion-panel-header>
-               <v-expansion-panel-content>
-                  <v-dialog v-model="editGameDialog" width="500">
-                     <c-dialog-card
-                        :props="editGameCard"
-                        v-on:close-dialog="closeDialog"
-                        v-on:edit-game="confirmEdits(game.game_id)"
-                     >
-                        <div v-if="editingGame" class="text-center mt-3">
-                           <v-progress-circular
-                              indeterminate
-                              size="100"
-                              color="primary"
-                           ></v-progress-circular>
-                        </div>
-                        <v-text-field
-                           outlined
-                           class="mt-3"
-                           v-model="editGame.label"
-                           label="Name"
-                           clearable
-                        ></v-text-field>
-                     </c-dialog-card>
-                  </v-dialog>
-                  <v-dialog v-model="deleteGameDialog" width="500">
-                     <c-dialog-card
-                        :props="deleteGameCard"
-                        v-on:close-dialog="closeDialog"
-                        v-on:delete-game="confirmDeleteGame(game.game_id)"
-                     >
-                        <div v-if="deletingGame" class="text-center mt-3">
-                           <v-progress-circular
-                              indeterminate
-                              size="100"
-                              color="primary"
-                           ></v-progress-circular>
-                        </div>
-                     </c-dialog-card>
-                  </v-dialog>
-                  <v-container>
-                     <v-row class="d-flex justify-end mb-3">
-                        <!-- TODO use custom buttons when you build gamecordians -->
-                        <!-- <c-btn
-                           :click="deleteGame(game.game_id)"
-                           color="red"
-                           :icon="Icons.CONTROLS.DELETE"
-                           >Delete</c-btn
-                        >
-                        <c-btn
-                           :click="editGameName(game.game_id)"
-                           color="warning"
-                           :icon="Icons.CONTROLS.EDIT"
-                           >Edit</c-btn
-                        > -->
-                        <v-btn text @click="deleteGame(game.game_id)">
-                           <v-icon class="mr-1" dark color="red">{{
-                              Icons.CONTROLS.DELETE
-                           }}</v-icon>
-                           Delete
-                        </v-btn>
-                        <v-btn text @click="editGameName(game.game_id)">
-                           <v-icon class="mr-1" dark color="warning">{{
-                              Icons.CONTROLS.EDIT
-                           }}</v-icon>
-                           Edit
-                        </v-btn>
-                     </v-row>
-                     <v-row class="d-flex justify-space-around">
-                        <div id="box-art">
-                           <div class="mb-1">
-                              {{ game.version.label }}
-                           </div>
-                           <v-img
-                              class="mt-2"
-                              :alt="game.version.label"
-                              :lazy-src="game.version.artwork_url"
-                              :src="game.version.artwork_url"
-                              max-height="150"
-                              max-width="150"
-                              position="center left"
-                              contain
-                           ></v-img>
-                        </div>
-                        <div id="party">
-                           <div class="text mb-1">Party</div>
-                           <div
-                              v-for="(group, i) of ofSix(game.party_icon_urls)"
-                              :key="`${group}-${i}`"
-                              class="d-inline-flex flex-column mr-3"
-                           >
-                              <c-poke-spirte
-                                 v-for="(url, i) of group"
-                                 class="mt-2"
-                                 :key="`${url}-${i}`"
-                                 :src="url"
-                                 outlineColor=""
-                                 size="small"
-                              ></c-poke-spirte>
-                           </div>
-                        </div>
-                        <div id="gym-badges">
-                           <div class="text mb-1">Gym Badges</div>
-                           <div
-                              v-for="(group, i) of ofEight(game.gym_badge_icon_urls)"
-                              :key="`${group}-${i}`"
-                              class="d-inline-flex flex-column mr-3"
-                           >
-                              <c-badge-sprite
-                                 class="mt-2"
-                                 v-for="(url, i) of group"
-                                 :key="`${url}-${i}`"
-                                 :src="url"
-                              ></c-badge-sprite>
-                           </div>
-                        </div>
-                        <div id="game-links">
-                           <div class="text mb-1">Game Links</div>
-                           <div v-for="btn of gameBtns" :key="btn.label">
-                              <div v-if="mobile()">
-                                 <v-btn
-                                    class="mt-2"
-                                    fab
-                                    dark
-                                    small
-                                    @click="toGame(btn.mobileRoute, game.game_id)"
-                                    ><v-icon>{{ btn.icon }}</v-icon></v-btn
-                                 >
-                                 <span class="ml-3">{{ btn.label }}</span>
-                              </div>
-                              <div v-if="!mobile()">
-                                 <v-btn
-                                    class="mt-2"
-                                    fab
-                                    dark
-                                    small
-                                    @click="toGame(btn.desktopRoute, game.game_id)"
-                                    ><v-icon>{{ btn.icon }}</v-icon></v-btn
-                                 >
-                                 <span class="ml-3">{{ btn.label }}</span>
-                              </div>
-                           </div>
-                        </div>
-                     </v-row>
-                  </v-container>
-               </v-expansion-panel-content>
-            </v-expansion-panel>
+            <c-gamecordian
+               v-show="filtered"
+               v-for="game of games"
+               :key="game.id"
+               :game="game"
+            ></c-gamecordian>
          </v-expansion-panels>
       </v-row>
-      <v-dialog v-model="createGameDialog" width="500">
+      <v-dialog v-model="createGame.flag" width="500">
          <c-dialog-card
-            :props="createGameCard"
+            :props="createGame.dialogCard"
             v-on:close-dialog="closeDialog"
             v-on:start-game="startGame"
          >
-            <div v-if="creatingGame" class="text-center mt-3">
-               <v-progress-circular
-                  indeterminate
-                  size="100"
-                  color="primary"
-               ></v-progress-circular>
-            </div>
-            <div class="mt-3" v-if="!creatingGame">
-               <v-text-field
-                  clearable
-                  outlined
-                  v-model="newGame.label"
-                  label="Name"
-               ></v-text-field>
-               <v-combobox
-                  label="Version"
-                  outlined
-                  v-model="newGame.version"
-                  :items="Object.values(Versions).map(v => v.label)"
-               >
-               </v-combobox>
-            </div>
+            <v-fade-transition>
+               <c-progress-spinner v-show="processingGame"></c-progress-spinner>
+            </v-fade-transition>
+            <v-fade-transition>
+               <div class="mt-3" v-show="!processingGame">
+                  <v-text-field
+                     clearable
+                     outlined
+                     v-model="createGame.values.label"
+                     label="Name"
+                  ></v-text-field>
+                  <v-combobox
+                     clearable
+                     label="Version"
+                     outlined
+                     v-model="createGame.values.version"
+                     :items="gameVersions"
+                  >
+                  </v-combobox>
+                  <c-error
+                     v-for="(error, i) of createGame.errors.errors"
+                     :key="i"
+                     :error="error"
+                  >
+                  </c-error>
+               </div>
+            </v-fade-transition>
          </c-dialog-card>
       </v-dialog>
-      <v-dialog v-model="filterDialog" width="500">
+      <v-dialog v-model="filter.flag" width="500">
          <c-dialog-card
-            :props="filterDialogCard"
+            :props="filter.dialogCard"
             v-on:close-dialog="closeDialog"
             v-on:filter-games="confirmFilterOptions"
          >
@@ -218,7 +77,7 @@
                class="mt-3 mb-3"
                label="Name"
                outlined
-               v-model="filterValues.label"
+               v-model="filter.values.label"
                clearable
             ></v-text-field>
             <v-combobox
@@ -226,7 +85,7 @@
                outlined
                :items="Object.values(Versions).map(v => v.label)"
                clearable
-               v-model="filterValues.version"
+               v-model="filter.values.version"
             ></v-combobox>
             <v-combobox
                class="mt-3"
@@ -234,12 +93,12 @@
                outlined
                :items="Object.values(Versions).map(v => v.generation)"
                clearable
-               v-model="filterValues.generation"
+               v-model="filter.values.generation"
             ></v-combobox>
-            <v-radio-group multiple v-model="filterValues.isFinished" row>
+            <v-radio-group multiple v-model="filter.values.finished" row>
                <v-radio label="On Going" color="primary"></v-radio>
                <v-radio label="Finished" color="primary"></v-radio>
-               <v-btn @click="filterValues.isFinished = []">reset</v-btn>
+               <v-btn @click="filter.values.finished = []">reset</v-btn>
             </v-radio-group>
          </c-dialog-card>
       </v-dialog>
@@ -249,251 +108,110 @@
 <script>
 import SpeedDial from '../components/SpeedDial.vue';
 import DialogCard from '../components/DialogCard.vue';
-import PokeSprite from '../components/PokeSprite.vue';
-import BadgeSprite from '../components/BadgeSprite.vue';
-import Button from '../components/Button.vue';
+import Gamecordian from '../components/Gamecordian.vue';
+import Errors from '../components/Errors.vue';
+import ProgressSpinner from '../components/ProgressSpinner.vue';
 import * as gameController from '../controllers/game.js';
-import * as gameServices from '../services/game.js';
-import * as userServices from '../services/user.js';
-import TabMap from '../constants/TabMap.js';
-import Pages from '../constants/Pages.js';
-import Icons from '../constants/Icons.js';
 import * as util from '../util/util.js';
-import APIResponse from '../models/APIResponse.js';
-import NewGame from '../models/NewGame.js';
+import Icons from '../constants/Icons.js';
+import Versions from '../constants/Versions';
 
 export default {
-   // TODO: clean up this big boy
-   // TODO you could easily build a Gamecordian component to abstract a lot of this page
    name: 'Games',
    components: {
-      'c-poke-spirte': PokeSprite,
-      'c-badge-sprite': BadgeSprite,
       'c-speed-dial': SpeedDial,
       'c-dialog-card': DialogCard,
-      'c-btn': Button,
+      'c-gamecordian': Gamecordian,
+      'c-error': Errors,
+      'c-progress-spinner': ProgressSpinner,
    },
    data() {
       return {
          // create game
-         creatingGame: false,
-         newGame: {
-            label: null,
-            version: null,
-         },
-         createGameDialog: false,
-         createGameCard: {
-            title: 'Start a new Game',
-            text:
-               'Are you ready to set out on a new adventure? Give this playthrough a memorable name and pick a game version.',
-            primaryBtn: {
-               text: 'Start',
-               action: 'start-game',
+         processingGame: false,
+         createGame: {
+            flag: false,
+            values: {
+               label: null,
+               version: null,
             },
-         },
-         // edit game
-         editingGame: false,
-         editGame: {
-            label: null,
-         },
-         editGameDialog: false,
-         editGameCard: {
-            title: `Edit Game`,
-            primaryBtn: {
-               action: 'edit-game',
+            dialogCard: {
+               title: 'Start a new Game',
+               text:
+                  'Are you ready to set out on a new adventure? Give this playthrough a memorable name and pick a game version.',
+               primaryBtn: {
+                  text: 'Start',
+                  action: 'start-game',
+               },
             },
-         },
-         // delete game
-         deletingGame: false,
-         deleteGameDialog: false,
-         deleteGameCard: {
-            title: `Delete Game?`,
-            text: 'This action cannot be undone. Are you sure you want to continue?',
-            secondaryBtn: {
-               action: 'delete-game',
+            errors: {
+               errors: [],
+               hasErrors: false,
             },
          },
          // filter games
-         filterDialog: false,
-         filterDialogCard: {
-            title: 'Filter Games',
-            primaryBtn: {
-               action: 'filter-games',
+         filter: {
+            flag: false,
+            dialogCard: {
+               title: 'Filter Games',
+               primaryBtn: {
+                  action: 'filter-games',
+               },
+            },
+            values: {
+               label: null,
+               version: null,
+               generation: null,
+               finished: [],
             },
          },
-         filterValues: {
-            label: null,
-            version: null,
-            generation: null,
-            isFinished: [],
-         },
-         // other data values
          actions: [
-            // {
-            //    label: 'Filter',
-            //    icon: 'mdi-filter',
-            //    action: 'filter-games',
-            //    color: 'primary',
-            // },
+            {
+               label: 'Filter',
+               icon: Icons.CONTROLS.FILTER,
+               action: 'filter-games',
+               color: 'primary',
+            },
             {
                label: 'Create Game',
                icon: Icons.CONTROLS.PLUS,
                action: 'create-game',
-               color: 'green',
-            },
-         ],
-         gameBtns: [
-            {
-               label: 'Pokemon',
-               mobileRoute: Pages.POKEMON,
-               desktopRoute: TabMap.POKEMON,
-               icon: Icons.PAGES.POKEMON,
-            },
-            {
-               label: 'Routes',
-               mobileRoute: Pages.ROUTES,
-               desktopRoute: TabMap.ROUTES,
-               icon: Icons.PAGES.ROUTES,
-            },
-            {
-               label: 'Gyms',
-               mobileRoute: Pages.GYMS,
-               desktopRoute: TabMap.GYMS,
-               icon: Icons.PAGES.GYMS,
-            },
-            {
-               label: 'Rules',
-               mobileRoute: Pages.RULES,
-               desktopRoute: TabMap.RULES,
-               icon: Icons.PAGES.RULES,
+               color: 'success',
             },
          ],
       };
    },
    methods: {
-      toConsoleIcon(family) {
-         return gameController.getConsoleIcon(family);
-      },
-      ofSix(array) {
-         const twoD = [];
-         twoD.push(array.filter((e, i) => i / 6 < 0.5));
-         twoD.push(array.filter((e, i) => i / 6 >= 0.5));
-         return twoD;
-      },
-      ofEight(array) {
-         const twoD = [];
-         twoD.push(array.filter((e, i) => i / 9 < 0.44));
-         twoD.push(array.filter((e, i) => i / 9 > 0.44));
-         return twoD;
-      },
       async startGame() {
-         this.creatingGame = true;
-         try {
-            const gameToCreate = NewGame.builder()
-               .withLabel(this.newGame.label)
-               .withVersion(this.newGame.version)
-               .build();
-            let res = await gameServices.createGame(gameToCreate);
-            const apiResponse = new APIResponse(res);
-            const gameSnapshot = gameController.getSnapshot(apiResponse.data);
-            this.games.push(gameSnapshot);
-            await userServices.updateUserById(this.userId, {
-               games: this.games,
-            });
-            this.toNewGame(apiResponse.data);
-         } catch (err) {
-            alert(err.stack);
-         }
+         if (!confirm(util.prettySON(this.createGame.values))) return;
+         // validate
+         this.createGame.errors = gameController.getValidationErrors(
+            this.createGame.values
+         );
+         if (this.createGame.errors.hasErrors) return;
+         this.processingGame = true;
+         await gameController.createNewGame(
+            this.createGame.values.label,
+            this.createGame.values.version.value,
+            undefined
+         );
          this.closeDialog();
-      },
-      editGameName(gameId) {
-         const selectedGame = this.getSelectedGame(gameId);
-         this.editGame.label = selectedGame.label;
-         this.editGameCard.title = `Edit ${selectedGame.label}?`;
-         this.editGameDialog = true;
-      },
-      async confirmEdits(gameId) {
-         if (!util.isUndefined(this.editGame.label)) {
-            this.editingGame = true;
-            try {
-               const userGamesId = this.games.findIndex(g => g.game_id === gameId);
-               this.games[userGamesId].label = this.editGame.label;
-               // update user
-               await userServices.updateUserById(this.userId, { games: this.games });
-               // update game object
-               await gameServices.updateGameById(gameId, { label: this.editGame.label });
-            } catch (err) {
-               alert(err);
-            }
-         }
-         this.closeDialog();
-      },
-      enterGame(route, gameId) {
-         if (util.mobile()) {
-            util.navigate({ name: route, params: { gameId: gameId } });
-         } else {
-            util.navigate({ name: 'game', params: { gameId: gameId, tab: route } });
-         }
-      },
-      toNewGame(game) {
-         this.$store.commit('selectGame', game);
-         this.enterGame('routes', game.id);
-      },
-      async toGame(route, gameId) {
-         try {
-            let res = await gameServices.getGameById(gameId);
-            let data = new APIResponse(res).data;
-            this.$store.commit('selectGame', data);
-            this.enterGame(route, gameId);
-         } catch (err) {
-            alert(err);
-         }
-      },
-      async confirmDeleteGame(gameId) {
-         this.deletingGame = true;
-         // remove from userGames
-         const userGamesId = this.games.findIndex(g => g.game_id === gameId);
-         this.games.splice(userGamesId, 1);
-         // remove from games in db
-         // update games in user in db
-         try {
-            await userServices.updateUserById(this.userId, { games: this.games });
-            await gameServices.deleteGameById(gameId);
-         } catch (err) {
-            console.log(err);
-         }
-         this.closeDialog();
-      },
-      deleteGame(gameId) {
-         const selectedGame = this.getSelectedGame(gameId);
-         this.editGame.label = selectedGame.label;
-         this.deleteGameCard.title = `Delete ${selectedGame.label}?`; // ${this.editGame.label}
-         this.deleteGameDialog = true;
       },
       closeDialog() {
-         this.creatingGame = false;
-         this.deletingGame = false;
-         this.editingGame = false;
-         this.createGameDialog = false;
-         this.editGameDialog = false;
-         this.deleteGameDialog = false;
-         this.filterDialog = false;
-         this.newGame.label = null;
-         this.newGame.version = null;
-         this.editGame.label = null;
-         this.filterValues.label = null;
-         this.filterValues.version = null;
-         this.filterValues.generation = null;
-         this.filterValues.isFinished = [];
-         this.filterValues.games = null;
+         this.processingGame = false;
+         this.createGame.flag = false;
+         this.filter.flag = false;
+         this.createGame.values.label = null;
+         this.createGame.values.version = null;
+         this.filter.values.label = null;
+         this.filter.values.version = null;
+         this.filter.values.generation = null;
+         this.filter.values.isFinished = [];
+         this.filter.values.games = null;
       },
-      getSelectedGame(gameId) {
-         return this.games.find(g => g.game_id === gameId);
-      },
-      // turning off filtering for now. really buggy
       confirmFilterOptions() {
-         // on purpose
-         this.filterDialog = false;
+         // TODO implement filtering. USE V-SHOW!
+         this.filter.flag = false;
       },
       getGeneration(familyCode) {
          let gen;
@@ -507,6 +225,17 @@ export default {
       },
    },
    computed: {
+      filtered() {
+         return true;
+      },
+      gameVersions() {
+         return Object.values(Versions).map(v =>
+            Object({
+               value: v.key,
+               text: v.label,
+            })
+         );
+      },
       username() {
          return this.$store.state.username;
       },

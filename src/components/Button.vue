@@ -8,7 +8,6 @@
 </template>
 
 <script>
-// TODO replace relevant buttons with this component
 export default {
    name: 'Button',
    props: {

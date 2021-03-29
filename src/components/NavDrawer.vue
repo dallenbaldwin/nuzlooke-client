@@ -190,28 +190,12 @@ export default {
          this.newGame.newGame.version = null;
       },
       async startGame() {
-         // FIXME: this should all be in the game controller so we only have to write it once
          this.creatingGame = true;
-         try {
-            const gameToCreate = NewGame.builder()
-               .withLabel(this.newGame.newGame.label)
-               .withVersion(this.newGame.newGame.version)
-               .build();
-            let res = await gameServices.createGame(gameToCreate);
-            const createdGame = new APIResponse(res).data;
-            const gameSnapshot = gameController.getSnapshot(createdGame);
-            this.games.push(gameSnapshot);
-            await userServices.updateUserById(this.userId, {
-               games: this.games,
-            });
-            this.$store.commit('selectGame', createdGame);
-            util.navigate({
-               name: 'routes',
-               params: { gameId: createdGame.id },
-            });
-         } catch (err) {
-            alert(err);
-         }
+         await gameController.createNewGame(
+            this.newGame.newGame.label,
+            this.newGame.newGame.version,
+            undefined
+         );
          this.closeDialog();
       },
    },
