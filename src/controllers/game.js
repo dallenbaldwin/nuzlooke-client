@@ -45,7 +45,7 @@ export const createNewGame = async (label, version, rules) => {
       await userController.updateUserGames();
       await goToGame(createdGame.id, util.mobile() ? 'routes' : '0');
    } catch (err) {
-      alert(errorCatch(err));
+      alert(util.errorCatch(err));
    }
 };
 
