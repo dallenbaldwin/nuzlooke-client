@@ -50,7 +50,7 @@ export default Object.freeze({
       icon: 'https://cdn.bulbagarden.net/upload/a/ab/Fire_icon_SwSh.png',
    },
    WATER: {
-      color: '#ff9c54',
+      color: '#4d90d5',
       label: 'Water',
       icon: 'https://cdn.bulbagarden.net/upload/8/80/Water_icon_SwSh.png',
    },
