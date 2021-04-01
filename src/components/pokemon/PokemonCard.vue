@@ -44,13 +44,13 @@
 </template>
 
 <script>
-import * as routeController from '../controllers/route';
-import * as pokemonController from '../controllers/pokemon';
-import PokeSprite from './PokeSprite.vue';
-import PokemonType from './PokemonType.vue';
-import Button from './Button.vue';
-import Icons from '../constants/Icons';
-import PartyState from '../constants/PartyState';
+import * as routeController from '../../controllers/route';
+import * as pokemonController from '../../controllers/pokemon';
+import PokeSprite from '../PokeSprite.vue';
+import PokemonType from '../PokemonType.vue';
+import Button from '../Button.vue';
+import Icons from '../../constants/Icons';
+import PartyState from '../../constants/PartyState';
 
 export default {
    name: 'PokemonCard',

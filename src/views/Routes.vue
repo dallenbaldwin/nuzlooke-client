@@ -1,129 +1,136 @@
 <template>
-   <!-- TODO should put this into a sheet component -->
-   <v-row class="d-flex justify-center align-content flex-row mt-3">
-      <c-route-card
-         v-for="encounter of game.encounters"
-         :key="encounter.label"
-         :encounter="encounter"
-         v-on:new-encounter="clickNewEncounter"
-         v-on:reset-encounter="clickResetEncounter"
-      ></c-route-card>
-      <v-dialog v-model="newEncounterDialog" width="500">
-         <c-dialog-card
-            :props="newEncounterDialogCard"
-            v-on:close-dialog="closeDialog"
-            v-on:new-encounter="confirmNewEncounter"
-         >
-            <v-slide-y-transition>
-               <div v-show="processingEncounter">
-                  <c-progress-spinner></c-progress-spinner>
-               </div>
-            </v-slide-y-transition>
-            <v-slide-y-transition>
-               <div v-show="!processingEncounter">
-                  <v-radio-group column v-model="newEncounter.result.constant">
-                     <v-radio
-                        v-for="(result, i) of Object.values(EncounterResultConst)"
-                        :key="`${result}-${i}`"
-                        :label="result"
-                        :value="result"
-                     ></v-radio>
-                  </v-radio-group>
-                  <v-combobox
-                     v-model="newEncounter.result.species"
-                     :items="newEncounter.pokemons"
-                     label="Pokemon"
-                     outlined
-                     clearable
-                     :disabled="
-                        newEncounter.result.constant === EncounterResultConst.AVAILABLE
-                     "
-                  >
-                  </v-combobox>
-                  <v-text-field
-                     label="Nickname"
-                     v-model="newEncounter.result.nickname"
-                     outlined
-                     clearable
-                     :disabled="
-                        newEncounter.result.constant !== EncounterResultConst.CAUGHT
-                     "
-                  >
-                  </v-text-field>
-                  <v-slide-y-transition>
-                     <v-card elevation="0" v-show="showPartyManagerOptions">
-                        <v-card-title>You have 6 Pokemon in your Party!</v-card-title>
-                        <v-card-subtitle
-                           >You can only keep up to 6 Pokemon in your Party. Would you
-                           like to switch a current party member for
-                           {{ newEncounter.result.nickname }}?</v-card-subtitle
-                        >
-                        <v-card-text>
-                           <v-radio-group
-                              v-model="newEncounter.result.destination"
-                              row
-                              mandatory
+   <v-sheet class="overflow-y-auto" elevation="1" outlined height="700" width="100%">
+      <v-text-field
+         class="pa-3"
+         prepend-inner-icon="mdi-magnify"
+         outlined
+         label="Search"
+         full-width
+         clearable
+         solo
+      ></v-text-field>
+      <v-row class="d-flex justify-center align-content flex-row">
+         <c-route-card
+            v-for="(encounter, i) of game.encounters"
+            :key="i"
+            :encounter="encounter"
+            v-on:new-encounter="clickNewEncounter"
+            v-on:reset-encounter="clickResetEncounter"
+         ></c-route-card>
+         <v-dialog v-model="newEncounterDialog" width="500">
+            <c-dialog-card
+               :props="newEncounterDialogCard"
+               v-on:close-dialog="closeDialog"
+               v-on:new-encounter="confirmNewEncounter"
+            >
+               <v-slide-y-transition>
+                  <div v-show="processingEncounter">
+                     <c-progress-spinner></c-progress-spinner>
+                  </div>
+               </v-slide-y-transition>
+               <v-slide-y-transition>
+                  <div v-show="!processingEncounter">
+                     <v-radio-group column v-model="newEncounter.result.constant">
+                        <v-radio
+                           v-for="(result, i) of Object.values(EncounterResultConst)"
+                           :key="`${result}-${i}`"
+                           :label="result"
+                           :value="result"
+                        ></v-radio>
+                     </v-radio-group>
+                     <v-combobox
+                        v-model="newEncounter.result.species"
+                        :items="newEncounter.pokemons"
+                        label="Pokemon"
+                        outlined
+                        clearable
+                        :disabled="
+                           newEncounter.result.constant === EncounterResultConst.AVAILABLE
+                        "
+                     >
+                     </v-combobox>
+                     <v-text-field
+                        label="Nickname"
+                        v-model="newEncounter.result.nickname"
+                        outlined
+                        clearable
+                        :disabled="
+                           newEncounter.result.constant !== EncounterResultConst.CAUGHT
+                        "
+                     >
+                     </v-text-field>
+                     <v-slide-y-transition>
+                        <v-card elevation="0" v-show="showPartyManagerOptions">
+                           <v-card-title>You have 6 Pokemon in your Party!</v-card-title>
+                           <v-card-subtitle
+                              >You can only keep up to 6 Pokemon in your Party. Would you
+                              like to switch a current party member for
+                              {{ newEncounter.result.nickname }}?</v-card-subtitle
                            >
-                              <v-radio
-                                 :value="PartyState.PC"
-                                 label="Send to Storage"
-                              ></v-radio>
-                              <v-radio
-                                 :value="PartyState.PARTY"
-                                 label="Send to Party"
-                              ></v-radio>
-                           </v-radio-group>
-                           <v-combobox
-                              label="Party Member"
-                              outlined
-                              clearable
-                              :items="partyPokemons"
-                              v-model="newEncounter.result.replacement"
-                              :disabled="
-                                 newEncounter.result.destination === PartyState.PC
-                              "
-                           >
-                           </v-combobox>
-                        </v-card-text>
-                     </v-card>
-                  </v-slide-y-transition>
-                  <c-errors
-                     v-for="(error, i) of newEncounter.errors"
-                     :key="i"
-                     :error="error"
-                  >
-                  </c-errors>
-               </div>
-            </v-slide-y-transition>
-         </c-dialog-card>
-      </v-dialog>
-      <v-dialog v-model="resetEncounterDialog" width="500">
-         <c-dialog-card
-            :props="resetEncounterDialogCard"
-            v-on:close-dialog="closeDialog"
-            v-on:reset-encounter="confirmResetEncounter"
-         >
-            <v-slide-y-transition>
-               <div v-show="processingEncounter">
-                  <c-progress-spinner></c-progress-spinner>
-               </div>
-            </v-slide-y-transition>
-         </c-dialog-card>
-      </v-dialog>
-      <!-- <pre>{{ prettySON(game.encounters) }}</pre> -->
-   </v-row>
+                           <v-card-text>
+                              <v-radio-group
+                                 v-model="newEncounter.result.destination"
+                                 row
+                                 mandatory
+                              >
+                                 <v-radio
+                                    :value="PartyState.PC"
+                                    label="Send to Storage"
+                                 ></v-radio>
+                                 <v-radio
+                                    :value="PartyState.PARTY"
+                                    label="Send to Party"
+                                 ></v-radio>
+                              </v-radio-group>
+                              <v-combobox
+                                 label="Party Member"
+                                 outlined
+                                 clearable
+                                 :items="partyPokemons"
+                                 v-model="newEncounter.result.replacement"
+                                 :disabled="
+                                    newEncounter.result.destination === PartyState.PC
+                                 "
+                              >
+                              </v-combobox>
+                           </v-card-text>
+                        </v-card>
+                     </v-slide-y-transition>
+                     <c-errors
+                        v-for="(error, i) of newEncounter.errors"
+                        :key="i"
+                        :error="error"
+                     >
+                     </c-errors>
+                  </div>
+               </v-slide-y-transition>
+            </c-dialog-card>
+         </v-dialog>
+         <v-dialog v-model="resetEncounterDialog" width="500">
+            <c-dialog-card
+               :props="resetEncounterDialogCard"
+               v-on:close-dialog="closeDialog"
+               v-on:reset-encounter="confirmResetEncounter"
+            >
+               <v-slide-y-transition>
+                  <div v-show="processingEncounter">
+                     <c-progress-spinner></c-progress-spinner>
+                  </div>
+               </v-slide-y-transition>
+            </c-dialog-card>
+         </v-dialog>
+      </v-row>
+   </v-sheet>
 </template>
 
 <script>
 import ProgressSpinner from '../components/ProgressSpinner.vue';
-import RouteCard from '../components/RouteCard.vue';
+import RouteCard from '../components/routes/RouteCard.vue';
 import DialogCard from '../components/DialogCard.vue';
 import Errors from '../components/Errors.vue';
 import EncounterResult from '../models/EncounterResult.js';
 import EncounterResultConst from '../constants/EncounterResultConst.js';
-import RuleCodes from '../constants/RuleCodes.js';
 import PartyState from '../constants/PartyState.js';
-import * as rulesController from '../controllers/rules.js';
 import * as pokemonController from '../controllers/pokemon.js';
 import * as routeController from '../controllers/route.js';
 import * as pokeapiController from '../controllers/pokeapi.js';
@@ -261,7 +268,6 @@ export default {
          this.newEncounter.errors = [];
       },
       async confirmNewEncounter() {
-         // if (!confirm(this.prettySON(this.newEncounter))) return;
          // validate for data errors
          this.newEncounter.errors = routeController.getEncounterErrors(
             this.newEncounter.result

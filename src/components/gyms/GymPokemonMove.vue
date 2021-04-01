@@ -33,7 +33,7 @@
 <script>
 import DamageClass from './DamageClass.vue';
 import GymPokemonMoveMeta from './GymPokemonMoveMeta.vue';
-import PokemonType from './PokemonType.vue';
+import PokemonType from '../PokemonType.vue';
 
 export default {
    name: 'GymPokemonMove',

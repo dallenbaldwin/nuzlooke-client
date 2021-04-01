@@ -1,20 +1,27 @@
 <template>
-   <v-fade-transition>
+   <v-lazy
+      v-model="active"
+      :options="{
+         threshold: 0.5,
+      }"
+      transition="fade-transition"
+      min-height="300"
+   >
       <v-card
          min-width="300"
          max-width="300"
          elevation="1"
          outlined
-         class="align-self-start mt-3 mx-3"
+         class="align-self-start mt-1 mx-1"
       >
          <div v-if="isAvailable">
             <v-card-title>{{ encounter.label }}</v-card-title>
             <v-card-subtitle>Available Pokemon</v-card-subtitle>
-            <v-card-text v-if="isAvailable" class="d-inline-flex justify-end">
+            <v-card-text v-if="isAvailable" class="d-inline-flex justify-end flex-wrap">
                <c-poke-sprite
-                  class="mx-1"
-                  v-for="pokemon of encounter.pokemons"
-                  :key="pokemon.species"
+                  class="mx-1 mt-1"
+                  v-for="(pokemon, i) of encounter.pokemons"
+                  :key="i"
                   :src="pokemon.icon_url"
                   size="small"
                ></c-poke-sprite>
@@ -56,13 +63,13 @@
             </c-btn>
          </v-card-actions>
       </v-card>
-   </v-fade-transition>
+   </v-lazy>
 </template>
 
 <script>
-import EncounterResultConst from '../constants/EncounterResultConst.js';
-import PokeSprite from '../components/PokeSprite.vue';
-import Button from '../components/Button.vue';
+import EncounterResultConst from '../../constants/EncounterResultConst.js';
+import PokeSprite from '../PokeSprite.vue';
+import Button from '../Button.vue';
 
 export default {
    name: 'RouteCard',
@@ -72,7 +79,7 @@ export default {
       'c-btn': Button,
    },
    data() {
-      return {};
+      return { active: false };
    },
    methods: {
       // TODO can i avoid emitting?

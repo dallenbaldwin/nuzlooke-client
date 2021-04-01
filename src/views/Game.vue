@@ -26,7 +26,9 @@
             </v-tab>
          </v-tabs>
       </v-row>
-      <component :is="currentTabComponent" ref="createRule"></component>
+      <v-row class="mt-3">
+         <component :is="currentTabComponent" ref="createRule"></component>
+      </v-row>
    </v-container>
 </template>
 

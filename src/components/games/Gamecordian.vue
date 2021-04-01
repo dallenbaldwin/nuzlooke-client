@@ -123,17 +123,17 @@
 </template>
 
 <script>
-import DialogCard from './DialogCard.vue';
-import Button from './Button.vue';
-import ProgressSpinner from './ProgressSpinner.vue';
-import PokeSprite from './PokeSprite.vue';
-import BadgeSprite from './BadgeSprite.vue';
-import Errors from './Errors.vue';
-import * as gameController from '../controllers/game';
-import Icons from '../constants/Icons';
-import TabMap from '../constants/TabMap';
-import Pages from '../constants/Pages';
-import { mobile } from '../util/util';
+import DialogCard from '../DialogCard.vue';
+import Button from '../Button.vue';
+import ProgressSpinner from '../ProgressSpinner.vue';
+import PokeSprite from '../PokeSprite.vue';
+import BadgeSprite from '../BadgeSprite.vue';
+import Errors from '../Errors.vue';
+import * as gameController from '../../controllers/game';
+import Icons from '../../constants/Icons';
+import TabMap from '../../constants/TabMap';
+import Pages from '../../constants/Pages';
+import { mobile } from '../../util/util';
 
 export default {
    name: 'Gamecordian',

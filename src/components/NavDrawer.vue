@@ -74,12 +74,8 @@
 </template>
 
 <script>
-import DialogCard from '../components/DialogCard.vue';
+import DialogCard from './DialogCard.vue';
 import * as gameController from '../controllers/game.js';
-import * as gameServices from '../services/game.js';
-import * as userServices from '../services/user.js';
-import APIResponse from '../models/APIResponse.js';
-import NewGame from '../models/NewGame.js';
 import Icons from '../constants/Icons';
 import * as util from '../util/util';
 

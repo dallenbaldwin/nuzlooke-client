@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import PokemonType from './PokemonType.vue';
-import PokeSprite from './PokeSprite.vue';
+import PokemonType from '../PokemonType.vue';
+import PokeSprite from '../PokeSprite.vue';
 import GymPokemonMove from './GymPokemonMove.vue';
 
 export default {

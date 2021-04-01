@@ -108,7 +108,7 @@
 <script>
 import SpeedDial from '../components/SpeedDial.vue';
 import DialogCard from '../components/DialogCard.vue';
-import Gamecordian from '../components/Gamecordian.vue';
+import Gamecordian from '../components/games/Gamecordian.vue';
 import Errors from '../components/Errors.vue';
 import ProgressSpinner from '../components/ProgressSpinner.vue';
 import * as gameController from '../controllers/game.js';
