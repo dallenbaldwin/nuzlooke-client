@@ -18,6 +18,7 @@ export default Object.freeze({
       PLUS: 'mdi-plus',
       LOGOUT: 'mdi-logout',
       EVOLVE: 'mdi-arrow-up-circle',
+      HELP: 'mdi-help-circle',
    },
    PAGES: {
       POKEMON: 'mdi-pokeball',

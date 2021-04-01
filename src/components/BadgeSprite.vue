@@ -8,7 +8,10 @@
 <script>
 export default {
    name: 'BadgeSprite',
-   props: ['src'],
+   props: {
+      src: { required: true },
+      grey: { required: false },
+   },
    data() {
       return {};
    },

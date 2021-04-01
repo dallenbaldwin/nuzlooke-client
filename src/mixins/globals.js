@@ -6,6 +6,8 @@ import TabMap from '../constants/TabMap.js';
 import EncounterResultConst from '../constants/EncounterResultConst.js';
 import * as util from '../util/util.js';
 import PokemonType from '../constants/PokemonType.js';
+import DamageClass from '../constants/DamageClass.js';
+import GymPokemonMeta from '../constants/GymPokemonMeta.js';
 
 export default {
    data() {
@@ -17,6 +19,8 @@ export default {
          TabMap: TabMap,
          EncounterResultConst: EncounterResultConst,
          PokemonType: PokemonType,
+         DamageClass: DamageClass,
+         GymPokemonMeta: GymPokemonMeta,
       };
    },
    methods: {

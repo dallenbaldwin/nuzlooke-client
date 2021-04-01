@@ -1,22 +1,28 @@
 <template>
-   <div>
-      gyms
-      <pre>{{ prettySON(game.gyms) }}</pre>
-   </div>
+   <v-row>
+      <v-expansion-panels popout class="mt-3">
+         <c-gymcordian v-for="gym of gyms" :key="gym.label" :gym="gym"></c-gymcordian>
+      </v-expansion-panels>
+   </v-row>
 </template>
 
 <script>
+import Gymcordian from '../components/Gymcordian.vue';
+
 export default {
    name: 'Gyms',
+   components: {
+      'c-gymcordian': Gymcordian,
+   },
    computed: {
-      game() {
-         return this.$store.state.game;
+      gyms() {
+         return this.$store.state.game.gyms;
       },
    },
    methods: {
-      // filterGyms() {
-      //    alert('i want to filter my gyms!');
-      // },
+      filterGyms() {
+         alert('i want to filter my gyms!');
+      },
    },
 };
 </script>
