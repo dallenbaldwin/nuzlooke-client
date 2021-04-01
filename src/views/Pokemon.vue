@@ -1,6 +1,6 @@
 <template>
    <v-row>
-      <v-expansion-panels popout class="mt-3">
+      <v-expansion-panels popout>
          <v-expansion-panel v-for="(state, i) of Object.values(PartyState)" :key="i">
             <v-expansion-panel-header disable-icon-rotate class="text-h6">
                {{ state }}

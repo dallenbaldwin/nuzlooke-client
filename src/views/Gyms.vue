@@ -1,6 +1,6 @@
 <template>
    <v-row>
-      <v-expansion-panels popout class="mt-3">
+      <v-expansion-panels popout>
          <c-gymcordian v-for="gym of gyms" :key="gym.label" :gym="gym"></c-gymcordian>
       </v-expansion-panels>
    </v-row>

@@ -1,19 +1,12 @@
 <template>
    <v-lazy
-      v-model="active"
+      v-model="isActive"
       :options="{
          threshold: 0.5,
       }"
       transition="fade-transition"
-      min-height="300"
    >
-      <v-card
-         min-width="300"
-         max-width="300"
-         elevation="1"
-         outlined
-         class="align-self-start mt-1 mx-1"
-      >
+      <v-card min-width="300" max-width="300" elevation="1" outlined class="mt-1 mx-1">
          <div v-if="isAvailable">
             <v-card-title>{{ encounter.label }}</v-card-title>
             <v-card-subtitle>Available Pokemon</v-card-subtitle>
@@ -79,7 +72,7 @@ export default {
       'c-btn': Button,
    },
    data() {
-      return { active: false };
+      return { isActive: false };
    },
    methods: {
       // TODO can i avoid emitting?
