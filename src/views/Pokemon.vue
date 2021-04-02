@@ -93,7 +93,7 @@
 <script>
 import DialogCard from '../components/DialogCard.vue';
 import PokemonCard from '../components/pokemon/PokemonCard.vue';
-import PokeSprite from '../components/PokeSprite.vue';
+import PokeSprite from '../components/pokemon/PokeSprite.vue';
 import ProgressSpinner from '../components/ProgressSpinner.vue';
 import Icons from '../constants/Icons';
 import * as gameController from '../controllers/game.js';

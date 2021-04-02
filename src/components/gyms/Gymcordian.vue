@@ -58,10 +58,10 @@
 </template>
 
 <script>
-import BadgeSprite from '../BadgeSprite.vue';
-import PokemonType from '../PokemonType.vue';
-import Pokecordian from './Pokecordian.vue';
-import * as util from '../../util/util.js';
+import BadgeSprite from './BadgeSprite';
+import PokemonType from '../pokemon/PokemonType';
+import Pokecordian from './Pokecordian';
+import * as util from '../../util/util';
 
 export default {
    name: 'Gymcordian',

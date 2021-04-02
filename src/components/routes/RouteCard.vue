@@ -61,7 +61,7 @@
 
 <script>
 import EncounterResultConst from '../../constants/EncounterResultConst.js';
-import PokeSprite from '../PokeSprite.vue';
+import PokeSprite from '../pokemon/PokeSprite.vue';
 import Button from '../Button.vue';
 
 export default {

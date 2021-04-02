@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import Icons from '../constants/Icons.js';
+import Icons from '../../constants/Icons.js';
 
 export default {
    name: 'PokeSprite',

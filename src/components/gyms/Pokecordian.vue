@@ -35,9 +35,9 @@
 </template>
 
 <script>
-import PokemonType from '../PokemonType.vue';
-import PokeSprite from '../PokeSprite.vue';
-import GymPokemonMove from './GymPokemonMove.vue';
+import PokemonType from '../pokemon/PokemonType';
+import PokeSprite from '../pokemon/PokeSprite';
+import GymPokemonMove from './GymPokemonMove';
 
 export default {
    name: 'Pokecordian',
