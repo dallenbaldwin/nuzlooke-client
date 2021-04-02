@@ -39,13 +39,67 @@
                >
             </div>
          </v-card-text>
+         <v-dialog v-model="graveyardData.flag" width="500">
+            <c-dialog-card
+               :props="graveyardData.dialogCard"
+               v-on:close-dialog="closeDialog"
+               v-on:confirm-graveyard="confirmSendToGraveyard"
+            >
+               <v-slide-y-transition>
+                  <c-progress-spinner v-show="processingPokemon"></c-progress-spinner>
+               </v-slide-y-transition>
+               <v-slide-y-transition>
+                  <div v-show="!processingPokemon">
+                     <v-text-field
+                        :label="
+                           `What happened to
+               ${graveyardData.pokemon ? graveyardData.pokemon.nickname : ''}?`
+                        "
+                        clearable
+                        outlined
+                        v-model="graveyardData.faintedMessage"
+                     >
+                     </v-text-field>
+                  </div>
+               </v-slide-y-transition>
+            </c-dialog-card>
+         </v-dialog>
+         <v-dialog v-model="evolveData.flag" width="500">
+            <c-dialog-card
+               :props="evolveData.dialogCard"
+               v-on:close-dialog="closeDialog"
+               v-on:confirm-evolve="confirmEvolve"
+            >
+               <v-slide-y-transition>
+                  <c-progress-spinner v-show="processingPokemon"></c-progress-spinner>
+               </v-slide-y-transition>
+               <v-slide-y-transition>
+                  <div v-show="!processingPokemon">
+                     <div class="text-body mb-3">
+                        {{ evolveData.pokemon ? evolveData.pokemon.nickname : undefined }}
+                        can evolve into one of the following Pokemon. Which one is it
+                        evolving into?
+                     </div>
+                     <v-combobox
+                        outlined
+                        label="Evolution"
+                        :items="evolutionPokemon"
+                        v-model="evolveData.evolvesTo"
+                     >
+                     </v-combobox>
+                  </div>
+               </v-slide-y-transition>
+            </c-dialog-card>
+         </v-dialog>
       </v-card>
    </v-scale-transition>
 </template>
 
 <script>
+import DialogCard from '../../components/DialogCard.vue';
 import PokeSprite from './PokeSprite.vue';
 import PokemonType from './PokemonType.vue';
+import ProgressSpinner from '../../components/ProgressSpinner.vue';
 import Button from '../Button.vue';
 import Icons from '../../constants/Icons';
 import PartyState from '../../constants/PartyState';
@@ -58,12 +112,47 @@ export default {
       'c-poke-sprite': PokeSprite,
       'c-pokemon-type': PokemonType,
       'c-btn': Button,
+      'c-dialog-card': DialogCard,
+      'c-progress-spinner': ProgressSpinner,
    },
    props: {
       pokemon: { required: true },
    },
    data() {
       return {
+         processingPokemon: false,
+         evolveData: {
+            flag: false,
+            pokemon: null,
+            evolvesTo: null,
+            dialogCard: {
+               title: 'Evolve?',
+               text:
+                  'Are you sure you want to evolve this Pokemon? This action cannot be undone!',
+               primaryBtn: {
+                  color: 'primary',
+                  icon: Icons.CONTROLS.EVOLVE,
+                  text: 'Evolve',
+                  action: 'confirm-evolve',
+               },
+            },
+         },
+         graveyardData: {
+            flag: false,
+            pokemon: null,
+            faintedMessage: null,
+            dialogCard: {
+               title: 'Send to the Graveyard?',
+               text:
+                  'Are you sure you want to send your pokemon to the graveyard? This action cannot be undone!',
+               primaryBtn: {
+                  color: 'black',
+                  icon: Icons.CONTROLS.TOMBSTONE,
+                  text: 'Send to Graveyard',
+                  action: 'confirm-graveyard',
+               },
+            },
+         },
          buttons: [
             {
                label: 'Evolve',
@@ -94,15 +183,43 @@ export default {
       };
    },
    methods: {
-      // TODO can I keep these emits inside the card???
-      clickEvolve() {
-         this.$emit('click-evolve', this.pokemon);
+      closeDialog() {
+         this.graveyardData.pokemon = null;
+         this.graveyardData.flag = false;
+         this.evolveData.pokemon = null;
+         this.evolveData.flag = false;
+         this.processingPokemon = false;
       },
-      clickStorage() {
-         pokemonController.sendToStorage(this.pokemon);
+      clickEvolve() {
+         this.evolveData.evolvesTo = null;
+         this.evolveData.pokemon = this.pokemon;
+         this.evolveData.dialogCard.title = `Evolve ${this.pokemon.nickname}?`;
+         this.evolveData.dialogCard.text = `Are you sure you want to evolve ${this.pokemon.nickname}? This action cannot be undone!`;
+         this.evolveData.flag = true;
+      },
+      async confirmEvolve() {
+         this.processingPokemon = true;
+         await pokemonController.evolvePokemon(
+            this.evolveData.pokemon,
+            this.evolveData.evolvesTo
+         );
+         this.closeDialog();
       },
       clickGraveyard() {
-         this.$emit('click-graveyard', this.pokemon);
+         this.graveyardData.pokemon = this.pokemon;
+         this.graveyardData.dialogCard.title = `Send ${this.pokemon.nickname} to the Graveyard?`;
+         this.graveyardData.dialogCard.text = `Are you sure you want to send ${this.pokemon.nickname} to the Graveyard? This action cannot be undone!`;
+         this.graveyardData.flag = true;
+      },
+      async confirmSendToGraveyard() {
+         this.processingPokemon = true;
+         this.graveyardData.pokemon.fainted_message = this.graveyardData.faintedMessage;
+         await pokemonController.sendToGraveyard(this.graveyardData.pokemon);
+         this.closeDialog();
+      },
+
+      clickStorage() {
+         pokemonController.sendToStorage(this.pokemon);
       },
       clickParty() {
          pokemonController.sendToParty(this.pokemon);
@@ -115,6 +232,9 @@ export default {
       },
    },
    computed: {
+      evolutionPokemon() {
+         return this.evolveData.pokemon ? this.evolveData.pokemon.evolves_to : [];
+      },
       route() {
          return routeController.getRouteByPokemonId(this.pokemon.id);
       },
