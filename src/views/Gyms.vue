@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import Gymcordian from '../components/gyms/Gymcordian.vue';
+import Gymcordian from '../components/gyms/Gymcordian';
 
 export default {
    name: 'Gyms',

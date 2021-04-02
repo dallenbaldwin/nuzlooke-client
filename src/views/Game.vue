@@ -31,14 +31,14 @@
 </template>
 
 <script>
-import NavDrawer from '../components/NavDrawer.vue';
-import SpeedDial from '../components/SpeedDial.vue';
-import TabMap from '../constants/TabMap.js';
-import Icons from '../constants/Icons.js';
-import Pokemon from './Pokemon.vue';
-import Routes from './Routes.vue';
-import Gyms from './Gyms.vue';
-import Rules from './Rules.vue';
+import NavDrawer from '../components/NavDrawer';
+import SpeedDial from '../components/SpeedDial';
+import TabMap from '../constants/TabMap';
+import Icons from '../constants/Icons';
+import Pokemon from './Pokemon';
+import Routes from './Routes';
+import Gyms from './Gyms';
+import Rules from './Rules';
 
 export default {
    name: 'Game',

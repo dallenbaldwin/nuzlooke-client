@@ -1,13 +1,13 @@
-import Versions from '../constants/Versions.js';
-import PartyState from '../constants/PartyState.js';
-import Icons from '../constants/Icons.js';
-import Pages from '../constants/Pages.js';
-import TabMap from '../constants/TabMap.js';
-import EncounterResultConst from '../constants/EncounterResultConst.js';
-import * as util from '../util/util.js';
-import PokemonType from '../constants/PokemonType.js';
-import DamageClass from '../constants/DamageClass.js';
-import GymPokemonMeta from '../constants/GymPokemonMeta.js';
+import Versions from '../constants/Versions';
+import PartyState from '../constants/PartyState';
+import Icons from '../constants/Icons';
+import Pages from '../constants/Pages';
+import TabMap from '../constants/TabMap';
+import EncounterResultConst from '../constants/EncounterResultConst';
+import * as util from '../util/util';
+import PokemonType from '../constants/PokemonType';
+import DamageClass from '../constants/DamageClass';
+import GymPokemonMeta from '../constants/GymPokemonMeta';
 
 export default {
    data() {

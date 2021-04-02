@@ -126,9 +126,9 @@
 import DialogCard from '../DialogCard';
 import Button from '../Button';
 import ProgressSpinner from '../ProgressSpinner';
-import PokeSprite from '../pokemon/PokeSprite.vue';
+import PokeSprite from '../pokemon/PokeSprite';
 import BadgeSprite from '../gyms/BadgeSprite';
-import Errors from '../Errors.vue';
+import Errors from '../Errors';
 import * as gameController from '../../controllers/game';
 import Icons from '../../constants/Icons';
 import TabMap from '../../constants/TabMap';

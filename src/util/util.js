@@ -1,9 +1,9 @@
 import { isMobile } from 'mobile-device-detect';
-import store from '../store/store.js';
-import router from '../router/router.js';
-import * as userServices from '../services/user.js';
-import Pages from '../constants/Pages.js';
-import APIResponse from '../models/APIResponse.js';
+import store from '../store/store';
+import router from '../router/router';
+import * as userServices from '../services/user';
+import Pages from '../constants/Pages';
+import APIResponse from '../models/APIResponse';
 
 export const navigate = endpoint => {
    router.replace(endpoint);

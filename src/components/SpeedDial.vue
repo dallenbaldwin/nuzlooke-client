@@ -70,12 +70,12 @@
 </template>
 
 <script>
-import DialogCard from './DialogCard.vue';
-import ProgressSpinner from './ProgressSpinner.vue';
-import Errors from './Errors.vue';
+import DialogCard from './DialogCard';
+import ProgressSpinner from './ProgressSpinner';
+import Errors from './Errors';
 import Icons from '../constants/Icons';
 import Pages from '../constants/Pages';
-import * as appController from '../controllers/application.js';
+import * as appController from '../controllers/application';
 
 export default {
    name: 'SpeedDial',

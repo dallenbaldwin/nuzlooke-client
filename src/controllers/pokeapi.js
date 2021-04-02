@@ -1,6 +1,6 @@
-import * as pokeapiServices from '../services/pokeapi.js';
-import UserPokemon from '../models/UserPokemon.js';
-import { errorCatch } from '../util/util.js';
+import * as pokeapiServices from '../services/pokeapi';
+import UserPokemon from '../models/UserPokemon';
+import { errorCatch } from '../util/util';
 
 export async function buildUserPokemon(species, nickname, partyState) {
    try {

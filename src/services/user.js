@@ -1,4 +1,4 @@
-import nuzlooke from './nuzlooke.js';
+import nuzlooke from './nuzlooke';
 
 export function createUser(user) {
    return nuzlooke().post('/users', user);

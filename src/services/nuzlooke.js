@@ -1,6 +1,6 @@
-import store from '../store/store.js';
+import store from '../store/store';
 import axios from 'axios';
-// import * as Auth from '../services/auth.js';
+// import * as Auth from '../services/auth';
 
 export default function nuzlooke() {
    return axios.create({

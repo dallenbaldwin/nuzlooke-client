@@ -1,4 +1,4 @@
-import * as util from '../util/util.js';
+import * as util from '../util/util';
 import uuid_pkg from 'uuid';
 const { v4: uuid } = uuid_pkg;
 

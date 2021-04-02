@@ -1,9 +1,9 @@
-import store from '../store/store.js';
-import RuleCodes from '../constants/RuleCodes.js';
-import EncounterResultConst from '../constants/EncounterResultConst.js';
-import * as util from '../util/util.js';
-import * as rulesController from '../controllers/rules.js';
-import * as pokemonController from '../controllers/pokemon.js';
+import store from '../store/store';
+import RuleCodes from '../constants/RuleCodes';
+import EncounterResultConst from '../constants/EncounterResultConst';
+import * as util from '../util/util';
+import * as rulesController from '../controllers/rules';
+import * as pokemonController from '../controllers/pokemon';
 
 export const getEncounterById = id => {
    return store.state.game.encounters.find(e => id === e.id);

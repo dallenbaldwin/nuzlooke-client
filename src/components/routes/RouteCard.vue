@@ -60,9 +60,9 @@
 </template>
 
 <script>
-import EncounterResultConst from '../../constants/EncounterResultConst.js';
-import PokeSprite from '../pokemon/PokeSprite.vue';
-import Button from '../Button.vue';
+import EncounterResultConst from '../../constants/EncounterResultConst';
+import PokeSprite from '../pokemon/PokeSprite';
+import Button from '../Button';
 
 export default {
    name: 'RouteCard',

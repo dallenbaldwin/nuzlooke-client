@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import DialogCardVue from '../components/DialogCard.vue';
-import * as util from '../util/util.js';
+import DialogCardVue from '../components/DialogCard';
+import * as util from '../util/util';
 
 export default {
    name: 'Rules',

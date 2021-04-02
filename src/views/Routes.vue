@@ -113,19 +113,19 @@
 </template>
 
 <script>
-import ProgressSpinner from '../components/ProgressSpinner.vue';
-import RouteCard from '../components/routes/RouteCard.vue';
-import DialogCard from '../components/DialogCard.vue';
-import Errors from '../components/Errors.vue';
-import EncounterResult from '../models/EncounterResult.js';
-import EncounterResultConst from '../constants/EncounterResultConst.js';
-import PartyState from '../constants/PartyState.js';
-import * as pokemonController from '../controllers/pokemon.js';
-import * as routeController from '../controllers/route.js';
-import * as pokeapiController from '../controllers/pokeapi.js';
-import * as userController from '../controllers/user.js';
+import ProgressSpinner from '../components/ProgressSpinner';
+import RouteCard from '../components/routes/RouteCard';
+import DialogCard from '../components/DialogCard';
+import Errors from '../components/Errors';
+import EncounterResult from '../models/EncounterResult';
+import EncounterResultConst from '../constants/EncounterResultConst';
+import PartyState from '../constants/PartyState';
+import * as pokemonController from '../controllers/pokemon';
+import * as routeController from '../controllers/route';
+import * as pokeapiController from '../controllers/pokeapi';
+import * as userController from '../controllers/user';
 import * as gameController from '../controllers/game';
-import * as util from '../util/util.js';
+import * as util from '../util/util';
 
 export default {
    name: 'Routes',

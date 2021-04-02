@@ -106,14 +106,14 @@
 </template>
 
 <script>
-import SpeedDial from '../components/SpeedDial.vue';
-import DialogCard from '../components/DialogCard.vue';
-import Gamecordian from '../components/games/Gamecordian.vue';
-import Errors from '../components/Errors.vue';
-import ProgressSpinner from '../components/ProgressSpinner.vue';
-import * as gameController from '../controllers/game.js';
-import * as util from '../util/util.js';
-import Icons from '../constants/Icons.js';
+import SpeedDial from '../components/SpeedDial';
+import DialogCard from '../components/DialogCard';
+import Gamecordian from '../components/games/Gamecordian';
+import Errors from '../components/Errors';
+import ProgressSpinner from '../components/ProgressSpinner';
+import * as gameController from '../controllers/game';
+import * as util from '../util/util';
+import Icons from '../constants/Icons';
 import Versions from '../constants/Versions';
 
 export default {

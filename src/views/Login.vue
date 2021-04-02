@@ -28,9 +28,9 @@
 </template>
 
 <script>
-import NavDrawer from '../components/NavDrawer.vue';
-import SpeedDial from '../components/SpeedDial.vue';
-import LoginProviders from '../components/LoginProviders.vue';
+import NavDrawer from '../components/NavDrawer';
+import SpeedDial from '../components/SpeedDial';
+import LoginProviders from '../components/LoginProviders';
 
 export default {
    name: 'Login',

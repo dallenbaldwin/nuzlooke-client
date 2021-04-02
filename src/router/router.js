@@ -1,14 +1,14 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
-import Login from '../views/Login.vue';
-import Register from '../views/Register.vue';
-import Games from '../views/Games.vue';
-import Game from '../views/Game.vue';
-import Pokemon from '../views/Pokemon.vue';
-import Routes from '../views/Routes.vue';
-import Gyms from '../views/Gyms.vue';
-import Rules from '../views/Rules.vue';
+import Home from '../views/Home';
+import Login from '../views/Login';
+import Register from '../views/Register';
+import Games from '../views/Games';
+import Game from '../views/Game';
+import Pokemon from '../views/Pokemon';
+import Routes from '../views/Routes';
+import Gyms from '../views/Gyms';
+import Rules from '../views/Rules';
 
 Vue.use(VueRouter);
 

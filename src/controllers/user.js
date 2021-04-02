@@ -1,7 +1,7 @@
-import store from '../store/store.js';
-import * as services from '../services/user.js';
-import * as gameController from './game.js';
-import { prettySON } from '../util/util.js';
+import store from '../store/store';
+import * as services from '../services/user';
+import * as gameController from './game';
+import { prettySON } from '../util/util';
 
 export const updateUserGames = async () => {
    try {

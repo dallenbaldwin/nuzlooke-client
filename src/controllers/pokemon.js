@@ -1,11 +1,11 @@
-import PartyState from '../constants/PartyState.js';
-import * as util from '../util/util.js';
-import * as gameServices from '../services/game.js';
-import * as userController from '../controllers/user.js';
-import UserPokemon from '../models/UserPokemon.js';
-import store from '../store/store.js';
-import Icons from '../constants/Icons.js';
-import * as pokeapiController from './pokeapi.js';
+import PartyState from '../constants/PartyState';
+import * as util from '../util/util';
+import * as gameServices from '../services/game';
+import * as userController from '../controllers/user';
+import UserPokemon from '../models/UserPokemon';
+import store from '../store/store';
+import Icons from '../constants/Icons';
+import * as pokeapiController from './pokeapi';
 
 export const PARTY_MAX_SIZE = 6;
 

@@ -1,12 +1,12 @@
-import Versions from '../constants/Versions.js';
-import PartyState from '../constants/PartyState.js';
-import Icons from '../constants/Icons.js';
-import store from '../store/store.js';
-import * as services from '../services/game.js';
-import * as util from '../util/util.js';
-import NewGame from '../models/NewGame.js';
-import APIResponse from '../models/APIResponse.js';
-import * as userController from '../controllers/user.js';
+import Versions from '../constants/Versions';
+import PartyState from '../constants/PartyState';
+import Icons from '../constants/Icons';
+import store from '../store/store';
+import * as services from '../services/game';
+import * as util from '../util/util';
+import NewGame from '../models/NewGame';
+import APIResponse from '../models/APIResponse';
+import * as userController from '../controllers/user';
 
 export const updateEncountersAndPokemonsInDB = async () => {
    try {

@@ -11,7 +11,7 @@
 
 <script>
 // <pre>{{ prettySON(this.$store.state) }}</pre>
-import NavDrawer from './components/NavDrawer.vue';
+import NavDrawer from './components/NavDrawer';
 
 export default {
    components: {

@@ -1,5 +1,5 @@
-import * as userController from '../controllers/user.js';
-import { isUndefined } from '../util/util.js';
+import * as userController from '../controllers/user';
+import { isUndefined } from '../util/util';
 
 export const saveSettings = async options => {
    userController.updateUser({ username: options.username });
