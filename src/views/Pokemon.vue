@@ -6,12 +6,13 @@
                {{ state }}
                <template v-slot:actions>
                   <v-badge
+                     overlap
                      v-if="state !== PartyState.PARTY && getPanelCount(state)"
                      dark
                      color="grey"
                      :content="getPanelCount(state)"
                   >
-                     <v-icon dark>
+                     <v-icon large dark>
                         {{ toPartyStateIcon(state) }}
                      </v-icon>
                   </v-badge>
