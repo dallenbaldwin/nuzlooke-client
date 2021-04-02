@@ -126,9 +126,8 @@ export default {
             pokemon: null,
             evolvesTo: null,
             dialogCard: {
-               title: 'Evolve?',
-               text:
-                  'Are you sure you want to evolve this Pokemon? This action cannot be undone!',
+               title: `Evolve ${this.pokemon.nickname}?`,
+               text: `Are you sure you want to evolve ${this.pokemon.nickname}? This action cannot be undone!`,
                primaryBtn: {
                   color: 'primary',
                   icon: Icons.CONTROLS.EVOLVE,
@@ -142,9 +141,8 @@ export default {
             pokemon: null,
             faintedMessage: null,
             dialogCard: {
-               title: 'Send to the Graveyard?',
-               text:
-                  'Are you sure you want to send your pokemon to the graveyard? This action cannot be undone!',
+               title: `Send ${this.pokemon.nickname} to the Graveyard?`,
+               text: `Are you sure you want to send ${this.pokemon.nickname} to the Graveyard? This action cannot be undone!`,
                primaryBtn: {
                   color: 'black',
                   icon: Icons.CONTROLS.TOMBSTONE,
@@ -193,8 +191,6 @@ export default {
       clickEvolve() {
          this.evolveData.evolvesTo = null;
          this.evolveData.pokemon = this.pokemon;
-         this.evolveData.dialogCard.title = `Evolve ${this.pokemon.nickname}?`;
-         this.evolveData.dialogCard.text = `Are you sure you want to evolve ${this.pokemon.nickname}? This action cannot be undone!`;
          this.evolveData.flag = true;
       },
       async confirmEvolve() {
@@ -207,8 +203,6 @@ export default {
       },
       clickGraveyard() {
          this.graveyardData.pokemon = this.pokemon;
-         this.graveyardData.dialogCard.title = `Send ${this.pokemon.nickname} to the Graveyard?`;
-         this.graveyardData.dialogCard.text = `Are you sure you want to send ${this.pokemon.nickname} to the Graveyard? This action cannot be undone!`;
          this.graveyardData.flag = true;
       },
       async confirmSendToGraveyard() {
@@ -217,7 +211,6 @@ export default {
          await pokemonController.sendToGraveyard(this.graveyardData.pokemon);
          this.closeDialog();
       },
-
       clickStorage() {
          pokemonController.sendToStorage(this.pokemon);
       },

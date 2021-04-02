@@ -214,7 +214,8 @@ export default {
          resetEncounterDialog: false,
          resetEncounter: null,
          resetEncounterDialogCard: {
-            title: 'Reset Encounter',
+            title: `Reset ${this.encounter.label}?`,
+            text: `Are you sure you want to reset ${this.encounter.label}? Any associated Pokemon will be removed from your list. This action cannot be undone.`,
             primaryBtn: { action: 'reset-encounter', color: 'orange', text: 'Reset' },
          },
       };
@@ -242,11 +243,10 @@ export default {
       },
    },
    methods: {
+      // TODO too much logic in these methods. move to controller
       clickResetEncounter() {
-         this.resetEncounterDialogCard.title = `Reset ${this.encounter.label}?`;
-         this.resetEncounterDialogCard.text = `Are you sure you want to reset ${this.encounter.label}? Any associated Pokemon will be removed from your list. This action cannot be undone.`;
-         this.resetEncounterDialog = true;
          this.resetEncounter = this.encounter;
+         this.resetEncounterDialog = true;
       },
       async confirmResetEncounter() {
          this.processingEncounter = true;
@@ -254,13 +254,12 @@ export default {
             this.resetEncounter.result.pokemon_id
          );
          if (pokemon) pokemonController.removeFromList(pokemon);
-         const encounter = routeController.getEncounterById(this.resetEncounter.id);
-         encounter.result.pokemon_id = null;
-         encounter.result.species = null;
-         encounter.result.constant = EncounterResultConst.AVAILABLE;
-         encounter.result.sprite_url = null;
-         encounter.result.nickname = null;
-         routeController.updateEncounterInStore(encounter);
+         this.encounter.result.pokemon_id = null;
+         this.encounter.result.species = null;
+         this.encounter.result.constant = EncounterResultConst.AVAILABLE;
+         this.encounter.result.sprite_url = null;
+         this.encounter.result.nickname = null;
+         routeController.updateEncounterInStore(this.encounter);
          await gameController.updateEncountersAndPokemonsInDB();
          userController.updateSnapshotPartyUrls(this.game.id);
          await userController.updateUserGames();
@@ -293,9 +292,8 @@ export default {
          }
          // start process
          this.processingEncounter = true;
-         const selectedEncounter = routeController.getEncounterById(this.newEncounter.id);
          // set result
-         selectedEncounter.result = EncounterResult.builder()
+         this.encounter.result = EncounterResult.builder()
             .withNickname(this.newEncounter.result.nickname)
             .withSpecies(this.newEncounter.result.species.text)
             .withConstant(this.newEncounter.result.constant)
@@ -306,10 +304,10 @@ export default {
             this.newEncounter.result.nickname,
             undefined
          );
-         selectedEncounter.result.sprite_url = newPokemon.sprite_url;
+         this.encounter.result.sprite_url = newPokemon.sprite_url;
          // handle capture situations
          if (routeController.isCaught(this.newEncounter.result.constant)) {
-            selectedEncounter.result.pokemon_id = newPokemon.id;
+            this.encounter.result.pokemon_id = newPokemon.id;
             if (pokemonController.isParty(this.newEncounter.result.destination)) {
                newPokemon.party_state = PartyState.PARTY;
                const replacement = pokemonController.getPokemonById(
@@ -324,7 +322,7 @@ export default {
             }
             pokemonController.pushNewPokemon(newPokemon);
          }
-         routeController.updateEncounterInStore(selectedEncounter);
+         routeController.updateEncounterInStore(this.encounter);
          await gameController.updateEncountersAndPokemonsInDB();
          userController.updateSnapshotPartyUrls(this.game.id);
          await userController.updateUserGames();
