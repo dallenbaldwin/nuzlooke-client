@@ -3,12 +3,16 @@
       <v-expansion-panel-header disable-icon-rotate class="text-h6">
          {{ gym.label }}
          <template v-slot:actions>
-            <v-icon v-if="!gym.is_defeated">{{ Icons.CONTROLS.HELP }}</v-icon>
-            <c-badge-sprite
-               v-if="gym.is_defeated"
-               :src="gym.badge.sprite_url"
-               :grey="!gym.is_defeated"
-            ></c-badge-sprite>
+            <v-slide-x-transition leave-absolute>
+               <v-icon v-if="!isDefeated">{{ Icons.CONTROLS.HELP }}</v-icon>
+            </v-slide-x-transition>
+            <v-slide-x-transition leave-absolute>
+               <c-badge-sprite
+                  v-if="isDefeated"
+                  :src="gym.badge.sprite_url"
+                  :grey="!isDefeated"
+               ></c-badge-sprite>
+            </v-slide-x-transition>
          </template>
       </v-expansion-panel-header>
       <v-expansion-panel-content>
@@ -36,6 +40,8 @@
                      inset
                      label="Earned"
                      :value="gym.is_defeated"
+                     v-model="isDefeated"
+                     @change="setEarnedBadge"
                   ></v-switch>
                </div>
                <div id="type" class="mx-6">
@@ -61,7 +67,9 @@
 import BadgeSprite from './BadgeSprite';
 import PokemonType from '../pokemon/PokemonType';
 import Pokecordian from './Pokecordian';
+import Button from '../Button.vue';
 import * as util from '../../util/util';
+import * as gymController from '../../controllers/gym';
 
 export default {
    name: 'Gymcordian',
@@ -70,6 +78,12 @@ export default {
       'c-badge-sprite': BadgeSprite,
       'c-pokemon-type': PokemonType,
       'c-pokecordian': Pokecordian,
+      'c-btn': Button,
+   },
+   data() {
+      return {
+         isDefeated: this.gym.is_defeated,
+      };
    },
    computed: {
       pokemons() {
@@ -84,6 +98,12 @@ export default {
             t.push(':');
          t.push(this.gym.leader.flavor_text);
          return t.join(' ');
+      },
+   },
+   methods: {
+      setEarnedBadge() {
+         this.gym.is_defeated = Boolean(this.isDefeated);
+         gymController.setEarnedBadge(this.gym);
       },
    },
 };

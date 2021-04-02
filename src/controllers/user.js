@@ -2,10 +2,11 @@ import store from '../store/store';
 import * as services from '../services/user';
 import * as gameController from './game';
 import { prettySON } from '../util/util';
+import APIResponse from '../models/APIResponse';
 
 export const updateUserGames = async () => {
    try {
-      await services.updateUserById(store.state.userId, {
+      const res = await services.updateUserById(store.state.userId, {
          games: store.state.userGames,
       });
    } catch (err) {

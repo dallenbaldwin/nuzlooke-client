@@ -39,6 +39,10 @@ export default new Vuex.Store({
       exitGame(state) {
          state.game = null;
       },
+      earnedBadge(state, payload) {
+         const i = state.game.gyms.findIndex(g => g.sort_id === payload.sort_id);
+         if (i !== -1) state.game.gyms.splice(i, 1, payload);
+      },
       updateGameLabel(state, payload) {
          let userGame = state.userGames.find(ug => ug.game_id === payload.gameId);
          userGame.label = payload.label;

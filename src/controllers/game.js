@@ -19,6 +19,16 @@ export const updateEncountersAndPokemonsInDB = async () => {
    }
 };
 
+export const updateGymsInDB = async () => {
+   try {
+      const res = await services.updateGameById(store.state.game.id, {
+         gyms: store.state.game.gyms,
+      });
+   } catch (err) {
+      alert(util.errorCatch(err));
+   }
+};
+
 export const getValidationErrors = (options, isEdit = false) => {
    const errors = [];
    if (util.isUndefined(options.label))
