@@ -74,9 +74,9 @@
 </template>
 
 <script>
-import DialogCard from './DialogCard';
-import * as gameController from '../controllers/game';
+import DialogCard from './DialogCard.vue';
 import Icons from '../constants/Icons';
+import * as gameController from '../controllers/game';
 import * as util from '../util/util';
 
 export default {

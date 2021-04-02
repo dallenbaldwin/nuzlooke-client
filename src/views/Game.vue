@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import NavDrawer from '../components/NavDrawer';
-import SpeedDial from '../components/SpeedDial';
+import NavDrawer from '../components/NavDrawer.vue';
+import SpeedDial from '../components/SpeedDial.vue';
 import TabMap from '../constants/TabMap';
 import Icons from '../constants/Icons';
 import Pokemon from './Pokemon';

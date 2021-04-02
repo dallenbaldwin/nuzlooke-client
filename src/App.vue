@@ -10,8 +10,7 @@
 </template>
 
 <script>
-// <pre>{{ prettySON(this.$store.state) }}</pre>
-import NavDrawer from './components/NavDrawer';
+import NavDrawer from './components/NavDrawer.vue';
 
 export default {
    components: {
@@ -26,7 +25,7 @@ export default {
 
 <style scoped>
 .c-mw {
-   max-width: 1000px;
+   max-width: 80%;
    margin: auto;
 }
 </style>

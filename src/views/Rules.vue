@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import DialogCardVue from '../components/DialogCard';
+import DialogCardVue from '../components/DialogCard.vue';
 import * as util from '../util/util';
 
 export default {

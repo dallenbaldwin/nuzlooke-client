@@ -91,10 +91,10 @@
 </template>
 
 <script>
-import DialogCard from '../components/DialogCard';
-import PokemonCard from '../components/pokemon/PokemonCard';
-import PokeSprite from '../components/pokemon/PokeSprite';
-import ProgressSpinner from '../components/ProgressSpinner';
+import DialogCard from '../components/DialogCard.vue';
+import PokemonCard from '../components/pokemon/PokemonCard.vue';
+import PokeSprite from '../components/pokemon/PokeSprite.vue';
+import ProgressSpinner from '../components/ProgressSpinner.vue';
 import Icons from '../constants/Icons';
 import * as gameController from '../controllers/game';
 import * as pokemonController from '../controllers/pokemon';

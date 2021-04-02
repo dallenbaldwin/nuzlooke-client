@@ -31,9 +31,9 @@
 </template>
 
 <script>
-import DamageClass from './DamageClass';
-import GymPokemonMoveMeta from './GymPokemonMoveMeta';
-import PokemonType from '../pokemon/PokemonType';
+import DamageClass from './DamageClass.vue';
+import GymPokemonMoveMeta from './GymPokemonMoveMeta.vue';
+import PokemonType from '../pokemon/PokemonType.vue';
 
 export default {
    name: 'GymPokemonMove',

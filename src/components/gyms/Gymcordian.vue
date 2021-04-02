@@ -64,9 +64,9 @@
 </template>
 
 <script>
-import BadgeSprite from './BadgeSprite';
-import PokemonType from '../pokemon/PokemonType';
-import Pokecordian from './Pokecordian';
+import BadgeSprite from './BadgeSprite.vue';
+import PokemonType from '../pokemon/PokemonType.vue';
+import Pokecordian from './Pokecordian.vue';
 import Button from '../Button.vue';
 import * as util from '../../util/util';
 import * as gymController from '../../controllers/gym';

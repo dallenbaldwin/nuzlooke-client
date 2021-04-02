@@ -113,10 +113,10 @@
 </template>
 
 <script>
-import ProgressSpinner from '../components/ProgressSpinner';
-import RouteCard from '../components/routes/RouteCard';
-import DialogCard from '../components/DialogCard';
-import Errors from '../components/Errors';
+import ProgressSpinner from '../components/ProgressSpinner.vue';
+import RouteCard from '../components/routes/RouteCard.vue';
+import DialogCard from '../components/DialogCard.vue';
+import Errors from '../components/Errors.vue';
 import EncounterResult from '../models/EncounterResult';
 import EncounterResultConst from '../constants/EncounterResultConst';
 import PartyState from '../constants/PartyState';

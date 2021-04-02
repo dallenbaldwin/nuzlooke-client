@@ -123,12 +123,12 @@
 </template>
 
 <script>
-import DialogCard from '../DialogCard';
-import Button from '../Button';
-import ProgressSpinner from '../ProgressSpinner';
-import PokeSprite from '../pokemon/PokeSprite';
-import BadgeSprite from '../gyms/BadgeSprite';
-import Errors from '../Errors';
+import DialogCard from '../DialogCard.vue';
+import Button from '../Button.vue';
+import ProgressSpinner from '../ProgressSpinner.vue';
+import PokeSprite from '../pokemon/PokeSprite.vue';
+import BadgeSprite from '../gyms/BadgeSprite.vue';
+import Errors from '../Errors.vue';
 import * as gameController from '../../controllers/game';
 import Icons from '../../constants/Icons';
 import TabMap from '../../constants/TabMap';
