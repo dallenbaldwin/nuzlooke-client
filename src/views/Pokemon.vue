@@ -5,7 +5,17 @@
             <v-expansion-panel-header disable-icon-rotate class="text-h6">
                {{ state }}
                <template v-slot:actions>
-                  <v-icon v-if="state !== PartyState.PARTY" dark>
+                  <v-badge
+                     v-if="state !== PartyState.PARTY && getPanelCount(state)"
+                     dark
+                     color="grey"
+                     :content="getPanelCount(state)"
+                  >
+                     <v-icon dark>
+                        {{ toPartyStateIcon(state) }}
+                     </v-icon>
+                  </v-badge>
+                  <v-icon dark v-if="state !== PartyState.PARTY && !getPanelCount(state)">
                      {{ toPartyStateIcon(state) }}
                   </v-icon>
                   <div class="d-inline-flex flex-row" v-if="state === PartyState.PARTY">
@@ -75,6 +85,10 @@ export default {
       },
    },
    methods: {
+      getPanelCount(partyState) {
+         if (pokemonController.isPC(partyState)) return this.pc.length;
+         else if (pokemonController.isGraveyard(partyState)) return this.graveyard.length;
+      },
       toPartyStateIcon(partyState) {
          return pokemonController.getPartyStateIcon(partyState);
       },
