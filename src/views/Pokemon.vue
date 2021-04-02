@@ -44,10 +44,17 @@
             </v-expansion-panel-content>
          </v-expansion-panel>
       </v-expansion-panels>
+      <v-dialog v-model="filter.flag" width="500">
+         <c-dialog-card
+            :props="filter.dialogCard"
+            v-on:close-dialog="closeDialog"
+         ></c-dialog-card>
+      </v-dialog>
    </v-row>
 </template>
 
 <script>
+import DialogCard from '../components/DialogCard.vue';
 import PokemonCard from '../components/pokemon/PokemonCard.vue';
 import PokeSprite from '../components/pokemon/PokeSprite.vue';
 import * as gameController from '../controllers/game';
@@ -58,9 +65,20 @@ export default {
    components: {
       'c-poke-sprite': PokeSprite,
       'c-pokemon-card': PokemonCard,
+      'c-dialog-card': DialogCard,
    },
    data() {
-      return {};
+      return {
+         // TODO filters
+         filter: {
+            flag: false,
+            dialogCard: {
+               title: 'Filter Pokemon',
+               text: 'I want to filter Pokemon!',
+               cancelBtn: { text: 'close' },
+            },
+         },
+      };
    },
    computed: {
       game() {
@@ -98,9 +116,12 @@ export default {
          else if (pokemonController.isPC(partyState)) return this.pc;
          else if (pokemonController.isGraveyard(partyState)) return this.graveyard;
       },
-      // filterPokemon() {
-      //    alert('i want to filter my pokemon!');
-      // },
+      openFilter() {
+         this.filter.flag = true;
+      },
+      closeDialog() {
+         this.filter.flag = false;
+      },
    },
 };
 </script>

@@ -25,7 +25,7 @@
       <v-row>
          <v-expansion-panels popout>
             <c-gamecordian
-               v-show="filtered"
+               v-show="getFilter(game)"
                v-for="game of games"
                :key="game.id"
                :game="game"
@@ -68,11 +68,7 @@
          </c-dialog-card>
       </v-dialog>
       <v-dialog v-model="filter.flag" width="500">
-         <c-dialog-card
-            :props="filter.dialogCard"
-            v-on:close-dialog="closeDialog"
-            v-on:filter-games="confirmFilterOptions"
-         >
+         <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
             <v-text-field
                class="mt-3 mb-3"
                label="Name"
@@ -154,8 +150,8 @@ export default {
             flag: false,
             dialogCard: {
                title: 'Filter Games',
-               primaryBtn: {
-                  action: 'filter-games',
+               cancelBtn: {
+                  text: 'close',
                },
             },
             values: {
@@ -183,7 +179,7 @@ export default {
    },
    methods: {
       async startGame() {
-         if (!confirm(util.prettySON(this.createGame.values))) return;
+         // if (!confirm(util.prettySON(this.createGame.values))) return;
          // validate
          this.createGame.errors = gameController.getValidationErrors(
             this.createGame.values
@@ -209,25 +205,53 @@ export default {
          this.filter.values.isFinished = [];
          this.filter.values.games = null;
       },
-      confirmFilterOptions() {
-         // TODO implement filtering. USE V-SHOW!
-         this.filter.flag = false;
-      },
-      getGeneration(familyCode) {
+      getGeneration(versionObj) {
+         let familyCode = versionObj.family;
          let gen;
          if (familyCode === 'letsgo') gen = 7;
          else if (familyCode === 'rubysapphire') gen = 3;
          else if (familyCode === 'emerald') gen = 3;
-         return gen;
+         return `${gen}`;
       },
       getFinishedStatus(boolean) {
          return boolean ? 1 : 0;
       },
+      isLabel(game) {
+         const isLabel =
+            game.label === this.filter.values.label ||
+            util.isUndefined(this.filter.values.label);
+         return isLabel;
+      },
+      isGeneration(game) {
+         const isGeneration =
+            this.getGeneration(game.version) === this.filter.values.generation ||
+            util.isUndefined(this.filter.values.generation);
+         return isGeneration;
+      },
+      isVersion(game) {
+         const isVersion =
+            game.version.label === this.filter.values.version ||
+            util.isUndefined(this.filter.values.version);
+         return isVersion;
+      },
+      isFinished(game) {
+         const isFinished =
+            this.filter.values.finished
+               .map(v => this.getFinishedStatus(v))
+               .includes(this.getFinishedStatus(game.is_finished)) ||
+            util.isEmptyArray(this.filter.values.finished);
+         return isFinished;
+      },
+      getFilter(game) {
+         const filtered =
+            this.isLabel(game) &&
+            this.isGeneration(game) &&
+            this.isVersion(game) &&
+            this.isFinished(game);
+         return filtered;
+      },
    },
    computed: {
-      filtered() {
-         return true;
-      },
       gameVersions() {
          return Object.values(Versions).map(v =>
             Object({

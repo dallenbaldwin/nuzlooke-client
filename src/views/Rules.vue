@@ -10,17 +10,23 @@
          >
          </c-dialog-card>
       </v-dialog>
+      <v-dialog v-model="filter.flag" width="500">
+         <c-dialog-card
+            :props="filter.dialogCard"
+            v-on:close-dialog="closeDialog"
+         ></c-dialog-card>
+      </v-dialog>
    </v-row>
 </template>
 
 <script>
-import DialogCardVue from '../components/DialogCard.vue';
+import DialogCard from '../components/DialogCard.vue';
 import * as util from '../util/util';
 
 export default {
    name: 'Rules',
    components: {
-      'c-dialog-card': DialogCardVue,
+      'c-dialog-card': DialogCard,
    },
    data() {
       return {
@@ -37,6 +43,14 @@ export default {
                action: 'create-rule',
             },
          },
+         filter: {
+            flag: false,
+            dialogCard: {
+               title: 'Filter Rules',
+               text: 'I want to filter Rules!',
+               cancelBtn: { text: 'close' },
+            },
+         },
       };
    },
    computed: {
@@ -51,15 +65,18 @@ export default {
          this.createRuleData.description = null;
          this.createRuleData.label = null;
       },
-      // filterRules() {
-      //    alert('i want to filter my rules!');
-      // },
       createRule() {
          this.createRuleDialog = true;
       },
       confirmCreateRule() {
          alert(util.prettySON(this.createRuleData));
          this.closeDialog();
+      },
+      openFilter() {
+         this.filter.flag = true;
+      },
+      closeDialog() {
+         this.filter.flag = false;
       },
    },
 };

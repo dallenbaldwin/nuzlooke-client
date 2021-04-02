@@ -5,21 +5,38 @@
          :key="i"
          :encounter="encounter"
       ></c-route-card>
+      <v-dialog v-model="filter.flag" width="500">
+         <c-dialog-card
+            :props="filter.dialogCard"
+            v-on:close-dialog="closeDialog"
+         ></c-dialog-card>
+      </v-dialog>
    </v-row>
 </template>
 
 <script>
+import DialogCard from '../components/DialogCard.vue';
 import RouteCard from '../components/routes/RouteCard.vue';
 
 export default {
    name: 'Routes',
    components: {
       'c-route-card': RouteCard,
+      'c-dialog-card': DialogCard,
    },
    data() {
-      return {};
+      return {
+         // TODO filters
+         filter: {
+            flag: false,
+            dialogCard: {
+               title: 'Filter Routes',
+               text: 'I want to filter Routes!',
+               cancelBtn: { text: 'close' },
+            },
+         },
+      };
    },
-
    computed: {
       game() {
          return this.$store.state.game;
@@ -29,9 +46,12 @@ export default {
       },
    },
    methods: {
-      // filterRoutes() {
-      //    alert('i want to filter my routes!');
-      // },
+      openFilter() {
+         this.filter.flag = true;
+      },
+      closeDialog() {
+         this.filter.flag = false;
+      },
    },
 };
 </script>

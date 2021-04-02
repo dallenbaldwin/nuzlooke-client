@@ -7,11 +7,8 @@
             v-on:logout="logout"
             v-on:exit-game="exitGame"
             v-on:create-rule="createRule"
+            v-on:filter="openFilter"
          ></c-speed-dial>
-         <!-- v-on:filter-pokemon="filterPokemon"
-            v-on:filter-routes="filterRoutes"
-            v-on:filter-gyms="filterGyms"
-            v-on:filter-rules="filterRules" -->
       </v-row>
       <v-row class="mt-6">
          <div class="text-h2">
@@ -26,7 +23,7 @@
             </v-tab>
          </v-tabs>
       </v-row>
-      <component :is="currentTabComponent" ref="createRule"></component>
+      <component :is="currentTabComponent" ref="eventBus"></component>
    </v-container>
 </template>
 
@@ -48,7 +45,7 @@ export default {
    },
    data() {
       return {
-         eventBus: null,
+         filter: false,
          tab: null,
          tabs: [
             { label: 'Pokemon', icon: Icons.PAGES.POKEMON },
@@ -71,6 +68,42 @@ export default {
       actions() {
          const a = [
             {
+               label: 'Filter',
+               icon: Icons.CONTROLS.FILTER,
+               route: null,
+               dark: true,
+               action: 'filter',
+               color: 'primary',
+               tab: TabMap.POKEMON,
+            },
+            {
+               label: 'Filter',
+               icon: Icons.CONTROLS.FILTER,
+               route: null,
+               dark: true,
+               action: 'filter',
+               color: 'primary',
+               tab: TabMap.ROUTES,
+            },
+            {
+               label: 'Filter',
+               icon: Icons.CONTROLS.FILTER,
+               route: null,
+               dark: true,
+               action: 'filter',
+               color: 'primary',
+               tab: TabMap.GYMS,
+            },
+            {
+               label: 'Filter',
+               icon: Icons.CONTROLS.FILTER,
+               route: null,
+               dark: true,
+               action: 'filter',
+               color: 'primary',
+               tab: TabMap.RULES,
+            },
+            {
                label: 'Create Rule',
                icon: Icons.CONTROLS.PLUS,
                route: null,
@@ -79,42 +112,6 @@ export default {
                color: 'green',
                tab: TabMap.RULES,
             },
-            // {
-            //    label: 'Filter',
-            //    icon: Icons.CONTROLS.FILTER,
-            //    route: null,
-            //    dark: true,
-            //    action: 'filter-pokemon',
-            //    color: 'primary',
-            //    tab: TabMap.POKEMON,
-            // },
-            // {
-            //    label: 'Filter',
-            //    icon: Icons.CONTROLS.FILTER,
-            //    route: null,
-            //    dark: true,
-            //    action: 'filter-routes',
-            //    color: 'primary',
-            //    tab: TabMap.ROUTES,
-            // },
-            // {
-            //    label: 'Filter',
-            //    icon: Icons.CONTROLS.FILTER,
-            //    route: null,
-            //    dark: true,
-            //    action: 'filter-gyms',
-            //    color: 'primary',
-            //    tab: TabMap.GYMS,
-            // },
-            // {
-            //    label: 'Filter',
-            //    icon: Icons.CONTROLS.FILTER,
-            //    route: null,
-            //    dark: true,
-            //    action: 'filter-rules',
-            //    color: 'primary',
-            //    tab: TabMap.RULES,
-            // },
          ];
          return a.filter(e => e.tab === this.tab);
       },
@@ -127,7 +124,10 @@ export default {
          return TabMap[tabIndex];
       },
       createRule() {
-         this.$refs.createRule.createRule();
+         this.$refs.eventBus.createRule();
+      },
+      openFilter() {
+         this.$refs.eventBus.openFilter();
       },
    },
    mounted() {
