@@ -1,8 +1,8 @@
 <template>
-   <v-card>
-      <v-card-title class="headline grey lighten-2"> {{ props.title }}</v-card-title>
+   <v-card outlined>
+      <v-card-title class="headline grey lighten-2 mb-3"> {{ props.title }}</v-card-title>
       <v-card-text>
-         <div v-if="props.text" class="mt-3 mb-3">{{ props.text }}</div>
+         <div v-if="props.text" class="mb-3">{{ props.text }}</div>
          <slot></slot>
       </v-card-text>
       <v-divider></v-divider>

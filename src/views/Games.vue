@@ -69,17 +69,21 @@
                label="Version"
                :items="Object.values(Versions).map(v => v.label)"
                v-model="filter.values.version"
+               :multiple="true"
             ></c-combobox>
             <c-combobox
                label="Generation"
                :items="Object.values(Versions).map(v => v.generation)"
                v-model="filter.values.generation"
+               :multiple="true"
             ></c-combobox>
-            <v-radio-group multiple v-model="filter.values.finished" row>
-               <v-radio label="On Going" color="primary"></v-radio>
-               <v-radio label="Finished" color="primary"></v-radio>
-               <v-btn @click="filter.values.finished = []">reset</v-btn>
-            </v-radio-group>
+            <c-combobox
+               label="Status"
+               v-model="filter.values.finished"
+               :items="filter.finishedStatuses"
+               :multiple="true"
+            >
+            </c-combobox>
          </c-dialog-card>
       </v-dialog>
    </v-container>
@@ -148,6 +152,10 @@ export default {
                generation: null,
                finished: [],
             },
+            finishedStatuses: [
+               { value: false, text: 'On Going' },
+               { value: true, text: 'Finished' },
+            ],
          },
          actions: [
             {
@@ -204,39 +212,21 @@ export default {
       getFinishedStatus(boolean) {
          return boolean ? 1 : 0;
       },
-      isLabel(game) {
-         const isLabel =
-            game.label === this.filter.values.label ||
-            util.isUndefined(this.filter.values.label);
-         return isLabel;
-      },
-      isGeneration(game) {
-         const isGeneration =
-            this.getGeneration(game.version) === this.filter.values.generation ||
-            util.isUndefined(this.filter.values.generation);
-         return isGeneration;
-      },
-      isVersion(game) {
-         const isVersion =
-            game.version.label === this.filter.values.version ||
-            util.isUndefined(this.filter.values.version);
-         return isVersion;
-      },
-      isFinished(game) {
-         const isFinished =
-            this.filter.values.finished
-               .map(v => this.getFinishedStatus(v))
-               .includes(this.getFinishedStatus(game.is_finished)) ||
-            util.isEmptyArray(this.filter.values.finished);
-         return isFinished;
-      },
       getFilter(game) {
-         const filtered =
-            this.isLabel(game) &&
-            this.isGeneration(game) &&
-            this.isVersion(game) &&
-            this.isFinished(game);
-         return filtered;
+         const isLabel = util.likeOrUndefined(game.label, this.filter.values.label);
+         const isGeneration = util.includesOrEmptyArray(
+            this.getGeneration(game.version),
+            this.filter.values.generation
+         );
+         const isVersion = util.includesOrEmptyArray(
+            game.version.label,
+            this.filter.values.version
+         );
+         const isFinished = util.includesOrEmptyArray(
+            this.getFinishedStatus(game.is_finished),
+            this.filter.values.finished.map(v => this.getFinishedStatus(v.value))
+         );
+         return isLabel && isGeneration && isVersion && isFinished;
       },
    },
    computed: {

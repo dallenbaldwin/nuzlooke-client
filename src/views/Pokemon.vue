@@ -1,6 +1,6 @@
 <template>
    <v-row>
-      <v-expansion-panels popout>
+      <v-expansion-panels multiple popout>
          <v-expansion-panel v-for="(state, i) of Object.values(PartyState)" :key="i">
             <v-expansion-panel-header disable-icon-rotate class="text-h6">
                {{ state }}
@@ -37,6 +37,7 @@
                         v-for="pokemon of getPanelPokemon(state)"
                         :key="pokemon.id"
                         :pokemon="pokemon"
+                        v-show="getFilter(pokemon)"
                      >
                      </c-pokemon-card>
                   </v-row>
@@ -45,20 +46,41 @@
          </v-expansion-panel>
       </v-expansion-panels>
       <v-dialog v-model="filter.flag" width="500">
-         <c-dialog-card
-            :props="filter.dialogCard"
-            v-on:close-dialog="closeDialog"
-         ></c-dialog-card>
+         <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
+            <c-text-field
+               label="Nickname"
+               v-model="filter.values.nickname"
+            ></c-text-field>
+            <c-combobox
+               label="Species"
+               v-model="filter.values.species"
+               :items="speciess"
+               :multiple="true"
+            ></c-combobox>
+            <c-combobox
+               label="Types"
+               v-model="filter.values.types"
+               :items="Object.values(PokemonType).map(t => t.label)"
+               :multiple="true"
+               :types="true"
+            >
+            </c-combobox>
+         </c-dialog-card>
       </v-dialog>
    </v-row>
 </template>
 
 <script>
 import DialogCard from '../components/DialogCard.vue';
+import Combobox from '../components/form-controls/Combobox.vue';
+import TextField from '../components/form-controls/TextField.vue';
 import PokemonCard from '../components/pokemon/PokemonCard.vue';
+import PokemonType from '../components/pokemon/PokemonType.vue';
 import PokeSprite from '../components/pokemon/PokeSprite.vue';
+import PartyState from '../constants/PartyState';
 import * as gameController from '../controllers/game';
 import * as pokemonController from '../controllers/pokemon';
+import * as util from '../util/util';
 
 export default {
    name: 'Pokemon',
@@ -66,16 +88,22 @@ export default {
       'c-poke-sprite': PokeSprite,
       'c-pokemon-card': PokemonCard,
       'c-dialog-card': DialogCard,
+      'c-text-field': TextField,
+      'c-combobox': Combobox,
+      'c-pokemon-type': PokemonType,
    },
    data() {
       return {
-         // TODO filters
          filter: {
             flag: false,
             dialogCard: {
                title: 'Filter Pokemon',
-               text: 'I want to filter Pokemon!',
                cancelBtn: { text: 'close' },
+            },
+            values: {
+               nickname: null,
+               types: null,
+               species: null,
             },
          },
       };
@@ -102,6 +130,9 @@ export default {
             pokemonController.isGraveyard(p.party_state)
          );
       },
+      speciess() {
+         return this.game.pokemons.map(p => p.species);
+      },
    },
    methods: {
       getPanelCount(partyState) {
@@ -116,7 +147,23 @@ export default {
          else if (pokemonController.isPC(partyState)) return this.pc;
          else if (pokemonController.isGraveyard(partyState)) return this.graveyard;
       },
+      getFilter(pokemon) {
+         const isNickname = util.likeOrUndefined(
+            pokemon.nickname,
+            this.filter.values.nickname
+         );
+         const isSpecies = util.includesOrEmptyArray(
+            pokemon.species,
+            this.filter.values.species
+         );
+         const isType = util.includesOrEmptyArray(
+            pokemon.types,
+            this.filter.values.types
+         );
+         return isNickname && isSpecies && isType;
+      },
       openFilter() {
+         // this is inherited from Game.vue
          this.filter.flag = true;
       },
       closeDialog() {

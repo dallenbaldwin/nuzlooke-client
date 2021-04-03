@@ -45,10 +45,33 @@ export const deClassify = classObject => JSON.parse(JSON.stringify(classObject))
 
 export const isUndefined = value => value === undefined || value === null || value === '';
 
-export const isEmptyArray = array => array.length === 0;
+export const isEmptyArray = array => (isUndefined(array) ? true : array.length === 0);
 
 export const prettySON = json => JSON.stringify(json, null, 2);
 
 export const mobile = () => isMobile;
 
 export const errorCatch = err => prettySON([err.message, err.stack]);
+
+export const isOrUndefined = (a, b) => {
+   return isUndefined(b) || a === b;
+};
+
+export const likeOrUndefined = (a, b) => {
+   if (isUndefined(a) && !isUndefined(b)) return false;
+   if (!isUndefined(a)) a = a.toLowerCase();
+   if (!isUndefined(b)) b = b.toLowerCase();
+   return isUndefined(b) || a.includes(b) || b.includes(a);
+};
+
+export const includesOrEmptyArray = (a, b) => {
+   return (
+      isEmptyArray(b) ||
+      b.filter(i => {
+         if (a.length > 0) return a.includes(i);
+         else return i === a;
+      }).length > 0
+   );
+};
+
+// TODO save filters to store and apply them when opening each page

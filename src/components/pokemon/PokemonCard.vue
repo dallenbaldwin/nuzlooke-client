@@ -224,6 +224,9 @@ export default {
       canSendToPC() {
          return pokemonController.getPartyLength() !== 1;
       },
+      canSendToParty() {
+         return pokemonController.getPartyLength() !== pokemonController.PARTY_MAX_SIZE;
+      },
    },
    computed: {
       evolutionPokemon() {
@@ -236,7 +239,8 @@ export default {
          return this.buttons
             .filter(b => b.state === this.pokemon.party_state)
             .filter(b => (this.canSendToPC() ? true : b.label !== 'To Storage'))
-            .filter(b => (this.canEvolve() ? true : b.label !== 'Evolve'));
+            .filter(b => (this.canEvolve() ? true : b.label !== 'Evolve'))
+            .filter(b => (this.canSendToParty() ? true : b.label !== 'To Party'));
       },
    },
 };

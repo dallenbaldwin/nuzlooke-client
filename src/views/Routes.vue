@@ -4,35 +4,68 @@
          v-for="(encounter, i) of game.encounters"
          :key="i"
          :encounter="encounter"
+         v-show="getFilter(encounter)"
       ></c-route-card>
       <v-dialog v-model="filter.flag" width="500">
-         <c-dialog-card
-            :props="filter.dialogCard"
-            v-on:close-dialog="closeDialog"
-         ></c-dialog-card>
+         <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
+            <c-combobox
+               label="Status"
+               v-model="filter.values.status"
+               :items="Object.values(EncounterResultConst)"
+               :multiple="true"
+            ></c-combobox>
+            <c-text-field label="Name" v-model="filter.values.label"></c-text-field>
+            <c-combobox
+               label="Species"
+               v-model="filter.values.species"
+               :items="encountersSpecies"
+               :multiple="true"
+            ></c-combobox>
+            <c-text-field
+               label="Nickname"
+               v-model="filter.values.nickname"
+            ></c-text-field>
+            <c-combobox
+               label="Type"
+               v-model="filter.values.types"
+               :items="Object.values(PokemonType).map(t => t.label)"
+               :types="true"
+               :multiple="true"
+            ></c-combobox>
+         </c-dialog-card>
       </v-dialog>
    </v-row>
 </template>
 
 <script>
 import DialogCard from '../components/DialogCard.vue';
+import Combobox from '../components/form-controls/Combobox.vue';
+import TextField from '../components/form-controls/TextField.vue';
 import RouteCard from '../components/routes/RouteCard.vue';
+import * as util from '../util/util';
 
 export default {
    name: 'Routes',
    components: {
       'c-route-card': RouteCard,
       'c-dialog-card': DialogCard,
+      'c-text-field': TextField,
+      'c-combobox': Combobox,
    },
    data() {
       return {
-         // TODO filters
          filter: {
             flag: false,
             dialogCard: {
                title: 'Filter Routes',
-               text: 'I want to filter Routes!',
                cancelBtn: { text: 'close' },
+            },
+            values: {
+               status: null,
+               label: null,
+               species: null,
+               nickname: null,
+               types: null,
             },
          },
       };
@@ -44,8 +77,39 @@ export default {
       userId() {
          return this.$store.state.userId;
       },
+      encountersSpecies() {
+         const set = new Set();
+         this.game.encounters.forEach(encounter => {
+            encounter.pokemons.forEach(pokemon => {
+               set.add(pokemon.species);
+            });
+         });
+         const array = [...set];
+         array.sort();
+         return array;
+      },
    },
    methods: {
+      getFilter(encounter) {
+         const isStatus = util.includesOrEmptyArray(
+            encounter.result.constant,
+            this.filter.values.status
+         );
+         const isLabel = util.likeOrUndefined(encounter.label, this.filter.values.label);
+         const isSpecies = util.includesOrEmptyArray(
+            encounter.pokemons.map(p => p.species),
+            this.filter.values.species
+         );
+         const isNickname = util.likeOrUndefined(
+            encounter.result.nickname,
+            this.filter.values.nickname
+         );
+         const isTypes = util.includesOrEmptyArray(
+            encounter.pokemons.flatMap(p => p.types),
+            this.filter.values.types
+         );
+         return isStatus && isLabel && isSpecies && isNickname && isTypes;
+      },
       openFilter() {
          this.filter.flag = true;
       },

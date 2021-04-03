@@ -50,7 +50,7 @@
                </div>
             </v-row>
             <v-row class="mt-6">
-               <v-expansion-panels popout disable-icon-rotate>
+               <v-expansion-panels multiple popout disable-icon-rotate>
                   <c-pokecordian
                      v-for="pokemon of pokemons"
                      :key="pokemon.species"
