@@ -92,13 +92,10 @@
             </v-fade-transition>
             <v-fade-transition>
                <div v-show="!processingGame">
-                  <v-text-field
-                     outlined
-                     class="mt-3"
-                     v-model="editGame.values.label"
+                  <c-text-field
                      label="Name"
-                     clearable
-                  ></v-text-field>
+                     v-model="editGame.values.label"
+                  ></c-text-field>
                   <c-error
                      v-for="(error, i) of editGame.errors.errors"
                      :key="i"
@@ -128,6 +125,7 @@ import Button from '../Button.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
 import PokeSprite from '../pokemon/PokeSprite.vue';
 import BadgeSprite from '../gyms/BadgeSprite.vue';
+import TextField from '../form-controls/TextField.vue';
 import Errors from '../Errors.vue';
 import * as gameController from '../../controllers/game';
 import Icons from '../../constants/Icons';
@@ -145,6 +143,7 @@ export default {
       'c-poke-sprite': PokeSprite,
       'c-badge-sprite': BadgeSprite,
       'c-error': Errors,
+      'c-text-field': TextField,
    },
    data() {
       return {

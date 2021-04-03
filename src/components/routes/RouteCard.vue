@@ -76,27 +76,22 @@
                            :value="result"
                         ></v-radio>
                      </v-radio-group>
-                     <v-combobox
+                     <c-combobox
                         v-model="newEncounter.result.species"
                         :items="newEncounter.pokemons"
                         label="Pokemon"
-                        outlined
-                        clearable
                         :disabled="
                            newEncounter.result.constant === EncounterResultConst.AVAILABLE
                         "
                      >
-                     </v-combobox>
-                     <v-text-field
-                        label="Nickname"
+                     </c-combobox>
+                     <c-text-field
                         v-model="newEncounter.result.nickname"
-                        outlined
-                        clearable
+                        label="Nickname"
                         :disabled="
                            newEncounter.result.constant !== EncounterResultConst.CAUGHT
                         "
-                     >
-                     </v-text-field>
+                     ></c-text-field>
                      <v-slide-y-transition>
                         <v-card elevation="0" v-show="showPartyManagerOptions">
                            <v-card-title>You have 6 Pokemon in your Party!</v-card-title>
@@ -120,17 +115,15 @@
                                     label="Send to Party"
                                  ></v-radio>
                               </v-radio-group>
-                              <v-combobox
+                              <c-combobox
                                  label="Party Member"
-                                 outlined
-                                 clearable
                                  :items="partyPokemons"
                                  v-model="newEncounter.result.replacement"
                                  :disabled="
                                     newEncounter.result.destination === PartyState.PC
                                  "
                               >
-                              </v-combobox>
+                              </c-combobox>
                            </v-card-text>
                         </v-card>
                      </v-slide-y-transition>
@@ -167,6 +160,8 @@ import Button from '../Button.vue';
 import ProgressSpinner from '../../components/ProgressSpinner.vue';
 import DialogCard from '../../components/DialogCard.vue';
 import Errors from '../../components/Errors.vue';
+import TextField from '../form-controls/TextField.vue';
+import Combobox from '../form-controls/Combobox.vue';
 import EncounterResultConst from '../../constants/EncounterResultConst';
 import EncounterResult from '../../models/EncounterResult';
 import PartyState from '../../constants/PartyState';
@@ -186,6 +181,8 @@ export default {
       'c-dialog-card': DialogCard,
       'c-progress-spinner': ProgressSpinner,
       'c-errors': Errors,
+      'c-text-field': TextField,
+      'c-combobox': Combobox,
    },
    data() {
       return {

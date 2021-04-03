@@ -50,13 +50,10 @@
             </v-fade-transition>
             <v-fade-transition>
                <div v-show="!settingsDialog.processing">
-                  <v-text-field
-                     clearable
-                     outlined
+                  <c-text-field
                      label="Username"
                      v-model="settingsDialog.options.username"
-                  >
-                  </v-text-field>
+                  ></c-text-field>
                   <c-error
                      v-for="(error, i) of settingsDialog.errors.errors"
                      :key="i"
@@ -72,6 +69,7 @@
 <script>
 import DialogCard from './DialogCard.vue';
 import ProgressSpinner from './ProgressSpinner.vue';
+import TextField from './form-controls/TextField.vue';
 import Errors from './Errors.vue';
 import Icons from '../constants/Icons';
 import Pages from '../constants/Pages';
@@ -84,6 +82,7 @@ export default {
       'c-dialog-card': DialogCard,
       'c-progress-spinner': ProgressSpinner,
       'c-error': Errors,
+      'c-text-field': TextField,
    },
    data() {
       return {

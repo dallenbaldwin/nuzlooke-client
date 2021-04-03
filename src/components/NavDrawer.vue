@@ -49,25 +49,16 @@
             v-on:close-dialog="closeDialog"
          >
             <div v-if="newGame.creatingGame" class="text-center mt-3">
-               <v-progress-circular
-                  indeterminate
-                  size="100"
-                  color="primary"
-               ></v-progress-circular>
+               <c-progress-spinner></c-progress-spinner>
             </div>
             <div class="mt-3" v-if="!newGame.creatingGame">
-               <v-text-field
-                  outlined
-                  v-model="newGame.newGame.label"
-                  label="Name"
-               ></v-text-field>
-               <v-combobox
+               <c-text-field v-model="newGame.newGame.label" label="Name"></c-text-field>
+               <c-combobox
                   label="Version"
-                  outlined
                   v-model="newGame.newGame.version"
                   :items="Object.values(Versions).map(v => v.label)"
                >
-               </v-combobox></div
+               </c-combobox></div
          ></c-dialog-card>
       </v-dialog>
    </v-container>
@@ -75,14 +66,21 @@
 
 <script>
 import DialogCard from './DialogCard.vue';
+import TextField from './form-controls/TextField.vue';
+import ProgressSpinner from './ProgressSpinner.vue';
+import Combobox from './form-controls/Combobox.vue';
 import Icons from '../constants/Icons';
 import * as gameController from '../controllers/game';
 import * as util from '../util/util';
 
 export default {
+   // TODO gonna have to rework most of this
    name: 'NavDrawer',
    components: {
       'c-dialog-card': DialogCard,
+      'c-text-field': TextField,
+      'c-progress-spinner': ProgressSpinner,
+      'c-combobox': Combobox,
    },
    data() {
       return {

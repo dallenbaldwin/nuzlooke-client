@@ -50,16 +50,13 @@
                </v-slide-y-transition>
                <v-slide-y-transition>
                   <div v-show="!processingPokemon">
-                     <v-text-field
+                     <c-text-field
+                        v-model="graveyardData.faintedMessage"
                         :label="
                            `What happened to
                ${graveyardData.pokemon ? graveyardData.pokemon.nickname : ''}?`
                         "
-                        clearable
-                        outlined
-                        v-model="graveyardData.faintedMessage"
-                     >
-                     </v-text-field>
+                     ></c-text-field>
                   </div>
                </v-slide-y-transition>
             </c-dialog-card>
@@ -80,13 +77,12 @@
                         can evolve into one of the following Pokemon. Which one is it
                         evolving into?
                      </div>
-                     <v-combobox
-                        outlined
+                     <c-combobox
                         label="Evolution"
                         :items="evolutionPokemon"
                         v-model="evolveData.evolvesTo"
                      >
-                     </v-combobox>
+                     </c-combobox>
                   </div>
                </v-slide-y-transition>
             </c-dialog-card>
@@ -100,7 +96,9 @@ import DialogCard from '../../components/DialogCard.vue';
 import PokeSprite from './PokeSprite.vue';
 import PokemonType from './PokemonType.vue';
 import ProgressSpinner from '../../components/ProgressSpinner.vue';
+import TextField from '../form-controls/TextField.vue';
 import Button from '../Button.vue';
+import Combobox from '../form-controls/Combobox.vue';
 import Icons from '../../constants/Icons';
 import PartyState from '../../constants/PartyState';
 import * as routeController from '../../controllers/route';
@@ -114,11 +112,14 @@ export default {
       'c-btn': Button,
       'c-dialog-card': DialogCard,
       'c-progress-spinner': ProgressSpinner,
+      'c-text-field': TextField,
+      'c-combobox': Combobox,
    },
    props: {
       pokemon: { required: true },
    },
    data() {
+      // FIXME can't evolve into a pokemon from a different game!
       return {
          processingPokemon: false,
          evolveData: {

@@ -43,20 +43,15 @@
             </v-fade-transition>
             <v-fade-transition>
                <div class="mt-3" v-show="!processingGame">
-                  <v-text-field
-                     clearable
-                     outlined
-                     v-model="createGame.values.label"
+                  <c-text-field
                      label="Name"
-                  ></v-text-field>
-                  <v-combobox
-                     clearable
+                     v-model="createGame.values.label"
+                  ></c-text-field>
+                  <c-combobox
                      label="Version"
-                     outlined
                      v-model="createGame.values.version"
                      :items="gameVersions"
-                  >
-                  </v-combobox>
+                  ></c-combobox>
                   <c-error
                      v-for="(error, i) of createGame.errors.errors"
                      :key="i"
@@ -69,28 +64,17 @@
       </v-dialog>
       <v-dialog v-model="filter.flag" width="500">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
-            <v-text-field
-               class="mt-3 mb-3"
-               label="Name"
-               outlined
-               v-model="filter.values.label"
-               clearable
-            ></v-text-field>
-            <v-combobox
+            <c-text-field label="Name" v-model="filter.values.label"></c-text-field>
+            <c-combobox
                label="Version"
-               outlined
                :items="Object.values(Versions).map(v => v.label)"
-               clearable
                v-model="filter.values.version"
-            ></v-combobox>
-            <v-combobox
-               class="mt-3"
+            ></c-combobox>
+            <c-combobox
                label="Generation"
-               outlined
                :items="Object.values(Versions).map(v => v.generation)"
-               clearable
                v-model="filter.values.generation"
-            ></v-combobox>
+            ></c-combobox>
             <v-radio-group multiple v-model="filter.values.finished" row>
                <v-radio label="On Going" color="primary"></v-radio>
                <v-radio label="Finished" color="primary"></v-radio>
@@ -107,6 +91,8 @@ import DialogCard from '../components/DialogCard.vue';
 import Gamecordian from '../components/games/Gamecordian.vue';
 import Errors from '../components/Errors.vue';
 import ProgressSpinner from '../components/ProgressSpinner.vue';
+import TextField from '../components/form-controls/TextField.vue';
+import Combobox from '../components/form-controls/Combobox.vue';
 import * as gameController from '../controllers/game';
 import * as util from '../util/util';
 import Icons from '../constants/Icons';
@@ -120,6 +106,8 @@ export default {
       'c-gamecordian': Gamecordian,
       'c-error': Errors,
       'c-progress-spinner': ProgressSpinner,
+      'c-text-field': TextField,
+      'c-combobox': Combobox,
    },
    data() {
       return {
