@@ -75,7 +75,7 @@ export default Object.freeze({
       icon: 'https://cdn.bulbagarden.net/upload/1/15/Ice_icon_SwSh.png',
    },
    DRAGON: {
-      color: '#7038f8',
+      color: '#0a6dc4',
       label: 'Dragon',
       icon: 'https://cdn.bulbagarden.net/upload/7/70/Dragon_icon_SwSh.png',
    },
@@ -89,5 +89,5 @@ export default Object.freeze({
       label: 'Fairy',
       icon: 'https://cdn.bulbagarden.net/upload/c/c6/Fairy_icon_SwSh.png',
    },
-   UNKNOWN: { color: '#68a090', label: '???', icon: '' },
+   '???': { color: '#68a090', label: '???', icon: 'null' },
 });
