@@ -1,4 +1,3 @@
-import Versions from '../constants/Versions';
 import PartyState from '../constants/PartyState';
 import Icons from '../constants/Icons';
 import store from '../store/store';
@@ -82,8 +81,8 @@ export const updateGameLabel = async (gameId, label) => {
 
 export const getConsoleIcon = family => {
    const familyToConsole = {
-      letsgo: Icons.CONSOLES.SWITCH,
-      rubysapphire: Icons.CONSOLES.DEFAULT,
+      'lets-go': Icons.CONSOLES.SWITCH,
+      'ruby-sapphire': Icons.CONSOLES.DEFAULT,
       emerald: Icons.CONSOLES.DEFAULT,
    };
    return familyToConsole[family];

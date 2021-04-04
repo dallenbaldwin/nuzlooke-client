@@ -204,8 +204,8 @@ export default {
       getGeneration(versionObj) {
          let familyCode = versionObj.family;
          let gen;
-         if (familyCode === 'letsgo') gen = 7;
-         else if (familyCode === 'rubysapphire') gen = 3;
+         if (familyCode === 'lets-go') gen = 7;
+         else if (familyCode === 'ruby-sapphire') gen = 3;
          else if (familyCode === 'emerald') gen = 3;
          return `${gen}`;
       },
