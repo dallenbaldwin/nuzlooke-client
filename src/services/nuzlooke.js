@@ -1,12 +1,11 @@
-import store from '../store/store';
 import axios from 'axios';
 // import * as Auth from '../services/auth';
 
-export default function nuzlooke() {
+export default () => {
    return axios.create({
-      baseURL: store.state.apiURL,
+      baseURL: `${window.location.protocol}//${window.location.hostname}:3000/api`,
       // headers: {
       //    Authorization: auth.getToken()
       // }
    });
-}
+};

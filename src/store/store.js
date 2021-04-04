@@ -7,7 +7,6 @@ Vue.use(Vuex);
 export default new Vuex.Store({
    plugins: [createPersistedState({ storage: window.sessionStorage })],
    state: {
-      apiURL: `${window.location.protocol}//${window.location.hostname}:3000/api`,
       game: null,
       userId: null,
       username: null,
