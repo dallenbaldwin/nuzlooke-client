@@ -1,17 +1,6 @@
 import nuzlooke from './nuzlooke';
 
-export function createGame(game) {
-   return nuzlooke().post('/games', game);
-}
-
-export function getGameById(id) {
-   return nuzlooke().get(`/games/${id}`);
-}
-
-export function updateGameById(id, game) {
-   return nuzlooke().put(`/games/${id}`, game);
-}
-
-export function deleteGameById(id) {
-   return nuzlooke().delete(`/games/${id}`);
-}
+export const createGame = game => nuzlooke().post('/games', game);
+export const getGameById = id => nuzlooke().get(`/games/${id}`);
+export const updateGameById = (id, game) => nuzlooke().put(`/games/${id}`, game);
+export const deleteGameById = id => nuzlooke().delete(`/games/${id}`);
