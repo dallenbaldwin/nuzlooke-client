@@ -2,7 +2,7 @@ import * as pokeapiServices from '../services/pokeapi';
 import UserPokemon from '../models/UserPokemon';
 import { errorCatch } from '../util/util';
 
-export async function buildUserPokemon(species, nickname, partyState) {
+export const buildUserPokemon = async (species, nickname, partyState) => {
    try {
       species = species.toLowerCase();
       const pokeData = await pokeapiServices.getPokemonBySpecies(species);
@@ -21,7 +21,7 @@ export async function buildUserPokemon(species, nickname, partyState) {
    } catch (err) {
       alert(errorCatch(err));
    }
-}
+};
 
 const getNextEvolution = (chain, currentSpecies) => {
    // debugger;
