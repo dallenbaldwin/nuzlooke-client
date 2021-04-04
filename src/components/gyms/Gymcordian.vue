@@ -53,7 +53,7 @@
                <v-expansion-panels multiple popout disable-icon-rotate>
                   <c-pokecordian
                      v-for="pokemon of pokemons"
-                     :key="pokemon.species"
+                     :key="pokemon.sort_id"
                      :pokemon="pokemon"
                   ></c-pokecordian>
                </v-expansion-panels>

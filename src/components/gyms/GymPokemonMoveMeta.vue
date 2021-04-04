@@ -14,7 +14,7 @@
 
 <script>
 export default {
-   name: 'GymPokemonMeta',
+   name: 'GymPokemonMoveMeta',
    props: ['text', 'meta'],
    computed: {
       upperMeta() {

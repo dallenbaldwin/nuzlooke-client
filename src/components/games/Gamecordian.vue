@@ -205,7 +205,7 @@ export default {
    },
    computed: {
       consoleIcon() {
-         return gameController.getConsoleIcon(this.game.version.family);
+         return gameController.getConsoleIcon(this.game.version.version_group);
       },
    },
    methods: {

@@ -24,7 +24,7 @@
       <v-card-subtitle>{{ description }}</v-card-subtitle>
       <v-card-text class="d-flex flex-row justify-end">
          <c-meta v-if="power" meta="power" :text="power"></c-meta>
-         <c-meta v-if="accuracy" meta="accuracy" :text="accuracy"></c-meta>
+         <c-meta v-if="accuracy" meta="accuracy" :text="`${accuracy}%`"></c-meta>
          <c-meta v-if="pp" meta="pp" :text="pp"></c-meta>
       </v-card-text>
    </v-card>

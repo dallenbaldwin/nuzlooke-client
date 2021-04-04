@@ -12,14 +12,28 @@
       </v-expansion-panel-header>
       <v-expansion-panel-content>
          <v-container>
-            <v-row class="d-flex flex-column justify-center align-center">
+            <v-row class="d-flex flex-row justify-center align-center">
                <c-poke-sprite :src="spriteUrl" size="large"></c-poke-sprite>
-               <div class="ma-3">
-                  <c-pokemon-type
-                     v-for="(type, i) of types"
-                     :key="i"
-                     :type="type"
-                  ></c-pokemon-type>
+               <div class="ma-3 d-flex flex-column align-start c-buffer">
+                  <div>
+                     <c-pokemon-type
+                        v-for="(type, i) of types"
+                        :key="i"
+                        :type="type"
+                     ></c-pokemon-type>
+                  </div>
+                  <c-meta
+                     class="mt-1"
+                     v-if="ability"
+                     label="Ability"
+                     :text="ability"
+                  ></c-meta>
+                  <c-meta
+                     class="mt-1"
+                     v-if="heldItem"
+                     label="Held Item"
+                     :text="heldItem"
+                  ></c-meta>
                </div>
             </v-row>
             <v-row class="d-flex flex-row justify-space-around align-center">
@@ -38,6 +52,7 @@
 import PokemonType from '../pokemon/PokemonType.vue';
 import PokeSprite from '../pokemon/PokeSprite.vue';
 import GymPokemonMove from './GymPokemonMove.vue';
+import GymPokemonMeta from './GymPokemonMeta.vue';
 
 export default {
    name: 'Pokecordian',
@@ -46,6 +61,7 @@ export default {
       'c-poke-sprite': PokeSprite,
       'c-pokemon-type': PokemonType,
       'c-gym-pokemon-move': GymPokemonMove,
+      'c-meta': GymPokemonMeta,
    },
    data() {
       return {
@@ -55,6 +71,8 @@ export default {
          spriteUrl: this.pokemon.sprite_url,
          types: this.pokemon.types,
          moves: this.pokemon.moves,
+         heldItem: this.pokemon.held_item,
+         ability: this.pokemon.ability,
       };
    },
    computed: {},
