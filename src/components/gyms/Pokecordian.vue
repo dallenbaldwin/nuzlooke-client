@@ -27,12 +27,14 @@
                      v-if="ability"
                      label="Ability"
                      :text="ability"
+                     meta="ability"
                   ></c-meta>
                   <c-meta
                      class="mt-1"
                      v-if="heldItem"
                      label="Held Item"
                      :text="heldItem"
+                     meta="held-item"
                   ></c-meta>
                </div>
             </v-row>

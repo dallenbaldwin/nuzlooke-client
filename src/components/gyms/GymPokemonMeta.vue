@@ -12,9 +12,7 @@
    >
       {{ label }}: {{ text }}
       <v-slide-x-transition>
-         <v-icon v-show="showHint && false" @click="getMetaData">{{
-            Icons.CONTROLS.HELP
-         }}</v-icon>
+         <v-icon v-show="showHint" @click="getMetaData">{{ Icons.CONTROLS.HELP }}</v-icon>
       </v-slide-x-transition>
    </v-chip>
 </template>
@@ -27,6 +25,7 @@ export default {
       label: { required: true },
       outline: { required: false, default: 'black' },
       'text-color': { required: false, default: 'black' },
+      meta: { required: true },
    },
    computed: {},
    data() {
@@ -36,7 +35,7 @@ export default {
    },
    methods: {
       getMetaData() {
-         if (this.showHint) alert(this.text);
+         if (this.showHint) alert(`${this.meta}, ${this.text}`);
          // a lot of the grunt work has been done for this to work
       },
    },

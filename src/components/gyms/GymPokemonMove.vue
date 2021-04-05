@@ -23,16 +23,28 @@
       </v-card-title>
       <v-card-subtitle>{{ description }}</v-card-subtitle>
       <v-card-text class="d-flex flex-row justify-end">
-         <c-meta v-if="power" meta="power" :text="power"></c-meta>
-         <c-meta v-if="accuracy" meta="accuracy" :text="`${accuracy}%`"></c-meta>
-         <c-meta v-if="pp" meta="pp" :text="pp"></c-meta>
+         <c-meta
+            v-if="power"
+            meta="power"
+            outline-color="black"
+            label="Power"
+            :text="power"
+         ></c-meta>
+         <c-meta
+            v-if="accuracy"
+            outline-color="black"
+            label="Accuracy"
+            :text="`${accuracy}%`"
+            meta="accuracy"
+         ></c-meta>
+         <c-meta v-if="pp" meta="pp" outline-color="black" label="PP" :text="pp"></c-meta>
       </v-card-text>
    </v-card>
 </template>
 
 <script>
 import DamageClass from './DamageClass.vue';
-import GymPokemonMoveMeta from './GymPokemonMoveMeta.vue';
+import GymPokemonMeta from './GymPokemonMeta.vue';
 import PokemonType from '../pokemon/PokemonType.vue';
 
 export default {
@@ -43,7 +55,7 @@ export default {
    components: {
       'c-pokemon-type': PokemonType,
       'c-damage-class': DamageClass,
-      'c-meta': GymPokemonMoveMeta,
+      'c-meta': GymPokemonMeta,
    },
    data() {
       return {
