@@ -36,9 +36,7 @@ export const exitGame = () => {
 };
 
 export const arrayify = (...values) => {
-   const a = [];
-   values.forEach(value => a.push(value));
-   return a.flatMap(i => i); // force it to accept an array of values or a list of values
+   return Array.from([...values]).flatMap(x => x);
 };
 
 export const deClassify = classObject => JSON.parse(JSON.stringify(classObject));
