@@ -119,7 +119,6 @@ export default {
       pokemon: { required: true },
    },
    data() {
-      // FIXME can't evolve into a pokemon from a different game!
       return {
          processingPokemon: false,
          evolveData: {

@@ -1,9 +1,9 @@
 <template>
-   <v-chip outlined :color="PokemonType[upperType].color" small class="mr-1">
+   <v-chip outlined :color="color" small class="mr-1">
       <v-img
          class="mr-1"
          :lazy-src="Icons.MISC.POKEBALL"
-         :src="PokemonType[upperType].icon"
+         :src="icon"
          contain
          max-height="16"
          max-width="16"
@@ -13,12 +13,17 @@
 </template>
 
 <script>
+import PokemonTypes from '../../constants/PokemonTypes';
+
 export default {
    name: 'PokemonType',
    props: ['type'],
    computed: {
-      upperType() {
-         return this.type.toUpperCase();
+      color() {
+         return Object.values(PokemonTypes).find(t => t.label === this.type).color;
+      },
+      icon() {
+         return Object.values(PokemonTypes).find(t => t.label === this.type).icon;
       },
    },
    data() {

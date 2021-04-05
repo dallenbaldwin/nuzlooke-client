@@ -1,11 +1,12 @@
 import PartyState from '../constants/PartyState';
-import Icons from '../constants/Icons';
 import store from '../store/store';
 import * as services from '../services/game';
 import * as util from '../util/util';
 import NewGame from '../models/NewGame';
 import APIResponse from '../models/APIResponse';
 import * as userController from '../controllers/user';
+import GameVersions from '../constants/GameVersions';
+import GameSnapshot from '../models/GameSnapshot';
 
 export const updateEncountersAndPokemonsInDB = async () => {
    try {
@@ -80,12 +81,10 @@ export const updateGameLabel = async (gameId, label) => {
 };
 
 export const getConsoleIcon = family => {
-   const familyToConsole = {
-      'lets-go': Icons.CONSOLES.SWITCH,
-      'ruby-sapphire': Icons.CONSOLES.DEFAULT,
-      emerald: Icons.CONSOLES.DEFAULT,
-   };
-   return familyToConsole[family];
+   const icons = Object.values(GameVersions).map(v =>
+      Object({ family: v.version_group, icon: v.icon })
+   );
+   return icons.find(i => i.family === family).icon;
 };
 
 export const getPartyIconUrls = game =>
@@ -95,12 +94,12 @@ export const getGymBadgeIconsUrls = game =>
    game.gyms.filter(g => g.is_defeated).map(g => g.badge.sprite_url);
 
 export const getSnapshot = game => {
-   return {
-      game_id: game.id,
-      is_finished: game.is_finished,
-      label: game.label,
-      version: game.version,
-      party_icon_urls: getPartyIconUrls(game),
-      gym_badge_icon_urls: getGymBadgeIconsUrls(game),
-   };
+   return GameSnapshot.builder()
+      .withGameId(game.id)
+      .withGymBadgeIconUrls(getGymBadgeIconsUrls(game))
+      .withIsFinished(game.is_finished)
+      .withLabel(game.label)
+      .withPartyIconUrls(getPartyIconUrls(game))
+      .withVersion(game.version)
+      .build();
 };

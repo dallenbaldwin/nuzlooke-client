@@ -67,13 +67,13 @@
             <c-text-field label="Name" v-model="filter.values.label"></c-text-field>
             <c-combobox
                label="Version"
-               :items="Object.values(Versions).map(v => v.label)"
+               :items="gameVersions"
                v-model="filter.values.version"
                :multiple="true"
             ></c-combobox>
             <c-combobox
                label="Generation"
-               :items="Object.values(Versions).map(v => v.generation)"
+               :items="generations"
                v-model="filter.values.generation"
                :multiple="true"
             ></c-combobox>
@@ -100,7 +100,7 @@ import Combobox from '../components/form-controls/Combobox.vue';
 import * as gameController from '../controllers/game';
 import * as util from '../util/util';
 import Icons from '../constants/Icons';
-import Versions from '../constants/Versions';
+import GameVersions from '../constants/GameVersions';
 
 export default {
    name: 'Games',
@@ -148,8 +148,8 @@ export default {
             },
             values: {
                label: null,
-               version: null,
-               generation: null,
+               version: [],
+               generation: [],
                finished: [],
             },
             finishedStatuses: [
@@ -185,6 +185,7 @@ export default {
          await gameController.createNewGame(
             this.createGame.values.label,
             this.createGame.values.version.value,
+            // TODO rules
             undefined
          );
          this.closeDialog();
@@ -196,18 +197,9 @@ export default {
          this.createGame.values.label = null;
          this.createGame.values.version = null;
          this.filter.values.label = null;
-         this.filter.values.version = null;
-         this.filter.values.generation = null;
+         this.filter.values.version = [];
+         this.filter.values.generation = [];
          this.filter.values.isFinished = [];
-         this.filter.values.games = null;
-      },
-      getGeneration(versionObj) {
-         let familyCode = versionObj.family;
-         let gen;
-         if (familyCode === 'lets-go') gen = 7;
-         else if (familyCode === 'ruby-sapphire') gen = 3;
-         else if (familyCode === 'emerald') gen = 3;
-         return `${gen}`;
       },
       getFinishedStatus(boolean) {
          return boolean ? 1 : 0;
@@ -215,12 +207,12 @@ export default {
       getFilter(game) {
          const isLabel = util.likeOrUndefined(game.label, this.filter.values.label);
          const isGeneration = util.includesOrEmptyArray(
-            this.getGeneration(game.version),
-            this.filter.values.generation
+            game.version.generation,
+            this.filter.values.generation.map(v => v.value)
          );
          const isVersion = util.includesOrEmptyArray(
-            game.version.label,
-            this.filter.values.version
+            game.version.version,
+            this.filter.values.version.map(v => v.value)
          );
          const isFinished = util.includesOrEmptyArray(
             this.getFinishedStatus(game.is_finished),
@@ -230,10 +222,15 @@ export default {
       },
    },
    computed: {
+      generations() {
+         return Object.values(GameVersions).map(v =>
+            Object({ value: v.generation, text: v.generation_label })
+         );
+      },
       gameVersions() {
-         return Object.values(Versions).map(v =>
+         return Object.values(GameVersions).map(v =>
             Object({
-               value: v.key,
+               value: v.version,
                text: v.label,
             })
          );

@@ -60,7 +60,7 @@
             <c-combobox
                label="Types"
                v-model="filter.values.types"
-               :items="Object.values(PokemonType).map(t => t.label)"
+               :items="pokemonTypes"
                :multiple="true"
                :types="true"
             >
@@ -77,7 +77,7 @@ import TextField from '../components/form-controls/TextField.vue';
 import PokemonCard from '../components/pokemon/PokemonCard.vue';
 import PokemonType from '../components/pokemon/PokemonType.vue';
 import PokeSprite from '../components/pokemon/PokeSprite.vue';
-import PartyState from '../constants/PartyState';
+import PokemonTypes from '../constants/PokemonTypes';
 import * as gameController from '../controllers/game';
 import * as pokemonController from '../controllers/pokemon';
 import * as util from '../util/util';
@@ -109,6 +109,9 @@ export default {
       };
    },
    computed: {
+      pokemonTypes() {
+         return Object.values(PokemonTypes).map(t => t.label);
+      },
       game() {
          return this.$store.state.game;
       },

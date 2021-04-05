@@ -56,7 +56,7 @@
                <c-combobox
                   label="Version"
                   v-model="newGame.newGame.version"
-                  :items="Object.values(Versions).map(v => v.label)"
+                  :items="gameVersions"
                >
                </c-combobox></div
          ></c-dialog-card>
@@ -72,6 +72,7 @@ import Combobox from './form-controls/Combobox.vue';
 import Icons from '../constants/Icons';
 import * as gameController from '../controllers/game';
 import * as util from '../util/util';
+import GameVersions from '../constants/GameVersions';
 
 export default {
    // TODO gonna have to rework most of this
@@ -194,6 +195,9 @@ export default {
       },
    },
    computed: {
+      gameVersions() {
+         return Object.values(GameVersions).map(v => v.label);
+      },
       pageLinks() {
          return this.links
             .filter(link => link.route !== this.$route.name)

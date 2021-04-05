@@ -28,7 +28,7 @@
             <c-combobox
                label="Type"
                v-model="filter.values.types"
-               :items="Object.values(PokemonType).map(t => t.label)"
+               :items="pokemonTypes"
                :types="true"
                :multiple="true"
             ></c-combobox>
@@ -43,6 +43,7 @@ import Combobox from '../components/form-controls/Combobox.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import RouteCard from '../components/routes/RouteCard.vue';
 import * as util from '../util/util';
+import PokemonTypes from '../constants/PokemonTypes';
 
 export default {
    name: 'Routes',
@@ -71,6 +72,9 @@ export default {
       };
    },
    computed: {
+      pokemonTypes() {
+         return Object.values(PokemonTypes).map(t => t.label);
+      },
       game() {
          return this.$store.state.game;
       },

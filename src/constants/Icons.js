@@ -32,6 +32,7 @@ export default Object.freeze({
    },
    CONSOLES: {
       GAMEBOY: 'mdi-nintendo-game-boy',
+      GBA: 'mdi-gamepad-square',
       SWITCH: 'mdi-nintendo-switch',
       DESKTOP: 'mdi-monitor',
       DEFAULT: 'mdi-gamepad-square',

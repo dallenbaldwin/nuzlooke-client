@@ -1,5 +1,5 @@
 import store from '../store/store';
-import RuleCodes from '../constants/RuleCodes';
+import GameRules from '../models/GameRules.js';
 import EncounterResultConst from '../constants/EncounterResultConst';
 import * as util from '../util/util';
 import * as rulesController from '../controllers/rules';
@@ -32,7 +32,7 @@ export const getEncounterErrors = (results, update = false) => {
    }
    if (isCaught(results.constant)) {
       if (
-         rulesController.isActive(RuleCodes.USE_NICKNAMES.code) &&
+         rulesController.isActive(GameRules.USE_NICKNAMES) &&
          util.isUndefined(results.nickname)
       ) {
          errors.push('Captured Pokemon need a nickname!');

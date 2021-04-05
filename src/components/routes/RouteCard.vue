@@ -240,7 +240,6 @@ export default {
       },
    },
    methods: {
-      // FIXME look at this logic again now that we have a new model on the encounters
       clickResetEncounter() {
          this.resetEncounter = this.encounter;
          this.resetEncounterDialog = true;
