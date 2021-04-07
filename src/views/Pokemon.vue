@@ -83,6 +83,7 @@ import * as pokemonController from '../controllers/pokemon';
 import * as util from '../util/util';
 
 export default {
+   // TODO game over button in here when all your mons died?
    name: 'Pokemon',
    components: {
       'c-poke-sprite': PokeSprite,
