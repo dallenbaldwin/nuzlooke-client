@@ -31,10 +31,19 @@
                   :lazy-src="Icons.MISC.NUZLOOKE"
                   position="center left"
                ></v-img>
+               <div id="location" class="mx-6">
+                  <div class="text-subtitle-2">
+                     <v-icon left>mdi-map-marker</v-icon>{{ gym.location }}
+                  </div>
+               </div>
+               <div id="type" class="mx-6">
+                  <div class="text-subtitle-2">Dominant Type</div>
+                  <c-pokemon-type :type="gym.dominant_type"></c-pokemon-type>
+               </div>
                <div id="completed" class="mx-6">
-                  <!-- <div class="text-body">{{ gym.location }}</div> -->
                   <div class="text-subtitle-2">{{ gym.badge.label }}</div>
                   <v-switch
+                     :disabled="gameFinished"
                      class="mt-0"
                      color="success"
                      inset
@@ -43,10 +52,6 @@
                      v-model="isDefeated"
                      @change="setEarnedBadge"
                   ></v-switch>
-               </div>
-               <div id="type" class="mx-6">
-                  <div class="text-subtitle-2">Dominant Type</div>
-                  <c-pokemon-type :type="gym.dominant_type"></c-pokemon-type>
                </div>
             </v-row>
             <v-row class="mt-6">
@@ -86,6 +91,9 @@ export default {
       };
    },
    computed: {
+      gameFinished() {
+         return this.$store.state.game.is_finished;
+      },
       pokemons() {
          return this.gym.pokemons;
       },

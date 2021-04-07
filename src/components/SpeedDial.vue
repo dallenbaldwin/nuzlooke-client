@@ -25,12 +25,12 @@
             <div class="c-fab-bottom-text">{{ link.label }}</div>
          </v-btn>
          <v-btn
+            :disabled="action.disabled"
             fab
             v-for="action of actions"
             :key="action.label"
-            dark
             @click="linkActions(action)"
-            class="mx-6"
+            class="mx-6 white--text"
             :color="action.color"
          >
             <v-icon>{{ action.icon }}</v-icon>
@@ -77,7 +77,10 @@ import * as appController from '../controllers/application';
 
 export default {
    name: 'SpeedDial',
-   props: ['actions'],
+   props: {
+      actions: { required: true },
+      finished: { required: false, default: false },
+   },
    components: {
       'c-dialog-card': DialogCard,
       'c-progress-spinner': ProgressSpinner,

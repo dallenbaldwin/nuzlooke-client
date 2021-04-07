@@ -43,6 +43,7 @@
                color="green"
                :icon="Icons.CONTROLS.EXCLAIM"
                :click="clickNewEncounter"
+               :disabled="game.is_finished"
             >
                Encounter
             </c-btn>
@@ -51,6 +52,7 @@
                :click="clickResetEncounter"
                color="orange"
                :icon="Icons.CONTROLS.EXCLAIM"
+               :disabled="game.is_finished"
             >
                Reset
             </c-btn>

@@ -46,6 +46,10 @@ export default new Vuex.Store({
          let userGame = state.userGames.find(ug => ug.game_id === payload.gameId);
          userGame.label = payload.label;
       },
+      finishGame(state, payload) {
+         let userGame = state.userGames.find(ug => ug.game_id === payload);
+         userGame.is_finished = true;
+      },
       deleteExistingGame(state, payload) {
          const i = state.userGames.findIndex(g => g.game_id === payload);
          if (i !== -1) state.userGames.splice(i, 1);

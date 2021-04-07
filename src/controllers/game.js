@@ -73,10 +73,15 @@ export const deleteExistingGame = async gameId => {
    await userController.updateUserGames();
 };
 
+export const finishGame = async gameId => {
+   store.commit('finishGame', gameId);
+   await userController.updateUserGames();
+   await services.updateGameById(gameId, { is_finished: true });
+};
+
 export const updateGameLabel = async (gameId, label) => {
    store.commit('updateGameLabel', { gameId: gameId, label: label });
    await userController.updateUserGames();
-   // debugger;
    await services.updateGameById(gameId, { label: label });
 };
 

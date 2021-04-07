@@ -1,5 +1,5 @@
 <template>
-   <v-btn text @click="click">
+   <v-btn text @click="click" :disabled="disabled">
       <v-icon :color="color" dark>{{ icon }}</v-icon>
       <span class="ml-1">
          <slot></slot>
@@ -14,6 +14,7 @@ export default {
       color: { default: undefined },
       icon: { required: true },
       click: { required: true },
+      disabled: { required: false, default: false },
    },
 };
 </script>

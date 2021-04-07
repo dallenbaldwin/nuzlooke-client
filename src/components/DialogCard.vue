@@ -1,8 +1,16 @@
 <template>
    <v-card outlined>
-      <v-card-title class="headline grey lighten-2 mb-3"> {{ props.title }}</v-card-title>
+      <v-card-title v-if="!finished" class="headline grey lighten-2 mb-3">
+         {{ props.title }}</v-card-title
+      >
+      <v-card-title v-if="finished" class="headline grey lighten-2 mb-3"
+         >This Game is Finished!</v-card-title
+      >
       <v-card-text>
-         <div v-if="props.text" class="mb-3">{{ props.text }}</div>
+         <div v-if="props.text && !finished" class="mb-3">{{ props.text }}</div>
+         <div v-if="finished" class="mb-3">
+            This action is not available for finished games.
+         </div>
          <slot></slot>
       </v-card-text>
       <v-divider></v-divider>
@@ -46,7 +54,15 @@
 <script>
 export default {
    name: 'DialogCard',
-   props: ['props'],
+   props: {
+      props: {
+         required: false,
+         default() {
+            return {};
+         },
+      },
+      finished: { required: false, default: false },
+   },
    data() {
       return {
          primaryBtn: this.props.primaryBtn ? this.props.primaryBtn : {},

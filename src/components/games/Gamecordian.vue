@@ -12,6 +12,12 @@
                <c-btn :click="clickDeleteGame" color="red" :icon="Icons.CONTROLS.DELETE"
                   >Delete</c-btn
                >
+               <c-btn
+                  :click="clickFinishGame"
+                  :icon="Icons.CONTROLS.CONFIRM"
+                  :disabled="game.is_finished"
+                  >Finish</c-btn
+               >
                <c-btn :click="clickEditGame" color="warning" :icon="Icons.CONTROLS.EDIT"
                   >Edit</c-btn
                >
@@ -81,6 +87,17 @@
             </v-row>
          </v-container>
       </v-expansion-panel-content>
+      <v-dialog v-model="finishGame.flag" width="500">
+         <c-dialog-card
+            :props="finishGame.dialogCard"
+            v-on:close-dialog="closeDialog"
+            v-on:finish-game="confirmFinish"
+         >
+         </c-dialog-card>
+         <v-fade-transition>
+            <c-progress-spinner v-show="processingGame"></c-progress-spinner>
+         </v-fade-transition>
+      </v-dialog>
       <v-dialog v-model="editGame.flag" width="500">
          <c-dialog-card
             :props="editGame.dialogCard"
@@ -201,6 +218,17 @@ export default {
                },
             },
          },
+         finishGame: {
+            flag: false,
+            dialogCard: {
+               title: `Finish ${this.game.label}?`,
+               text: `This action cannot be undone. The game will enter a Read-Only state, where most functions will be disabled. Are you sure you want to continue?`,
+               primaryBtn: {
+                  text: 'Finish Game',
+                  action: 'finish-game',
+               },
+            },
+         },
       };
    },
    computed: {
@@ -226,6 +254,15 @@ export default {
          this.editGame.flag = false;
          this.editGame.values = {};
          this.deleteGame.flag = false;
+         this.finishGame.flag = false;
+      },
+      clickFinishGame() {
+         this.finishGame.flag = true;
+      },
+      async confirmFinish() {
+         this.processingGame = true;
+         await gameController.finishGame(this.game.game_id);
+         this.closeDialog();
       },
       clickDeleteGame() {
          this.deleteGame.flag = true;

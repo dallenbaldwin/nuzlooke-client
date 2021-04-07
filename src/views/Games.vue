@@ -174,7 +174,6 @@ export default {
       };
    },
    methods: {
-      // TODO finish game
       async startGame() {
          // if (!confirm(util.prettySON(this.createGame.values))) return;
          // validate

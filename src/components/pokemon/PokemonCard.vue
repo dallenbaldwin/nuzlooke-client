@@ -35,6 +35,7 @@
                   :color="button.color"
                   :icon="button.icon"
                   :click="button.action"
+                  :disabled="gameFinished"
                   >{{ button.label }}</c-btn
                >
             </div>
@@ -228,6 +229,9 @@ export default {
       },
    },
    computed: {
+      gameFinished() {
+         return this.$store.state.game.is_finished;
+      },
       evolutionPokemon() {
          return this.evolveData.pokemon ? this.evolveData.pokemon.evolves_to : [];
       },

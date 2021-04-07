@@ -30,6 +30,7 @@
 <script>
 import NavDrawer from '../components/NavDrawer.vue';
 import SpeedDial from '../components/SpeedDial.vue';
+import DialogCard from '../components/DialogCard.vue';
 import TabMap from '../constants/TabMap';
 import Icons from '../constants/Icons';
 import Pokemon from './Pokemon';
@@ -42,9 +43,11 @@ export default {
    components: {
       'c-nav-drawer': NavDrawer,
       'c-speed-dial': SpeedDial,
+      'c-dialog-card': DialogCard,
    },
    data() {
       return {
+         gameFinished: false,
          filter: false,
          tab: null,
          tabs: [
@@ -75,6 +78,7 @@ export default {
                action: 'filter',
                color: 'primary',
                tab: TabMap.POKEMON,
+               disabled: false,
             },
             {
                label: 'Filter',
@@ -84,6 +88,7 @@ export default {
                action: 'filter',
                color: 'primary',
                tab: TabMap.ROUTES,
+               disabled: false,
             },
             {
                label: 'Filter',
@@ -93,6 +98,7 @@ export default {
                action: 'filter',
                color: 'primary',
                tab: TabMap.GYMS,
+               disabled: false,
             },
             {
                label: 'Filter',
@@ -102,6 +108,7 @@ export default {
                action: 'filter',
                color: 'primary',
                tab: TabMap.RULES,
+               disabled: false,
             },
             {
                label: 'Create Rule',
@@ -111,6 +118,7 @@ export default {
                action: 'create-rule',
                color: 'green',
                tab: TabMap.RULES,
+               disabled: this.game.is_finished,
             },
          ];
          return a.filter(e => e.tab === this.tab);

@@ -76,6 +76,7 @@ import GameVersions from '../constants/GameVersions';
 
 export default {
    // TODO gonna have to rework most of this
+   // TODO disable functions when game is finished
    name: 'NavDrawer',
    components: {
       'c-dialog-card': DialogCard,
