@@ -1,6 +1,6 @@
 <template>
    <v-row>
-      <v-expansion-panels popout multiple>
+      <v-expansion-panels popout>
          <c-gymcordian
             v-show="getFilter(gym)"
             v-for="gym of gyms"
