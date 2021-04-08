@@ -6,7 +6,7 @@
       }"
       transition="fade-transition"
    >
-      <v-card min-width="300" max-width="300" elevation="1" outlined class="mt-1 mx-1">
+      <v-card min-width="300" max-width="300" elevation="1" outlined class="ma-1">
          <div v-if="isAvailable">
             <v-card-title>{{ encounter.label }}</v-card-title>
             <v-card-subtitle>Available Pokemon</v-card-subtitle>
@@ -42,14 +42,14 @@
                v-if="isAvailable"
                color="green"
                :icon="Icons.CONTROLS.EXCLAIM"
-               :click="clickNewEncounter"
+               @click="clickNewEncounter"
                :disabled="game.is_finished"
             >
                Encounter
             </c-btn>
             <c-btn
                v-if="!isAvailable"
-               :click="clickResetEncounter"
+               @click="clickResetEncounter"
                color="orange"
                :icon="Icons.CONTROLS.EXCLAIM"
                :disabled="game.is_finished"

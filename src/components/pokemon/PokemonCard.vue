@@ -5,7 +5,7 @@
          max-width="350"
          elevation="1"
          outlined
-         class="align-self-start mt-3 mx-3"
+         class="align-self-start ma-1"
       >
          <v-card-title class="pb-0">{{ pokemon.nickname }}</v-card-title>
          <v-card-text class="d-inline-flex justify-space-around">
@@ -34,7 +34,7 @@
                   :key="button.label"
                   :color="button.color"
                   :icon="button.icon"
-                  :click="button.action"
+                  @click="button.action"
                   :disabled="gameFinished"
                   >{{ button.label }}</c-btn
                >

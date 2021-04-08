@@ -1,10 +1,14 @@
 <template>
-   <v-card max-width="300">
+   <v-card max-width="300" min-width="300" class="ma-1">
       <v-card-title>{{ label }}</v-card-title>
       <v-card-text>{{ description }}</v-card-text>
       <v-card-actions>
          <v-spacer></v-spacer>
-         <c-btn :click="clickEditRule" color="orange" :icon="Icons.CONTROLS.EDIT"
+         <c-btn
+            @click="clickEditRule"
+            color="orange"
+            :icon="Icons.CONTROLS.EDIT"
+            :disabled="gameFinished"
             >Edit</c-btn
          >
       </v-card-actions>
@@ -32,6 +36,11 @@ export default {
    methods: {
       clickEditRule() {
          alert(`I want to edit this rule! \n${prettySON(this.gameRule)}`);
+      },
+   },
+   computed: {
+      gameFinished() {
+         return this.$store.state.game.is_finished;
       },
    },
 };

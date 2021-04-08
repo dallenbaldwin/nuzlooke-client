@@ -1,5 +1,5 @@
 <template>
-   <v-btn text @click="click" :disabled="disabled">
+   <v-btn text @click="$emit('click', $event)" :disabled="disabled">
       <v-icon :color="color" dark>{{ icon }}</v-icon>
       <span class="ml-1">
          <slot></slot>
@@ -13,7 +13,6 @@ export default {
    props: {
       color: { default: undefined },
       icon: { required: true },
-      click: { required: true },
       disabled: { required: false, default: false },
    },
 };

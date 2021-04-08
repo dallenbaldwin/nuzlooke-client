@@ -9,16 +9,16 @@
       <v-expansion-panel-content>
          <v-container>
             <v-row id="manageBtns" class="d-flex justify-end mb-3 mt-1">
-               <c-btn :click="clickDeleteGame" color="red" :icon="Icons.CONTROLS.DELETE"
+               <c-btn @click="clickDeleteGame" color="red" :icon="Icons.CONTROLS.DELETE"
                   >Delete</c-btn
                >
                <c-btn
-                  :click="clickFinishGame"
+                  @click="clickFinishGame"
                   :icon="Icons.CONTROLS.CONFIRM"
                   :disabled="game.is_finished"
                   >Finish</c-btn
                >
-               <c-btn :click="clickEditGame" color="warning" :icon="Icons.CONTROLS.EDIT"
+               <c-btn @click="clickEditGame" color="warning" :icon="Icons.CONTROLS.EDIT"
                   >Edit</c-btn
                >
             </v-row>
