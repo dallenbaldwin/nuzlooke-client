@@ -32,7 +32,7 @@
             ></c-gamecordian>
          </v-expansion-panels>
       </v-row>
-      <v-dialog v-model="createGame.flag" width="500">
+      <v-dialog v-model="createGame.flag" width="500" scrollable>
          <c-dialog-card
             :props="createGame.dialogCard"
             v-on:close-dialog="closeDialog"
@@ -52,9 +52,32 @@
                      v-model="createGame.values.version"
                      :items="gameVersions"
                   ></c-combobox>
+                  <div
+                     v-for="(rule, i) of createGame.values.rules"
+                     :key="`${i}-rule`"
+                     class="d-flex flex-row"
+                  >
+                     <c-combobox
+                        :items="rule.items"
+                        v-model="rule.values"
+                        label="Pre-defined Rule"
+                     ></c-combobox>
+                     <c-btn
+                        class="mt-2"
+                        @click="removeRule(i)"
+                        color="red"
+                        :icon="Icons.CONTROLS.DELETE"
+                     ></c-btn>
+                  </div>
+                  <div class="mb-3">
+                     <v-spacer></v-spacer>
+                     <c-btn @click="addRule" color="success" :icon="Icons.CONTROLS.ADD"
+                        >Add Default Rule</c-btn
+                     >
+                  </div>
                   <c-error
                      v-for="(error, i) of createGame.errors.errors"
-                     :key="i"
+                     :key="`${i}-error`"
                      :error="error"
                   >
                   </c-error>
@@ -97,10 +120,12 @@ import Errors from '../components/Errors.vue';
 import ProgressSpinner from '../components/ProgressSpinner.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
+import Button from '../components/Button.vue';
 import * as gameController from '../controllers/game';
 import * as util from '../util/util';
 import Icons from '../constants/Icons';
 import GameVersions from '../constants/GameVersions';
+import GameRules from '../constants/GameRules';
 
 export default {
    name: 'Games',
@@ -112,6 +137,7 @@ export default {
       'c-progress-spinner': ProgressSpinner,
       'c-text-field': TextField,
       'c-combobox': Combobox,
+      'c-btn': Button,
    },
    data() {
       return {
@@ -122,6 +148,7 @@ export default {
             values: {
                label: null,
                version: null,
+               rules: [],
             },
             dialogCard: {
                title: 'Start a new Game',
@@ -157,6 +184,7 @@ export default {
                { value: true, text: 'Finished' },
             ],
          },
+         // speed dial buttons
          actions: [
             {
                label: 'Filter',
@@ -174,8 +202,18 @@ export default {
       };
    },
    methods: {
+      addRule() {
+         if (this.createGame.values.rules.some(r => util.isUndefined(r.values))) return;
+         this.createGame.values.rules.push({
+            items: this.defaultGameRules,
+            values: null,
+         });
+      },
+      removeRule(index) {
+         this.createGame.values.rules.splice(index, 1);
+      },
       async startGame() {
-         // if (!confirm(util.prettySON(this.createGame.values))) return;
+         if (!confirm(util.prettySON(this.createGame.values))) return;
          // validate
          this.createGame.errors = gameController.getValidationErrors(
             this.createGame.values
@@ -196,6 +234,8 @@ export default {
          this.filter.flag = false;
          this.createGame.values.label = null;
          this.createGame.values.version = null;
+         this.createGame.errors.errors = [];
+         this.createGame.errors.hasErrors = false;
          this.filter.values.label = null;
          this.filter.values.version = [];
          this.filter.values.generation = [];
@@ -222,6 +262,11 @@ export default {
       },
    },
    computed: {
+      defaultGameRules() {
+         return Object.values(GameRules).map(gr =>
+            Object({ value: gr.id, text: gr.label })
+         );
+      },
       generations() {
          return Object.values(GameVersions).map(v =>
             Object({ value: v.generation, text: v.generation_label })
@@ -244,6 +289,31 @@ export default {
       userId() {
          return this.$store.state.userId;
       },
+   },
+   mounted() {
+      this.createGame.values.rules = [
+         {
+            items: this.defaultGameRules,
+            values: {
+               text: GameRules.USE_NICKNAMES.label,
+               value: GameRules.USE_NICKNAMES.id,
+            },
+         },
+         {
+            items: this.defaultGameRules,
+            values: {
+               text: GameRules.FAINTING_KILLS.label,
+               value: GameRules.FAINTING_KILLS.id,
+            },
+         },
+         {
+            items: this.defaultGameRules,
+            values: {
+               text: GameRules.ONE_MON_ONE_AREA.label,
+               value: GameRules.ONE_MON_ONE_AREA.id,
+            },
+         },
+      ];
    },
 };
 </script>

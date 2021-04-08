@@ -132,7 +132,7 @@ export default {
          return TabMap[tabIndex];
       },
       createRule() {
-         this.$refs.eventBus.createRule();
+         this.$refs.eventBus.clickCreateRule();
       },
       openFilter() {
          this.$refs.eventBus.openFilter();

@@ -38,6 +38,9 @@ export default new Vuex.Store({
       exitGame(state) {
          state.game = null;
       },
+      addNewRule(state, payload) {
+         state.game.game_rules.push(payload);
+      },
       earnedBadge(state, payload) {
          const i = state.game.gyms.findIndex(g => g.sort_id === payload.sort_id);
          if (i !== -1) state.game.gyms.splice(i, 1, payload);

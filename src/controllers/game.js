@@ -59,6 +59,14 @@ export const createNewGame = async (label, version, rules) => {
    }
 };
 
+export const updateGameRulesInDB = async game => {
+   try {
+      await services.updateGameById(game.id, { game_rules: game.game_rules });
+   } catch (err) {
+      alert(util.errorCatch(err));
+   }
+};
+
 export const goToGame = async (gameId, route) => {
    const res = await services.getGameById(gameId);
    const game = new APIResponse(res).data;
