@@ -13,6 +13,7 @@ export default Object.freeze({
       CLOSE: 'mdi-close-circle',
       DELETE: 'mdi-minus-circle',
       CONFIRM: 'mdi-check-circle',
+      ADD: 'mdi-plus-circle',
       TOMBSTONE: 'mdi-grave-stone',
       STORAGE: 'mdi-monitor',
       PLUS: 'mdi-plus',
