@@ -1,5 +1,5 @@
 import store from '../store/store';
-import GameRules from '../models/GameRules.js';
+import GameRules from '../constants/GameRules';
 import EncounterResultConst from '../constants/EncounterResultConst';
 import * as util from '../util/util';
 import * as rulesController from '../controllers/rules';
