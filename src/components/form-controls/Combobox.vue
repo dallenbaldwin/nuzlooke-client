@@ -1,5 +1,6 @@
 <template>
    <v-combobox
+      hide-details
       outlined
       :label="label"
       :items="items"
@@ -10,6 +11,7 @@
       @input="$emit('input', $event)"
       :multiple="multiple"
       :chips="types"
+      class="ma-3"
    >
       <template v-slot:selection="data" v-if="types">
          <c-pokemon-type :type="data.item"></c-pokemon-type>

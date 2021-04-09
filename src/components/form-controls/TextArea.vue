@@ -1,5 +1,6 @@
 <template>
    <v-textarea
+      hide-details
       :clear-icon="Icons.CONTROLS.CLOSE"
       clearable
       outlined
@@ -9,6 +10,7 @@
       :disabled="disabled"
       auto-grow
       rows="1"
+      class="ma-3"
    >
    </v-textarea>
 </template>
