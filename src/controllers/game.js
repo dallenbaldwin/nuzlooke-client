@@ -2,11 +2,12 @@ import PartyState from '../constants/PartyState';
 import store from '../store/store';
 import * as services from '../services/game';
 import * as util from '../util/util';
-import NewGame from '../models/NewGame';
+import Game from '../models/Game';
 import APIResponse from '../models/APIResponse';
 import * as userController from '../controllers/user';
 import GameVersions from '../constants/GameVersions';
 import GameSnapshot from '../models/GameSnapshot';
+import GameRules from '../constants/GameRules';
 
 export const updateEncountersAndPokemonsInDB = async () => {
    try {
@@ -35,6 +36,15 @@ export const getValidationErrors = (options, isEdit = false) => {
       errors.push('You must give this playthrough a Name!');
    if (util.isUndefined(options.version) && !isEdit)
       errors.push('You must select a Version!');
+   let rules = options.rules.map(r => r.values).filter(r => !util.isUndefined(r));
+   if (rules.length !== options.rules.length && !isEdit)
+      errors.push('A Pre-defined Rule is missing a selection!');
+   let set = new Set();
+   rules.forEach(rule => {
+      set.add(rule.value);
+   });
+   if (set.size !== rules.length && !isEdit)
+      errors.push('You cannot have two of the same Pre-defined Rule!');
    return {
       errors: errors,
       hasErrors: errors.length > 0,
@@ -43,10 +53,15 @@ export const getValidationErrors = (options, isEdit = false) => {
 
 export const createNewGame = async (label, version, rules) => {
    try {
-      const newGame = NewGame.builder()
+      const newRules = rules.map(rule => {
+         let defaultRule = Object.values(GameRules).find(gr => gr.id === rule);
+         defaultRule.is_active = true;
+         return defaultRule;
+      });
+      const newGame = Game.builder()
          .withLabel(label)
          .withVersion(version)
-         // .withRules(...rules)
+         .withGameRules(newRules)
          .build();
       const res = await services.createGame(newGame);
       const createdGame = new APIResponse(res).data;

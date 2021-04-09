@@ -1,9 +1,9 @@
 import { arrayify } from '../util/util';
 export default class NewGame {
-   constructor(label, version, rules) {
+   constructor(label, version, game_rules) {
       this.label = label;
       this.version = version;
-      this.rules = rules;
+      this.game_rules = game_rules;
    }
    static builder() {
       this.label = undefined;
@@ -19,11 +19,11 @@ export default class NewGame {
       this.version = val;
       return this;
    }
-   static withRules(...vals) {
-      this.rules = arrayify(...vals);
+   static withGameRules(...vals) {
+      this.game_rules = arrayify(...vals);
       return this;
    }
    static build() {
-      return new NewGame(this.label, this.version, this.rules);
+      return new NewGame(this.label, this.version, this.game_rules);
    }
 }

@@ -213,7 +213,6 @@ export default {
          this.createGame.values.rules.splice(index, 1);
       },
       async startGame() {
-         if (!confirm(util.prettySON(this.createGame.values))) return;
          // validate
          this.createGame.errors = gameController.getValidationErrors(
             this.createGame.values
@@ -223,8 +222,7 @@ export default {
          await gameController.createNewGame(
             this.createGame.values.label,
             this.createGame.values.version.value,
-            // TODO rules
-            undefined
+            this.createGame.values.rules.map(rule => rule.values.value)
          );
          this.closeDialog();
       },
