@@ -4,14 +4,14 @@
          <v-card-title>{{ gameRule.label }} </v-card-title>
          <v-card-text>{{ gameRule.description }}</v-card-text>
          <v-card-actions>
+            <v-spacer></v-spacer>
             <c-btn
-               @click="clickDeleteRule"
+               @click="deleteRule.flag = !deleteRule.flag"
                color="red"
                :disabled="gameFinished"
                :icon="Icons.CONTROLS.DELETE"
                >Delete</c-btn
             >
-            <v-spacer></v-spacer>
             <c-btn
                @click="clickEditRule"
                color="orange"
@@ -85,9 +85,6 @@
          >
             <v-slide-y-transition>
                <c-progress-spinner v-show="processingRule"></c-progress-spinner>
-            </v-slide-y-transition>
-            <v-slide-y-transition>
-               <div v-show="!processingRule"></div>
             </v-slide-y-transition>
          </c-dialog-card>
       </v-dialog>
@@ -163,9 +160,6 @@ export default {
          this.processingRule = false;
          this.editRule.errors.errors = [];
       },
-      clickDeleteRule() {
-         this.deleteRule.flag = true;
-      },
       clickEditRule() {
          if (this.gameRule.id === 0) {
             this.editRule.values.useStock = false;
@@ -193,6 +187,8 @@ export default {
          this.closeDialog();
       },
       async confirmDelete() {
+         this.processingRule = true;
+         await rulesController.deleteRule(this.gameRule);
          this.closeDialog();
       },
    },

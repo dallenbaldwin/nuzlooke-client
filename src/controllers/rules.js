@@ -63,6 +63,12 @@ const updateRuleByLabel = options => {
    });
 };
 
+export const deleteRule = async rule => {
+   if (rule.id === 0) store.commit('deleteExistingRuleByLabel', rule);
+   else store.commit('deleteExistingRuleById', rule);
+   await updateGameRulesInDB(store.state.game);
+};
+
 export const getValidationErrors = options => {
    const errors = [];
    if (options.useStock) {
