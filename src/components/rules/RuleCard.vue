@@ -177,7 +177,6 @@ export default {
          this.editRule.flag = true;
       },
       async confirmEdit() {
-         // TODO do some more rigorous testing when editing a rule that already exists
          // if (!confirm(util.prettySON(this.editRule.values))) return;
          this.editRule.errors = rulesController.getValidationErrors(this.editRule.values);
          if (this.editRule.errors.hasErrors) return;

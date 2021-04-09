@@ -24,7 +24,6 @@ export const buildUserPokemon = async (species, nickname, partyState) => {
 };
 
 const getNextEvolution = (chain, currentSpecies) => {
-   // debugger;
    // FIXME can't evolve into pokemon that aren't available to this version!
    if (chain.species.name === currentSpecies) {
       let evolvesTo = chain.evolves_to.map(e => normalizeKabob(e.species.name));

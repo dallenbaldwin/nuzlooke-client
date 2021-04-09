@@ -2,6 +2,7 @@
    <div>
       <v-row class="d-flex flex-row justify-space-around align-start">
          <c-rule-card
+            v-show="getFilter(gameRule)"
             v-for="(gameRule, i) of gameRules"
             :key="i"
             :gameRule="gameRule"
@@ -9,10 +10,14 @@
       </v-row>
       <v-row>
          <v-dialog v-model="filter.flag" width="500">
-            <c-dialog-card
-               :props="filter.dialogCard"
-               v-on:close-dialog="closeDialog"
-            ></c-dialog-card>
+            <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
+               <c-combobox
+                  :items="filter.isStockItems"
+                  label="Rule Type"
+                  :multiple="true"
+                  v-model="filter.values.isStock"
+               ></c-combobox>
+            </c-dialog-card>
          </v-dialog>
          <v-dialog v-model="createRule.flag" width="500">
             <c-dialog-card
@@ -119,14 +124,19 @@ export default {
                useStock: null,
             },
          },
-         // TODO filters
          filter: {
             flag: false,
             dialogCard: {
                title: 'Filter Rules',
-               text: 'I want to filter Rules!',
                cancelBtn: { text: 'close' },
             },
+            values: {
+               isStock: [],
+            },
+            isStockItems: [
+               { value: true, text: 'Pre-defined' },
+               { value: false, text: 'Custom' },
+            ],
          },
       };
    },
@@ -152,9 +162,20 @@ export default {
          this.createRule.values.description = null;
          this.createRule.values.stock = null;
          this.createRule.errors.errors = [];
+         this.filter.values.isStock = [];
       },
       openFilter() {
          this.filter.flag = true;
+      },
+      getStockStatus(boolean) {
+         return boolean ? 1 : 0;
+      },
+      getFilter(rule) {
+         const isStock = util.includesOrEmptyArray(
+            this.getStockStatus(rule.id !== 0),
+            this.filter.values.isStock.map(v => this.getStockStatus(v.value))
+         );
+         return isStock;
       },
       clickCreateRule() {
          // this gets called in Game.vue
