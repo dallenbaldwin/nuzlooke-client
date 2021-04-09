@@ -4,6 +4,9 @@ import './registerServiceWorker';
 import router from './router/router';
 import store from './store/store';
 import vuetify from './plugins/vuetify';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 Vue.config.productionTip = false;
 

@@ -6,14 +6,12 @@ import { updateGameRulesInDB } from './game';
 
 const gameRules = Object.values(GameRules);
 
-const currentRules = store.state.game.game_rules;
-
 export const isActive = gameRule =>
-   currentRules.find(g => g.id === gameRule.id).is_active;
+   store.state.game.game_rules.find(g => g.id === gameRule.id).is_active;
 
 export const getAvailableStockRules = () => {
    return gameRules
-      .filter(r => !currentRules.map(r => r.id).includes(r.id))
+      .filter(r => !store.state.game.game_rules.map(r => r.id).includes(r.id))
       .map(r => Object({ value: r.id, text: r.label }));
 };
 
@@ -77,7 +75,7 @@ export const getValidationErrors = options => {
          errors.push('You must select a Pre-defined Rule!');
       if (
          !util.isUndefined(options.stock) &&
-         currentRules.map(r => r.id).includes(options.stock.value)
+         store.state.game.game_rules.map(r => r.id).includes(options.stock.value)
       )
          errors.push('This Rule already exists!');
    } else {
@@ -89,7 +87,7 @@ export const getValidationErrors = options => {
       if (
          !options.isUpdate &&
          !util.isUndefined(options.label) &&
-         currentRules
+         store.state.game.game_rules
             .map(r => r.label.toLowerCase())
             .includes(options.label.toLowerCase())
       )

@@ -12,7 +12,10 @@
    >
       {{ label }}: {{ text }}
       <v-slide-x-transition>
-         <v-icon v-show="showHint" @click="getMetaData">{{ Icons.CONTROLS.HELP }}</v-icon>
+         <!-- scope creep -->
+         <v-icon v-show="showHint && false" @click="getMetaData">{{
+            Icons.CONTROLS.HELP
+         }}</v-icon>
       </v-slide-x-transition>
    </v-chip>
 </template>
