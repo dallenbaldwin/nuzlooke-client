@@ -25,20 +25,41 @@
                </v-slide-y-transition>
                <v-slide-y-transition>
                   <div v-show="!processingRule">
+                     <div class="d-flex align-center justify-center">
+                        <v-chip
+                           @click="
+                              createRule.values.useStock = !createRule.values.useStock
+                           "
+                           label
+                           outlined
+                           :color="createRule.values.useStock ? 'primary' : null"
+                           class="mx-3 mb-6"
+                           >Use Pre-defined Rule</v-chip
+                        >
+                        <v-chip
+                           @click="
+                              createRule.values.useStock = !createRule.values.useStock
+                           "
+                           label
+                           outlined
+                           :color="createRule.values.useStock ? null : 'primary'"
+                           class="mx-3 mb-6"
+                           >Use Custom Rule</v-chip
+                        >
+                     </div>
                      <c-combobox
-                        :disabled="gameFinished"
+                        :disabled="!createRule.values.useStock"
+                        :items="defaultRules"
                         label="Pre-defined Rules"
                         v-model="createRule.values.stock"
-                        :items="stockRules"
-                     >
-                     </c-combobox>
+                     ></c-combobox>
                      <c-text-field
-                        :disabled="gameFinished"
+                        :disabled="createRule.values.useStock"
                         label="Name"
                         v-model="createRule.values.label"
                      ></c-text-field>
                      <c-text-area
-                        :disabled="gameFinished"
+                        :disabled="createRule.values.useStock"
                         label="Description"
                         v-model="createRule.values.description"
                      ></c-text-area>
@@ -46,17 +67,9 @@
                         v-for="(error, i) of createRule.errors.errors"
                         :key="i"
                         :error="error"
-                     >
-                     </c-error>
+                     ></c-error>
                   </div>
                </v-slide-y-transition>
-               <v-fade-transition>
-                  <c-error
-                     v-show="isPredefinedAndCustom"
-                     error="You cannot select a Pre-defined Rule and define a Custom Rule at the same time!"
-                  >
-                  </c-error>
-               </v-fade-transition>
             </c-dialog-card>
          </v-dialog>
       </v-row>
@@ -73,6 +86,7 @@ import RuleCard from '../components/rules/RuleCard.vue';
 import Errors from '../components/Errors.vue';
 import * as util from '../util/util';
 import * as rulesController from '../controllers/rules';
+import GameRules from '../constants/GameRules';
 
 export default {
    name: 'Rules',
@@ -92,7 +106,7 @@ export default {
             flag: false,
             dialogCard: {
                title: 'Create a Rule',
-               text: `Rules are the most important part of any Nuzlocke. Pick a pre-defined rule or give yourself a new rule with memorable name and description.`,
+               text: `Rules are the most important part of any Nuzlocke. Pick a pre-defined rule or make your own rule with a memorable name and description.`,
                primaryBtn: {
                   action: 'create-rule',
                },
@@ -102,8 +116,10 @@ export default {
                label: null,
                description: null,
                stock: null,
+               useStock: null,
             },
          },
+         // TODO filters
          filter: {
             flag: false,
             dialogCard: {
@@ -121,14 +137,9 @@ export default {
       gameRules() {
          return this.$store.state.game.game_rules;
       },
-      stockRules() {
-         return rulesController.getAvailableStockRules();
-      },
-      isPredefinedAndCustom() {
-         return (
-            !util.isUndefined(this.createRule.values.stock) &&
-            (!util.isUndefined(this.createRule.values.label) ||
-               !util.isUndefined(this.createRule.values.description))
+      defaultRules() {
+         return Object.values(GameRules).map(gr =>
+            Object({ text: gr.label, value: gr.id })
          );
       },
    },
@@ -140,23 +151,24 @@ export default {
          this.createRule.values.label = null;
          this.createRule.values.description = null;
          this.createRule.values.stock = null;
-         this.createRule.predefined = null;
+         this.createRule.errors.errors = [];
       },
       openFilter() {
          this.filter.flag = true;
       },
       clickCreateRule() {
+         // this gets called in Game.vue
+         this.createRule.values.useStock = true;
          this.createRule.flag = true;
       },
       async confirmCreateRule() {
-         if (!confirm(util.prettySON(this.createRule.values))) return;
-         if (this.isPredefinedAndCustom) return;
+         // if (!confirm(util.prettySON(this.createRule.values))) return;
          this.createRule.errors = rulesController.getValidationErrors(
             this.createRule.values
          );
          if (this.createRule.errors.hasErrors) return;
-         await rulesController.createNewRule(this.createRule.values);
          this.processingRule = true;
+         await rulesController.createNewRule(this.createRule.values);
          this.closeDialog();
       },
    },

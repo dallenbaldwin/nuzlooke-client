@@ -38,6 +38,14 @@ export default new Vuex.Store({
       exitGame(state) {
          state.game = null;
       },
+      updateRuleById(state, payload) {
+         const i = state.game.game_rules.findIndex(r => r.id === payload.id);
+         if (i !== -1) state.game.game_rules.splice(i, 1, payload.rule);
+      },
+      updateRuleByLabel(state, payload) {
+         const i = state.game.game_rules.findIndex(r => r.label === payload.label);
+         if (i !== -1) state.game.game_rules.splice(i, 1, payload.rule);
+      },
       addNewRule(state, payload) {
          state.game.game_rules.push(payload);
       },
