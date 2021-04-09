@@ -1,6 +1,6 @@
 <template>
    <v-container>
-      <v-row class="mt-6">
+      <v-row class="mt-6 pb-6">
          <c-speed-dial
             :actions="actions"
             v-if="!mobile()"
@@ -10,7 +10,7 @@
             v-on:filter="openFilter"
          ></c-speed-dial>
       </v-row>
-      <v-row class="mt-6">
+      <v-row class="mt-6 pt-6">
          <div class="text-h2">
             {{ game.label }}
          </div>
