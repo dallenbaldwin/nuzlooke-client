@@ -1,7 +1,7 @@
 <template>
-   <v-btn text @click="$emit('click', $event)" :disabled="disabled">
+   <v-btn :icon="isIcon" text @click="$emit('click', $event)" :disabled="disabled">
       <v-icon :color="color" dark>{{ icon }}</v-icon>
-      <span class="ml-1">
+      <span v-if="!isIcon" class="ml-1">
          <slot></slot>
       </span>
    </v-btn>
@@ -14,6 +14,7 @@ export default {
       color: { default: undefined },
       icon: { required: true },
       disabled: { required: false, default: false },
+      isIcon: { required: false, default: false },
    },
 };
 </script>

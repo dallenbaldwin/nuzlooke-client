@@ -67,6 +67,7 @@
                         @click="removeRule(i)"
                         color="red"
                         :icon="Icons.CONTROLS.DELETE"
+                        :isIcon="true"
                      ></c-btn>
                   </div>
                   <div class="mb-3">
@@ -140,6 +141,7 @@ export default {
       'c-btn': Button,
    },
    data() {
+      // TODO move speed dial actions into toolbar
       return {
          // create game
          processingGame: false,
