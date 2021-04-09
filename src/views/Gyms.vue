@@ -1,13 +1,25 @@
 <template>
-   <v-row>
-      <v-expansion-panels popout>
-         <c-gymcordian
-            v-show="getFilter(gym)"
-            v-for="gym of gyms"
-            :key="gym.sort_id"
-            :gym="gym"
-         ></c-gymcordian>
-      </v-expansion-panels>
+   <div>
+      <v-row>
+         <v-toolbar>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+               <v-icon>{{ Icons.CONTROLS.SEARCH }}</v-icon>
+               <v-icon>{{ Icons.CONTROLS.FILTER }}</v-icon>
+               <v-spacer></v-spacer>
+            </v-toolbar-items>
+         </v-toolbar>
+      </v-row>
+      <v-row>
+         <v-expansion-panels popout class="mt-1">
+            <c-gymcordian
+               v-show="getFilter(gym)"
+               v-for="gym of gyms"
+               :key="gym.sort_id"
+               :gym="gym"
+            ></c-gymcordian>
+         </v-expansion-panels>
+      </v-row>
       <v-dialog v-model="filter.flag" width="500">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
             <v-checkbox
@@ -33,7 +45,7 @@
             </c-combobox>
          </c-dialog-card>
       </v-dialog>
-   </v-row>
+   </div>
 </template>
 
 <script>

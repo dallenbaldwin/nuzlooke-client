@@ -1,10 +1,12 @@
 <template>
    <div>
       <v-row>
-         <v-toolbar outlined>
+         <v-toolbar>
+            <v-spacer></v-spacer>
             <v-toolbar-items>
-               <v-spacer></v-spacer>
+               <v-icon>{{ Icons.CONTROLS.SEARCH }}</v-icon>
                <v-icon>{{ Icons.CONTROLS.FILTER }}</v-icon>
+               <v-spacer></v-spacer>
             </v-toolbar-items>
          </v-toolbar>
       </v-row>
@@ -15,35 +17,35 @@
             :encounter="encounter"
             v-show="getFilter(encounter)"
          ></c-route-card>
-         <v-dialog v-model="filter.flag" width="500">
-            <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
-               <c-combobox
-                  label="Status"
-                  v-model="filter.values.status"
-                  :items="Object.values(EncounterResultConst)"
-                  :multiple="true"
-               ></c-combobox>
-               <c-text-field label="Name" v-model="filter.values.label"></c-text-field>
-               <c-combobox
-                  label="Species"
-                  v-model="filter.values.species"
-                  :items="encountersSpecies"
-                  :multiple="true"
-               ></c-combobox>
-               <c-text-field
-                  label="Nickname"
-                  v-model="filter.values.nickname"
-               ></c-text-field>
-               <c-combobox
-                  label="Type"
-                  v-model="filter.values.types"
-                  :items="pokemonTypes"
-                  :types="true"
-                  :multiple="true"
-               ></c-combobox>
-            </c-dialog-card>
-         </v-dialog>
       </v-row>
+      <v-dialog v-model="filter.flag" width="500">
+         <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
+            <c-combobox
+               label="Status"
+               v-model="filter.values.status"
+               :items="Object.values(EncounterResultConst)"
+               :multiple="true"
+            ></c-combobox>
+            <c-text-field label="Name" v-model="filter.values.label"></c-text-field>
+            <c-combobox
+               label="Species"
+               v-model="filter.values.species"
+               :items="encountersSpecies"
+               :multiple="true"
+            ></c-combobox>
+            <c-text-field
+               label="Nickname"
+               v-model="filter.values.nickname"
+            ></c-text-field>
+            <c-combobox
+               label="Type"
+               v-model="filter.values.types"
+               :items="pokemonTypes"
+               :types="true"
+               :multiple="true"
+            ></c-combobox>
+         </c-dialog-card>
+      </v-dialog>
    </div>
 </template>
 
@@ -52,6 +54,7 @@ import DialogCard from '../components/DialogCard.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import RouteCard from '../components/routes/RouteCard.vue';
+import Button from '../components/Button.vue';
 import * as util from '../util/util';
 import PokemonTypes from '../constants/PokemonTypes';
 
@@ -62,6 +65,7 @@ export default {
       'c-dialog-card': DialogCard,
       'c-text-field': TextField,
       'c-combobox': Combobox,
+      'c-btn': Button,
    },
    // TODO move speed dial actions into toolbar
    data() {

@@ -1,50 +1,69 @@
 <template>
-   <v-row>
-      <v-expansion-panels multiple popout>
-         <v-expansion-panel v-for="(state, i) of Object.values(PartyState)" :key="i">
-            <v-expansion-panel-header disable-icon-rotate class="text-h6">
-               {{ state }}
-               <template v-slot:actions>
-                  <v-badge
-                     overlap
-                     v-if="state !== PartyState.PARTY && getPanelCount(state)"
-                     dark
-                     color="grey"
-                     :content="getPanelCount(state)"
-                  >
-                     <v-icon large dark>
+   <div>
+      <v-row>
+         <v-toolbar>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+               <v-icon>{{ Icons.CONTROLS.SEARCH }}</v-icon>
+               <v-icon>{{ Icons.CONTROLS.FILTER }}</v-icon>
+               <v-spacer></v-spacer>
+            </v-toolbar-items>
+         </v-toolbar>
+      </v-row>
+      <v-row>
+         <v-expansion-panels multiple popout class="mt-1">
+            <v-expansion-panel v-for="(state, i) of Object.values(PartyState)" :key="i">
+               <v-expansion-panel-header disable-icon-rotate class="text-h6">
+                  {{ state }}
+                  <template v-slot:actions>
+                     <!-- TODO v-else-if -->
+                     <v-badge
+                        overlap
+                        v-if="state !== PartyState.PARTY && getPanelCount(state)"
+                        dark
+                        color="grey"
+                        :content="getPanelCount(state)"
+                     >
+                        <v-icon large dark>
+                           {{ toPartyStateIcon(state) }}
+                        </v-icon>
+                     </v-badge>
+                     <v-icon
+                        dark
+                        v-if="state !== PartyState.PARTY && !getPanelCount(state)"
+                     >
                         {{ toPartyStateIcon(state) }}
                      </v-icon>
-                  </v-badge>
-                  <v-icon dark v-if="state !== PartyState.PARTY && !getPanelCount(state)">
-                     {{ toPartyStateIcon(state) }}
-                  </v-icon>
-                  <div class="d-inline-flex flex-row" v-if="state === PartyState.PARTY">
-                     <c-poke-sprite
-                        v-for="(url, i) of partyIcons"
-                        class="ml-1"
-                        :key="i"
-                        :src="url"
-                        size="small"
-                     ></c-poke-sprite>
-                  </div>
-               </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-               <v-container>
-                  <v-row class="d-flex justify-center align-content flex-row mt-3">
-                     <c-pokemon-card
-                        v-for="pokemon of getPanelPokemon(state)"
-                        :key="pokemon.id"
-                        :pokemon="pokemon"
-                        v-show="getFilter(pokemon)"
+                     <div
+                        class="d-inline-flex flex-row"
+                        v-if="state === PartyState.PARTY"
                      >
-                     </c-pokemon-card>
-                  </v-row>
-               </v-container>
-            </v-expansion-panel-content>
-         </v-expansion-panel>
-      </v-expansion-panels>
+                        <c-poke-sprite
+                           v-for="(url, i) of partyIcons"
+                           class="ml-1"
+                           :key="i"
+                           :src="url"
+                           size="small"
+                        ></c-poke-sprite>
+                     </div>
+                  </template>
+               </v-expansion-panel-header>
+               <v-expansion-panel-content>
+                  <v-container>
+                     <v-row class="d-flex justify-center align-content flex-row mt-3">
+                        <c-pokemon-card
+                           v-for="pokemon of getPanelPokemon(state)"
+                           :key="pokemon.id"
+                           :pokemon="pokemon"
+                           v-show="getFilter(pokemon)"
+                        >
+                        </c-pokemon-card>
+                     </v-row>
+                  </v-container>
+               </v-expansion-panel-content>
+            </v-expansion-panel>
+         </v-expansion-panels>
+      </v-row>
       <v-dialog v-model="filter.flag" width="500">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
             <c-text-field
@@ -67,7 +86,7 @@
             </c-combobox>
          </c-dialog-card>
       </v-dialog>
-   </v-row>
+   </div>
 </template>
 
 <script>

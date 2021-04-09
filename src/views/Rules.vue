@@ -1,5 +1,15 @@
 <template>
    <div>
+      <v-row>
+         <v-toolbar>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+               <v-icon>{{ Icons.CONTROLS.SEARCH }}</v-icon>
+               <v-icon>{{ Icons.CONTROLS.FILTER }}</v-icon>
+               <v-spacer></v-spacer>
+            </v-toolbar-items>
+         </v-toolbar>
+      </v-row>
       <v-row class="d-flex flex-row justify-space-around align-start">
          <c-rule-card
             v-show="getFilter(gameRule)"
@@ -8,76 +18,70 @@
             :gameRule="gameRule"
          ></c-rule-card>
       </v-row>
-      <v-row>
-         <v-dialog v-model="filter.flag" width="500">
-            <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
-               <c-combobox
-                  :items="filter.isStockItems"
-                  label="Rule Type"
-                  :multiple="true"
-                  v-model="filter.values.isStock"
-               ></c-combobox>
-            </c-dialog-card>
-         </v-dialog>
-         <v-dialog v-model="createRule.flag" width="500">
-            <c-dialog-card
-               :props="createRule.dialogCard"
-               v-on:create-rule="confirmCreateRule"
-               v-on:close-dialog="closeDialog"
-            >
-               <v-slide-y-transition>
-                  <c-progress-spinner v-show="processingRule"></c-progress-spinner>
-               </v-slide-y-transition>
-               <v-slide-y-transition>
-                  <div v-show="!processingRule">
-                     <div class="d-flex align-center justify-center">
-                        <v-chip
-                           @click="
-                              createRule.values.useStock = !createRule.values.useStock
-                           "
-                           label
-                           outlined
-                           :color="createRule.values.useStock ? 'primary' : null"
-                           class="mx-3 mb-6"
-                           >Use Pre-defined Rule</v-chip
-                        >
-                        <v-chip
-                           @click="
-                              createRule.values.useStock = !createRule.values.useStock
-                           "
-                           label
-                           outlined
-                           :color="createRule.values.useStock ? null : 'primary'"
-                           class="mx-3 mb-6"
-                           >Use Custom Rule</v-chip
-                        >
-                     </div>
-                     <c-combobox
-                        :disabled="!createRule.values.useStock"
-                        :items="defaultRules"
-                        label="Pre-defined Rules"
-                        v-model="createRule.values.stock"
-                     ></c-combobox>
-                     <c-text-field
-                        :disabled="createRule.values.useStock"
-                        label="Name"
-                        v-model="createRule.values.label"
-                     ></c-text-field>
-                     <c-text-area
-                        :disabled="createRule.values.useStock"
-                        label="Description"
-                        v-model="createRule.values.description"
-                     ></c-text-area>
-                     <c-error
-                        v-for="(error, i) of createRule.errors.errors"
-                        :key="i"
-                        :error="error"
-                     ></c-error>
+      <v-dialog v-model="filter.flag" width="500">
+         <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
+            <c-combobox
+               :items="filter.isStockItems"
+               label="Rule Type"
+               :multiple="true"
+               v-model="filter.values.isStock"
+            ></c-combobox>
+         </c-dialog-card>
+      </v-dialog>
+      <v-dialog v-model="createRule.flag" width="500">
+         <c-dialog-card
+            :props="createRule.dialogCard"
+            v-on:create-rule="confirmCreateRule"
+            v-on:close-dialog="closeDialog"
+         >
+            <v-slide-y-transition>
+               <c-progress-spinner v-show="processingRule"></c-progress-spinner>
+            </v-slide-y-transition>
+            <v-slide-y-transition>
+               <div v-show="!processingRule">
+                  <div class="d-flex align-center justify-center">
+                     <v-chip
+                        @click="createRule.values.useStock = !createRule.values.useStock"
+                        label
+                        outlined
+                        :color="createRule.values.useStock ? 'primary' : null"
+                        class="ma-3"
+                        >Use Pre-defined Rule</v-chip
+                     >
+                     <v-chip
+                        @click="createRule.values.useStock = !createRule.values.useStock"
+                        label
+                        outlined
+                        :color="createRule.values.useStock ? null : 'primary'"
+                        class="ma-3"
+                        >Use Custom Rule</v-chip
+                     >
                   </div>
-               </v-slide-y-transition>
-            </c-dialog-card>
-         </v-dialog>
-      </v-row>
+                  <c-combobox
+                     :disabled="!createRule.values.useStock"
+                     :items="defaultRules"
+                     label="Pre-defined Rules"
+                     v-model="createRule.values.stock"
+                  ></c-combobox>
+                  <c-text-field
+                     :disabled="createRule.values.useStock"
+                     label="Name"
+                     v-model="createRule.values.label"
+                  ></c-text-field>
+                  <c-text-area
+                     :disabled="createRule.values.useStock"
+                     label="Description"
+                     v-model="createRule.values.description"
+                  ></c-text-area>
+                  <c-error
+                     v-for="(error, i) of createRule.errors.errors"
+                     :key="i"
+                     :error="error"
+                  ></c-error>
+               </div>
+            </v-slide-y-transition>
+         </c-dialog-card>
+      </v-dialog>
    </div>
 </template>
 
