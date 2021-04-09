@@ -134,6 +134,7 @@ export default {
                hasErrors: false,
             },
             values: {
+               isUpdate: true,
                useStock: false,
                label: null,
                description: null,

@@ -85,7 +85,9 @@ export const getValidationErrors = options => {
       if (util.isUndefined(options.label)) errors.push('You must give rules a Name!');
       if (util.isUndefined(options.description))
          errors.push('You must give rules a Description!');
+      // only need to worry about adding new custom rules
       if (
+         !options.isUpdate &&
          !util.isUndefined(options.label) &&
          currentRules
             .map(r => r.label.toLowerCase())
