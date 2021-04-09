@@ -105,6 +105,7 @@ export default {
       'c-error': Errors,
    },
    data() {
+      // TODO move speed dial actions into toolbar
       return {
          processingRule: false,
          createRule: {

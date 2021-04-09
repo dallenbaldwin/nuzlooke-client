@@ -18,6 +18,7 @@ export default {
    },
    name: 'App',
    data() {
+      // TODO move speed dial into this view
       return { debug: true };
    },
 };

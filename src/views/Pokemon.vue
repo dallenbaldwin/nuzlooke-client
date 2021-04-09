@@ -92,6 +92,7 @@ export default {
       'c-combobox': Combobox,
       'c-pokemon-type': PokemonType,
    },
+   // TODO move speed dial actions into toolbar
    data() {
       return {
          filter: {

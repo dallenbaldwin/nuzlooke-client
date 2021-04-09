@@ -53,6 +53,7 @@ export default {
       'c-combobox': Combobox,
    },
    data() {
+      // TODO move speed dial actions into toolbar
       return {
          filter: {
             flag: false,

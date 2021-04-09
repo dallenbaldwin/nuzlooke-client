@@ -88,6 +88,7 @@ export default {
       'c-text-field': TextField,
    },
    data() {
+      // TODO consolidate and rework this without all the actions
       return {
          settingsDialog: {
             flag: false,

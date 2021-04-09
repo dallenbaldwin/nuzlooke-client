@@ -15,7 +15,7 @@
             {{ game.label }}
          </div>
       </v-row>
-      <v-row class="mt-6 mb-6">
+      <v-row class="mt-6 mb-3">
          <v-tabs v-model="tab" icons-and-text grow color="black">
             <v-tab v-for="tab of tabs" :key="tab.label">
                {{ tab.label }}
