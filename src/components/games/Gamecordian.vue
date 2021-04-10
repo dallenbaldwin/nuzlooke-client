@@ -23,7 +23,7 @@
                >
             </v-row>
             <v-row class="d-flex justify-space-around">
-               <div id="box-art">
+               <div id="box-art" class="ma-3">
                   <div>{{ game.version.label }}</div>
                   <v-img
                      class="mt-2"
@@ -36,7 +36,7 @@
                      contain
                   ></v-img>
                </div>
-               <div id="party">
+               <div id="party" class="ma-3">
                   <div>Party</div>
                   <div
                      v-for="(group, i) of ofSix(game.party_icon_urls)"
@@ -53,7 +53,7 @@
                      ></c-poke-sprite>
                   </div>
                </div>
-               <div id="gym-badges">
+               <div id="gym-badges" class="ma-3">
                   <div>Gym Badges</div>
                   <div
                      v-for="(group, i) of ofEight(game.gym_badge_icon_urls)"
@@ -68,7 +68,7 @@
                      ></c-badge-sprite>
                   </div>
                </div>
-               <div id="game-links">
+               <div id="game-links" class="ma-3">
                   <div>Game Links</div>
                   <div v-for="btn of gameBtns" :key="btn.label">
                      <div class="d-inline-flex mt-1">

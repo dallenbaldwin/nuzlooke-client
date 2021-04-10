@@ -3,11 +3,8 @@
       <v-row>
          <v-toolbar>
             <v-spacer></v-spacer>
-            <v-toolbar-items>
-               <v-icon>{{ Icons.CONTROLS.SEARCH }}</v-icon>
-               <v-icon>{{ Icons.CONTROLS.FILTER }}</v-icon>
-               <v-spacer></v-spacer>
-            </v-toolbar-items>
+            <c-btn :icon="Icons.CONTROLS.SEARCH" :isIcon="true" color="primary"></c-btn>
+            <c-btn :icon="Icons.CONTROLS.FILTER" :isIcon="true" color="teal"></c-btn>
          </v-toolbar>
       </v-row>
       <v-row class="d-flex flex-row justify-space-around align-start">

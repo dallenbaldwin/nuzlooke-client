@@ -18,15 +18,24 @@ export default {
    },
    name: 'App',
    data() {
-      // TODO move speed dial into this view
       return { debug: true };
    },
 };
 </script>
 
-<style scoped>
+<style>
 .c-mw {
    max-width: 80%;
    margin: auto;
+}
+/* if the app bar bugs out and goes up top again... run this real quick */
+.v-app-bar.v-app-bar--fixed {
+   position: fixed;
+   bottom: 0;
+   z-index: 5;
+}
+.v-toolbar.v-toolbar--bottom {
+   top: initial;
+   bottom: 0;
 }
 </style>

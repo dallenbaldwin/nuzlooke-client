@@ -1,29 +1,37 @@
 <template>
    <v-container>
+      <div v-if="!mobile()">
+         <v-row>
+            <c-speed-dial
+               class="c-speed-dial"
+               :actions="actions"
+               v-on:logout="logout"
+               v-on:filter-games="filter.flag = !filter.flag"
+               v-on:create-game="createGame.flag = !createGame.flag"
+            ></c-speed-dial>
+         </v-row>
+         <v-row>
+            <div class="ma-3 text-h2">Games</div>
+         </v-row>
+      </div>
       <v-row>
-         <c-speed-dial
-            class="c-speed-dial"
-            :actions="actions"
-            v-if="!mobile()"
-            v-on:logout="logout"
-            v-on:filter-games="filter.flag = !filter.flag"
-            v-on:create-game="createGame.flag = !createGame.flag"
-         ></c-speed-dial>
-      </v-row>
-      <v-row class="d-flex flex-column mb-1">
-         <div class="mt-6 text-h2">
-            Games
-         </div>
-         <div class="mt-6 text-h4">Welcome back {{ username }}</div>
+         <div class="ma-3 text-h4">Welcome back {{ username }}</div>
       </v-row>
       <v-row v-if="games.length === 0">
-         <div class="mt-6 text-body">
+         <div class="ma-3 text-body">
             It looks like you don't have any games... You should create a new game from
             the menu!
          </div>
       </v-row>
       <v-row>
-         <v-expansion-panels popout>
+         <v-toolbar>
+            <v-spacer></v-spacer>
+            <c-btn :icon="Icons.CONTROLS.SEARCH" :isIcon="true" color="primary"></c-btn>
+            <c-btn :icon="Icons.CONTROLS.FILTER" :isIcon="true" color="teal"></c-btn>
+         </v-toolbar>
+      </v-row>
+      <v-row>
+         <v-expansion-panels popout class="mt-1">
             <c-gamecordian
                v-show="getFilter(game)"
                v-for="game of games"

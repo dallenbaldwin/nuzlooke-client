@@ -28,5 +28,6 @@ export default {
       isUndefined: util.isUndefined,
       isEmptyArray: util.isEmptyArray,
       prettySON: util.prettySON,
+      toTitleCase: util.toTitleCase,
    },
 };

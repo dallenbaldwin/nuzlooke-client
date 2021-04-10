@@ -3,11 +3,8 @@
       <v-row>
          <v-toolbar>
             <v-spacer></v-spacer>
-            <v-toolbar-items>
-               <v-icon>{{ Icons.CONTROLS.SEARCH }}</v-icon>
-               <v-icon>{{ Icons.CONTROLS.FILTER }}</v-icon>
-               <v-spacer></v-spacer>
-            </v-toolbar-items>
+            <c-btn :icon="Icons.CONTROLS.SEARCH" :isIcon="true" color="primary"></c-btn>
+            <c-btn :icon="Icons.CONTROLS.FILTER" :isIcon="true" color="teal"></c-btn>
          </v-toolbar>
       </v-row>
       <v-row>
@@ -96,6 +93,7 @@ import TextField from '../components/form-controls/TextField.vue';
 import PokemonCard from '../components/pokemon/PokemonCard.vue';
 import PokemonType from '../components/pokemon/PokemonType.vue';
 import PokeSprite from '../components/pokemon/PokeSprite.vue';
+import Icons from '../constants/Icons';
 import PokemonTypes from '../constants/PokemonTypes';
 import * as gameController from '../controllers/game';
 import * as pokemonController from '../controllers/pokemon';

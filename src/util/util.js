@@ -39,6 +39,12 @@ export const arrayify = (...values) => {
    return Array.from([...values]).flatMap(x => x);
 };
 
+export const toTitleCase = str =>
+   str
+      .split(' ')
+      .map(s => s.slice(0, 1).toUpperCase() + s.slice(1).toLowerCase())
+      .join(' ');
+
 export const deClassify = classObject => JSON.parse(JSON.stringify(classObject));
 
 export const isUndefined = value => value === undefined || value === null || value === '';

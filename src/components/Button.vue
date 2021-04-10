@@ -1,7 +1,17 @@
 <template>
-   <v-btn :icon="isIcon" text @click="$emit('click', $event)" :disabled="disabled">
-      <v-icon :color="color" dark>{{ icon }}</v-icon>
-      <span v-if="!isIcon" class="ml-1">
+   <v-btn
+      :fab="isFab"
+      :icon="isIcon"
+      :color="isFab ? color : null"
+      :text="!isFab"
+      :small="isFab"
+      :dark="isFab"
+      @click="$emit('click', $event)"
+      :disabled="disabled"
+   >
+      <v-icon v-if="isFab">{{ icon }}</v-icon>
+      <v-icon v-if="!isFab" :color="color" dark>{{ icon }}</v-icon>
+      <span v-if="!isIcon && !isFab" class="ml-1">
          <slot></slot>
       </span>
    </v-btn>
@@ -15,6 +25,7 @@ export default {
       icon: { required: true },
       disabled: { required: false, default: false },
       isIcon: { required: false, default: false },
+      isFab: { required: false, default: false },
    },
 };
 </script>

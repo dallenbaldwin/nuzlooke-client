@@ -26,21 +26,21 @@
                <v-img
                   :src="gym.leader.sprite_url"
                   contain
-                  max-height="150"
-                  max-width="150"
+                  aspect-ratio="3/2"
+                  max-width="100"
                   :lazy-src="Icons.MISC.NUZLOOKE"
                   position="center left"
                ></v-img>
-               <div id="location" class="mx-6">
+               <div id="location" class="ma-3">
                   <div class="text-subtitle-2">
                      <v-icon left>mdi-map-marker</v-icon>{{ gym.location }}
                   </div>
                </div>
-               <div id="type" class="mx-6">
+               <div id="type" class="ma-3">
                   <div class="text-subtitle-2">Dominant Type</div>
                   <c-pokemon-type :type="gym.dominant_type"></c-pokemon-type>
                </div>
-               <div id="completed" class="mx-6">
+               <div id="completed" class="ma-3">
                   <div class="text-subtitle-2">{{ gym.badge.label }}</div>
                   <v-switch
                      :disabled="gameFinished"

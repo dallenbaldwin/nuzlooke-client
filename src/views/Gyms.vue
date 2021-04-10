@@ -3,11 +3,8 @@
       <v-row>
          <v-toolbar>
             <v-spacer></v-spacer>
-            <v-toolbar-items>
-               <v-icon>{{ Icons.CONTROLS.SEARCH }}</v-icon>
-               <v-icon>{{ Icons.CONTROLS.FILTER }}</v-icon>
-               <v-spacer></v-spacer>
-            </v-toolbar-items>
+            <c-btn :icon="Icons.CONTROLS.SEARCH" :isIcon="true" color="primary"></c-btn>
+            <c-btn :icon="Icons.CONTROLS.FILTER" :isIcon="true" color="teal"></c-btn>
          </v-toolbar>
       </v-row>
       <v-row>
@@ -52,6 +49,7 @@
 import Gymcordian from '../components/gyms/Gymcordian.vue';
 import DialogCard from '../components/DialogCard.vue';
 import TextField from '../components/form-controls/TextField.vue';
+import Button from '../components/Button.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import * as util from '../util/util';
 import PokemonTypes from '../constants/PokemonTypes';
@@ -63,6 +61,7 @@ export default {
       'c-gymcordian': Gymcordian,
       'c-text-field': TextField,
       'c-combobox': Combobox,
+      'c-btn': Button,
    },
    data() {
       // TODO move speed dial actions into toolbar

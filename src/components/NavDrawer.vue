@@ -1,32 +1,21 @@
 <template>
-   <v-container>
+   <div>
       <v-app-bar elevation="1" bottom app v-if="mobile()">
          <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-         <v-spacer></v-spacer>
-         <v-btn
-            fab
-            small
-            color="green"
-            dark
-            v-if="outGame"
-            @click="newGame.createGameDialog = !newGame.createGameDialog"
-         >
-            <v-icon>mdi-plus</v-icon>
-         </v-btn>
+         <v-app-bar-title class="text-h6">{{ toTitleCase(currentPage) }}</v-app-bar-title>
       </v-app-bar>
-      <v-navigation-drawer v-model="drawer" absolute bottom temporary>
+      <v-navigation-drawer v-model="drawer" app bottom temporary>
          <v-list-item v-if="isLoggedIn">
             <v-list-item-icon>
-               <v-btn fab x-small color="orange" dark @click="editUsername">
-                  <v-icon>mdi-pencil</v-icon>
-               </v-btn>
+               <c-btn
+                  :icon="Icons.CONTROLS.SETTINGS"
+                  :isFab="true"
+                  @click="editUsername"
+               ></c-btn>
             </v-list-item-icon>
-            <v-list-item-content>
-               {{ username }}
-            </v-list-item-content>
          </v-list-item>
          <v-divider></v-divider>
-         <v-list nav>
+         <v-list>
             <v-list-item
                v-for="link of pageLinks"
                :key="link.label"
@@ -34,7 +23,9 @@
                @click="clickLink(link)"
             >
                <v-list-item-icon>
-                  <v-icon :color="link.color">{{ link.icon }}</v-icon>
+                  <v-btn fab small dark :color="link.color"
+                     ><v-icon>{{ link.icon }}</v-icon></v-btn
+                  >
                </v-list-item-icon>
                <v-list-item-content class="text-right">
                   {{ link.label }}
@@ -42,26 +33,7 @@
             </v-list-item>
          </v-list>
       </v-navigation-drawer>
-      <v-dialog v-model="newGame.createGameDialog" width="500">
-         <c-dialog-card
-            :props="newGame.createGameCard"
-            v-on:start-game="startGame"
-            v-on:close-dialog="closeDialog"
-         >
-            <div v-if="newGame.creatingGame" class="text-center mt-3">
-               <c-progress-spinner></c-progress-spinner>
-            </div>
-            <div class="mt-3" v-if="!newGame.creatingGame">
-               <c-text-field v-model="newGame.newGame.label" label="Name"></c-text-field>
-               <c-combobox
-                  label="Version"
-                  v-model="newGame.newGame.version"
-                  :items="gameVersions"
-               >
-               </c-combobox></div
-         ></c-dialog-card>
-      </v-dialog>
-   </v-container>
+   </div>
 </template>
 
 <script>
@@ -69,6 +41,7 @@ import DialogCard from './DialogCard.vue';
 import TextField from './form-controls/TextField.vue';
 import ProgressSpinner from './ProgressSpinner.vue';
 import Combobox from './form-controls/Combobox.vue';
+import Button from './Button.vue';
 import Icons from '../constants/Icons';
 import * as gameController from '../controllers/game';
 import * as util from '../util/util';
@@ -83,6 +56,7 @@ export default {
       'c-text-field': TextField,
       'c-progress-spinner': ProgressSpinner,
       'c-combobox': Combobox,
+      'c-btn': Button,
    },
    data() {
       return {
@@ -196,6 +170,9 @@ export default {
       },
    },
    computed: {
+      currentPage() {
+         return this.$route.name;
+      },
       gameVersions() {
          return Object.values(GameVersions).map(v => v.label);
       },
@@ -216,6 +193,9 @@ export default {
       },
       game() {
          return this.$store.state.game;
+      },
+      gameFinished() {
+         return this.game ? this.game.is_finished : false;
       },
       isLoggedIn() {
          return this.$store.state.isLoggedIn;
