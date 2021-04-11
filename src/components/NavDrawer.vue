@@ -78,7 +78,7 @@ import GameVersions from '../constants/GameVersions';
 import Pages from '../constants/Pages';
 
 export default {
-   // TODO gonna have to rework most of this
+   // TODO refactor the jank
    name: 'NavDrawer',
    components: {
       'c-text-field': TextField,
@@ -103,6 +103,7 @@ export default {
             ],
             LOGOUT: [Pages.GAMES, Pages.POKEMON, Pages.RULES, Pages.ROUTES, Pages.GYMS],
          },
+         // this is janky
          inGameRoutes: ['Pokemon', 'Routes', 'Gyms', 'Rules'],
          inGameLinks: ['Pokemon', 'Routes', 'Gyms', 'Rules', 'Games', 'Sign Out'],
          outGameLinks: ['Sign Out', 'Create Game'],
@@ -153,6 +154,7 @@ export default {
       };
    },
    methods: {
+      // this is janky
       clickLink(link) {
          if (link.action) {
             this.reactToAction(link.action);
@@ -162,6 +164,7 @@ export default {
             util.navigate({ name: link.route });
          }
       },
+      // this is janky
       reactToAction(action) {
          if (action === 'logout') {
             util.logout();

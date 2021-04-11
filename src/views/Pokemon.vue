@@ -9,7 +9,6 @@
                <v-expansion-panel-header disable-icon-rotate class="text-h6">
                   {{ state }}
                   <template v-slot:actions>
-                     <!-- TODO v-else-if -->
                      <v-badge
                         overlap
                         v-if="state !== PartyState.PARTY && getPanelCount(state)"
@@ -23,13 +22,13 @@
                      </v-badge>
                      <v-icon
                         dark
-                        v-if="state !== PartyState.PARTY && !getPanelCount(state)"
+                        v-else-if="state !== PartyState.PARTY && !getPanelCount(state)"
                      >
                         {{ toPartyStateIcon(state) }}
                      </v-icon>
                      <div
                         class="d-inline-flex flex-row"
-                        v-if="state === PartyState.PARTY"
+                        v-else-if="state === PartyState.PARTY"
                      >
                         <c-poke-sprite
                            v-for="(url, i) of partyIcons"

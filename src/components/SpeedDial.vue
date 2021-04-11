@@ -81,11 +81,10 @@ export default {
                requiresLoginAccess: false,
             },
             {
-               label: 'Settings',
-               icon: Icons.CONTROLS.SETTINGS,
-               action: 'open-settings',
+               label: 'Sign Out',
+               icon: Icons.CONTROLS.LOGOUT,
+               action: 'logout',
                requiresLoginAccess: true,
-               color: colors.grey.darken2,
             },
             {
                label: 'Games',
@@ -95,10 +94,11 @@ export default {
                requiresLoginAccess: true,
             },
             {
-               label: 'Sign Out',
-               icon: Icons.CONTROLS.LOGOUT,
-               action: 'logout',
+               label: 'Settings',
+               icon: Icons.CONTROLS.SETTINGS,
+               action: 'open-settings',
                requiresLoginAccess: true,
+               color: colors.grey.darken2,
             },
          ],
       };

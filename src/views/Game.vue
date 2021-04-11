@@ -1,6 +1,6 @@
 <template>
    <v-container class="fill-height">
-      <v-row class="mt-6 pb-6">
+      <v-row>
          <c-speed-dial
             :actions="actions"
             v-if="!mobile()"
@@ -16,7 +16,7 @@
          </div>
       </v-row>
       <v-row class="mt-6 mb-3">
-         <v-tabs v-model="tab" icons-and-text grow color="black">
+         <v-tabs v-model="tab" icons-and-text grow :color="Colors.grey.darken4">
             <v-tab v-for="tab of tabs" :key="tab.label">
                {{ tab.label }}
                <v-icon dark>{{ tab.icon }}</v-icon>
@@ -124,7 +124,7 @@ export default {
    },
    methods: {
       toTab(routeName) {
-         return [...Object.values(TabMap)].findIndex(route => route === routeName);
+         return Object.values(TabMap).findIndex(route => route === routeName);
       },
       toRoute(tabIndex) {
          return TabMap[tabIndex];
