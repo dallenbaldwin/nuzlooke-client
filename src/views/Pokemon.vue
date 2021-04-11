@@ -84,7 +84,7 @@
 
 <script>
 import Button from '../components/Button.vue';
-import DialogCard from '../components/DialogCard.vue';
+import DialogCard from '../components/dialogs/DialogCard.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import PokemonCard from '../components/pokemon/PokemonCard.vue';

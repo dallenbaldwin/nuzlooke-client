@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import DialogCard from '../DialogCard.vue';
+import DialogCard from '../dialogs/DialogCard.vue';
 import Button from '../Button.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
 import PokeSprite from '../pokemon/PokeSprite.vue';

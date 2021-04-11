@@ -93,7 +93,7 @@
 
 <script>
 import Button from '../Button.vue';
-import DialogCard from '../DialogCard.vue';
+import DialogCard from '../dialogs/DialogCard.vue';
 import TextArea from '../form-controls/TextArea.vue';
 import TextField from '../form-controls/TextField.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';

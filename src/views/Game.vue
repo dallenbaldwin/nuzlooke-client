@@ -30,7 +30,6 @@
 <script>
 import NavDrawer from '../components/NavDrawer.vue';
 import SpeedDial from '../components/SpeedDial.vue';
-import DialogCard from '../components/DialogCard.vue';
 import TabMap from '../constants/TabMap';
 import Icons from '../constants/Icons';
 import Pokemon from './Pokemon';
@@ -43,7 +42,6 @@ export default {
    components: {
       'c-nav-drawer': NavDrawer,
       'c-speed-dial': SpeedDial,
-      'c-dialog-card': DialogCard,
    },
    data() {
       return {

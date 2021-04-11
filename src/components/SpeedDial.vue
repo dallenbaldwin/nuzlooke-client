@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import DialogCard from './DialogCard.vue';
 import ProgressSpinner from './ProgressSpinner.vue';
 import TextField from './form-controls/TextField.vue';
 import AppSettings from './dialogs/AppSettings.vue';
@@ -54,7 +53,6 @@ export default {
       finished: { required: false, default: false },
    },
    components: {
-      'c-dialog-card': DialogCard,
       'c-progress-spinner': ProgressSpinner,
       'c-error': Errors,
       'c-text-field': TextField,

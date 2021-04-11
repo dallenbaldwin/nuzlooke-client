@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import DialogCard from '../DialogCard.vue';
+import DialogCard from './DialogCard.vue';
 import Errors from '../Errors.vue';
 import TextField from '../form-controls/TextField.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';

@@ -67,7 +67,6 @@
 </template>
 
 <script>
-import DialogCard from './DialogCard.vue';
 import TextField from './form-controls/TextField.vue';
 import ProgressSpinner from './ProgressSpinner.vue';
 import AppSettings from './dialogs/AppSettings.vue';
@@ -82,7 +81,6 @@ export default {
    // TODO gonna have to rework most of this
    name: 'NavDrawer',
    components: {
-      'c-dialog-card': DialogCard,
       'c-text-field': TextField,
       'c-progress-spinner': ProgressSpinner,
       'c-combobox': Combobox,

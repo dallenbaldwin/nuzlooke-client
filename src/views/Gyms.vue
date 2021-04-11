@@ -43,7 +43,7 @@
 
 <script>
 import Gymcordian from '../components/gyms/Gymcordian.vue';
-import DialogCard from '../components/DialogCard.vue';
+import DialogCard from '../components/dialogs/DialogCard.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import Button from '../components/Button.vue';
 import Toolbar from '../components/Toolbar.vue';

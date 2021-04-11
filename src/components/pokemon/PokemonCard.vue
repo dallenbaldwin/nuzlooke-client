@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import DialogCard from '../../components/DialogCard.vue';
+import DialogCard from '../../components/dialogs/DialogCard.vue';
 import PokeSprite from './PokeSprite.vue';
 import PokemonType from './PokemonType.vue';
 import ProgressSpinner from '../../components/ProgressSpinner.vue';

@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import DialogCard from '../components/DialogCard.vue';
+import DialogCard from '../components/dialogs/DialogCard.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import RouteCard from '../components/routes/RouteCard.vue';
