@@ -1,5 +1,5 @@
 <template>
-   <v-container>
+   <v-container fill-height>
       <div v-if="!mobile()">
          <v-row>
             <c-speed-dial
@@ -24,11 +24,13 @@
          </div>
       </v-row>
       <v-row>
-         <v-toolbar>
-            <v-spacer></v-spacer>
-            <c-btn :icon="Icons.CONTROLS.SEARCH" :isIcon="true" color="primary"></c-btn>
-            <c-btn :icon="Icons.CONTROLS.FILTER" :isIcon="true" color="teal"></c-btn>
-         </v-toolbar>
+         <c-toobar
+            :add="true"
+            :filter="true"
+            add-label="Create Game"
+            v-on:add="createGame.flag = !createGame.flag"
+            v-on:filter="filter.flag = !filter.flag"
+         ></c-toobar>
       </v-row>
       <v-row>
          <v-expansion-panels popout class="mt-1">
@@ -71,7 +73,7 @@
                         label="Pre-defined Rule"
                      ></c-combobox>
                      <c-btn
-                        class="mt-2"
+                        class="align-self-center"
                         @click="removeRule(i)"
                         color="red"
                         :icon="Icons.CONTROLS.DELETE"
@@ -130,6 +132,7 @@ import ProgressSpinner from '../components/ProgressSpinner.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import Button from '../components/Button.vue';
+import Toolbar from '../components/Toolbar.vue';
 import * as gameController from '../controllers/game';
 import * as util from '../util/util';
 import Icons from '../constants/Icons';
@@ -147,9 +150,9 @@ export default {
       'c-text-field': TextField,
       'c-combobox': Combobox,
       'c-btn': Button,
+      'c-toobar': Toolbar,
    },
    data() {
-      // TODO move speed dial actions into toolbar
       return {
          // create game
          processingGame: false,
@@ -212,6 +215,14 @@ export default {
       };
    },
    methods: {
+      clickAdd() {
+         // inherited from App.vue
+         this.createGame.flag = true;
+      },
+      clickFilter() {
+         // inherited from App.vue
+         this.filter.flag = true;
+      },
       addRule() {
          if (this.createGame.values.rules.some(r => util.isUndefined(r.values))) return;
          this.createGame.values.rules.push({

@@ -1,11 +1,14 @@
 <template>
    <div>
       <v-row>
-         <v-toolbar>
-            <v-spacer></v-spacer>
-            <c-btn :icon="Icons.CONTROLS.SEARCH" :isIcon="true" color="primary"></c-btn>
-            <c-btn :icon="Icons.CONTROLS.FILTER" :isIcon="true" color="teal"></c-btn>
-         </v-toolbar>
+         <c-toolbar
+            :filter="true"
+            :add="true"
+            add-label="Create Rule"
+            filter-label="Filter"
+            v-on:filter="clickFilter"
+            v-on:add="clickAdd"
+         ></c-toolbar>
       </v-row>
       <v-row class="d-flex flex-row justify-space-around align-start">
          <c-rule-card
@@ -90,6 +93,8 @@ import TextArea from '../components/form-controls/TextArea.vue';
 import ProgressSpinner from '../components/ProgressSpinner.vue';
 import RuleCard from '../components/rules/RuleCard.vue';
 import Errors from '../components/Errors.vue';
+import Button from '../components/Button.vue';
+import Toolbar from '../components/Toolbar.vue';
 import * as util from '../util/util';
 import * as rulesController from '../controllers/rules';
 import GameRules from '../constants/GameRules';
@@ -104,9 +109,10 @@ export default {
       'c-progress-spinner': ProgressSpinner,
       'c-text-area': TextArea,
       'c-error': Errors,
+      'c-btn': Button,
+      'c-toolbar': Toolbar,
    },
    data() {
-      // TODO move speed dial actions into toolbar
       return {
          processingRule: false,
          createRule: {
@@ -166,7 +172,8 @@ export default {
          this.createRule.errors.errors = [];
          this.filter.values.isStock = [];
       },
-      openFilter() {
+      clickFilter() {
+         // this is inherited from Game.vue and App.vue
          this.filter.flag = true;
       },
       getStockStatus(boolean) {
@@ -179,8 +186,8 @@ export default {
          );
          return isStock;
       },
-      clickCreateRule() {
-         // this gets called in Game.vue
+      clickAdd() {
+         // this gets called in Game.vue and App.vue
          this.createRule.values.useStock = true;
          this.createRule.flag = true;
       },

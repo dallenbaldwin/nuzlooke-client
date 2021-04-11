@@ -1,9 +1,14 @@
 <template>
    <v-app :class="mobile() ? '' : 'c-mw'">
-      <c-nav-drawer></c-nav-drawer>
+      <!-- <v-app> -->
+      <c-nav-drawer
+         v-if="mobile()"
+         v-on:add="navClickAdd"
+         v-on:filter="navClickFilter"
+      ></c-nav-drawer>
       <v-main>
          <v-container>
-            <router-view> </router-view>
+            <router-view ref="eventBus"> </router-view>
          </v-container>
       </v-main>
    </v-app>
@@ -20,6 +25,14 @@ export default {
    data() {
       return { debug: true };
    },
+   methods: {
+      navClickAdd() {
+         this.$refs.eventBus.clickAdd();
+      },
+      navClickFilter() {
+         this.$refs.eventBus.clickFilter();
+      },
+   },
 };
 </script>
 
@@ -28,7 +41,7 @@ export default {
    max-width: 80%;
    margin: auto;
 }
-/* if the app bar bugs out and goes up top again... run this real quick */
+/* these have to be here if i'm using a toolbar and bottom app-bar at the same time */
 .v-app-bar.v-app-bar--fixed {
    position: fixed;
    bottom: 0;

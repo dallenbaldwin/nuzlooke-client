@@ -5,6 +5,7 @@ import TabMap from '../constants/TabMap';
 import EncounterResultConst from '../constants/EncounterResultConst';
 import * as util from '../util/util';
 import DamageClass from '../constants/DamageClass';
+import colors from 'vuetify/lib/util/colors';
 
 export default {
    data() {
@@ -15,6 +16,7 @@ export default {
          TabMap: TabMap,
          EncounterResultConst: EncounterResultConst,
          DamageClass: DamageClass,
+         Colors: colors,
       };
    },
    methods: {

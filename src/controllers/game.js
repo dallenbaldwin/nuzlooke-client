@@ -52,6 +52,7 @@ export const getValidationErrors = (options, isEdit = false) => {
 };
 
 export const createNewGame = async (label, version, rules) => {
+   // TODO rework to create the game, then ask for the routes, possibly in a loop??
    try {
       const newRules = rules.map(rule => {
          let defaultRule = Object.values(GameRules).find(gr => gr.id === rule);

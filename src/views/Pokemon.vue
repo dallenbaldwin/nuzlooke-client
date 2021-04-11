@@ -1,11 +1,7 @@
 <template>
    <div>
       <v-row>
-         <v-toolbar>
-            <v-spacer></v-spacer>
-            <c-btn :icon="Icons.CONTROLS.SEARCH" :isIcon="true" color="primary"></c-btn>
-            <c-btn :icon="Icons.CONTROLS.FILTER" :isIcon="true" color="teal"></c-btn>
-         </v-toolbar>
+         <c-toolbar :filter="true" v-on:filter="filter.flag = !filter.flag"></c-toolbar>
       </v-row>
       <v-row>
          <v-expansion-panels multiple popout class="mt-1">
@@ -87,12 +83,14 @@
 </template>
 
 <script>
+import Button from '../components/Button.vue';
 import DialogCard from '../components/DialogCard.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import PokemonCard from '../components/pokemon/PokemonCard.vue';
 import PokemonType from '../components/pokemon/PokemonType.vue';
 import PokeSprite from '../components/pokemon/PokeSprite.vue';
+import Toolbar from '../components/Toolbar.vue';
 import Icons from '../constants/Icons';
 import PokemonTypes from '../constants/PokemonTypes';
 import * as gameController from '../controllers/game';
@@ -108,8 +106,9 @@ export default {
       'c-text-field': TextField,
       'c-combobox': Combobox,
       'c-pokemon-type': PokemonType,
+      'c-btn': Button,
+      'c-toolbar': Toolbar,
    },
-   // TODO move speed dial actions into toolbar
    data() {
       return {
          filter: {
@@ -183,8 +182,8 @@ export default {
          );
          return isNickname && isSpecies && isType;
       },
-      openFilter() {
-         // this is inherited from Game.vue
+      clickFilter() {
+         // this is inherited from Game.vue and App.vue
          this.filter.flag = true;
       },
       closeDialog() {

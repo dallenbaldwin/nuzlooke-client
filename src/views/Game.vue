@@ -1,5 +1,5 @@
 <template>
-   <v-container>
+   <v-container class="fill-height">
       <v-row class="mt-6 pb-6">
          <c-speed-dial
             :actions="actions"
@@ -23,7 +23,7 @@
             </v-tab>
          </v-tabs>
       </v-row>
-      <component :is="currentTabComponent" ref="eventBus"></component>
+      <component style="width: 100%" :is="currentTabComponent" ref="eventBus"></component>
    </v-container>
 </template>
 
@@ -132,10 +132,10 @@ export default {
          return TabMap[tabIndex];
       },
       createRule() {
-         this.$refs.eventBus.clickCreateRule();
+         this.$refs.eventBus.clickAdd();
       },
       openFilter() {
-         this.$refs.eventBus.openFilter();
+         this.$refs.eventBus.clickFilter();
       },
    },
    mounted() {

@@ -1,19 +1,48 @@
 <template>
    <div>
-      <v-app-bar elevation="1" bottom app v-if="mobile()">
-         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-         <v-app-bar-title class="text-h6">{{ toTitleCase(currentPage) }}</v-app-bar-title>
+      <v-app-bar elevation="1" bottom app>
+         <v-app-bar-nav-icon
+            v-show="currentPage !== Pages.GAMES"
+            @click.stop="drawer = !drawer"
+         ></v-app-bar-nav-icon>
+         <span class="text-h6"> {{ toTitleCase(currentPage) }} </span>
+         <template v-slot:extension v-if="isLoggedIn">
+            <c-btn
+               v-show="btnSupport.ADD.includes(currentPage) && !gameFinished"
+               class="ma-3"
+               :icon="Icons.CONTROLS.PLUS"
+               :isFab="true"
+               @click="clickAdd"
+               color="success"
+            ></c-btn>
+            <c-btn
+               v-show="btnSupport.FILTER.includes(currentPage)"
+               class="ma-3"
+               :icon="Icons.CONTROLS.FILTER"
+               :isFab="true"
+               @click="clickFilter"
+               color="primary"
+            ></c-btn>
+            <c-btn
+               v-show="btnSupport.APPSETTINGS.includes(currentPage)"
+               class="ma-3"
+               :icon="Icons.CONTROLS.SETTINGS"
+               :color="Colors.grey.darken2"
+               :isFab="true"
+               @click="appSettings = !appSettings"
+            ></c-btn>
+            <c-btn
+               v-show="btnSupport.LOGOUT.includes(currentPage)"
+               class="ma-3"
+               :icon="Icons.CONTROLS.LOGOUT"
+               :isFab="true"
+               @click="logout"
+            ></c-btn>
+         </template>
       </v-app-bar>
       <v-navigation-drawer v-model="drawer" app bottom temporary>
-         <v-list-item v-if="isLoggedIn">
-            <v-list-item-icon>
-               <c-btn
-                  :icon="Icons.CONTROLS.SETTINGS"
-                  :isFab="true"
-                  @click="editUsername"
-               ></c-btn>
-            </v-list-item-icon>
-         </v-list-item>
+         <div class="ma-3 text-h6" v-if="game">{{ game.label }}</div>
+         <div class="ma-3 text-text-title" v-if="username">{{ username }}</div>
          <v-divider></v-divider>
          <v-list>
             <v-list-item
@@ -23,9 +52,7 @@
                @click="clickLink(link)"
             >
                <v-list-item-icon>
-                  <v-btn fab small dark :color="link.color"
-                     ><v-icon>{{ link.icon }}</v-icon></v-btn
-                  >
+                  <c-btn :isFab="true" :icon="link.icon"></c-btn>
                </v-list-item-icon>
                <v-list-item-content class="text-right">
                   {{ link.label }}
@@ -33,6 +60,9 @@
             </v-list-item>
          </v-list>
       </v-navigation-drawer>
+      <v-dialog v-model="appSettings" width="500">
+         <c-app-settings v-on:close-dialog="appSettings = !appSettings"></c-app-settings>
+      </v-dialog>
    </div>
 </template>
 
@@ -40,16 +70,16 @@
 import DialogCard from './DialogCard.vue';
 import TextField from './form-controls/TextField.vue';
 import ProgressSpinner from './ProgressSpinner.vue';
+import AppSettings from './dialogs/AppSettings.vue';
 import Combobox from './form-controls/Combobox.vue';
 import Button from './Button.vue';
 import Icons from '../constants/Icons';
-import * as gameController from '../controllers/game';
 import * as util from '../util/util';
 import GameVersions from '../constants/GameVersions';
+import Pages from '../constants/Pages';
 
 export default {
    // TODO gonna have to rework most of this
-   // TODO disable functions when game is finished
    name: 'NavDrawer',
    components: {
       'c-dialog-card': DialogCard,
@@ -57,10 +87,24 @@ export default {
       'c-progress-spinner': ProgressSpinner,
       'c-combobox': Combobox,
       'c-btn': Button,
+      'c-app-settings': AppSettings,
    },
    data() {
       return {
+         appSettings: false,
          drawer: false,
+         btnSupport: {
+            FILTER: [Pages.GAMES, Pages.POKEMON, Pages.RULES, Pages.ROUTES, Pages.GYMS],
+            ADD: [Pages.GAMES, Pages.RULES],
+            APPSETTINGS: [
+               Pages.GAMES,
+               Pages.POKEMON,
+               Pages.RULES,
+               Pages.ROUTES,
+               Pages.GYMS,
+            ],
+            LOGOUT: [Pages.GAMES, Pages.POKEMON, Pages.RULES, Pages.ROUTES, Pages.GYMS],
+         },
          inGameRoutes: ['Pokemon', 'Routes', 'Gyms', 'Rules'],
          inGameLinks: ['Pokemon', 'Routes', 'Gyms', 'Rules', 'Games', 'Sign Out'],
          outGameLinks: ['Sign Out', 'Create Game'],
@@ -80,12 +124,6 @@ export default {
                label: 'Register',
                icon: Icons.PAGES.REGISTER,
                route: 'register',
-            },
-            {
-               label: 'Sign Out',
-               icon: Icons.CONTROLS.LOGOUT,
-               route: 'home',
-               action: 'logout',
             },
             {
                label: 'Pokemon',
@@ -114,23 +152,6 @@ export default {
                action: 'exit-game',
             },
          ],
-         newGame: {
-            creatingGame: false,
-            newGame: {
-               label: null,
-               version: null,
-            },
-            createGameDialog: false,
-            createGameCard: {
-               title: 'Start a new Game',
-               text:
-                  'Are you ready to set out on a new adventure? Give this playthrough a memorable name and pick a game version.',
-               primaryBtn: {
-                  text: 'Start',
-                  action: 'start-game',
-               },
-            },
-         },
       };
    },
    methods: {
@@ -150,23 +171,11 @@ export default {
             util.exitGame();
          }
       },
-      editUsername() {
-         alert('i want to edit the username!');
+      clickFilter() {
+         this.$emit('filter');
       },
-      closeDialog() {
-         this.newGame.creatingGame = false;
-         this.newGame.createGameDialog = false;
-         this.newGame.newGame.label = null;
-         this.newGame.newGame.version = null;
-      },
-      async startGame() {
-         this.creatingGame = true;
-         await gameController.createNewGame(
-            this.newGame.newGame.label,
-            this.newGame.newGame.version,
-            undefined
-         );
-         this.closeDialog();
+      clickAdd() {
+         this.$emit('add');
       },
    },
    computed: {

@@ -1,14 +1,8 @@
 <template>
    <div>
-      <v-speed-dial
-         open-on-hover
-         top
-         right
-         direction="left"
-         transition="scale-transition"
-      >
+      <v-speed-dial top right direction="bottom" transition="scale-transition">
          <template v-slot:activator>
-            <v-btn dark fab x-large @click.prevent.stop
+            <v-btn dark fab x-large @click.prevent
                ><v-icon>{{ Icons.CONTROLS.MENU }}</v-icon></v-btn
             >
          </template>
@@ -19,7 +13,7 @@
             :key="link.label"
             dark
             @click="linkActions(link)"
-            class="mx-6"
+            class="ma-4"
          >
             <v-icon>{{ link.icon }}</v-icon>
             <div class="c-fab-bottom-text">{{ link.label }}</div>
@@ -30,38 +24,15 @@
             v-for="action of actions"
             :key="action.label"
             @click="linkActions(action)"
-            class="mx-6 white--text"
+            class="ma-4 white--text"
             :color="action.color"
          >
             <v-icon>{{ action.icon }}</v-icon>
             <div class="c-fab-bottom-text">{{ action.label }}</div>
          </v-btn>
       </v-speed-dial>
-      <v-dialog v-model="settingsDialog.flag" width="500">
-         <c-dialog-card
-            :props="settingsDialog.dialogCard"
-            v-on:close-dialog="closeDialog"
-            v-on:save-settings="saveSettings"
-         >
-            <v-fade-transition>
-               <c-progress-spinner
-                  v-show="settingsDialog.processing"
-               ></c-progress-spinner>
-            </v-fade-transition>
-            <v-fade-transition>
-               <div v-show="!settingsDialog.processing">
-                  <c-text-field
-                     label="Username"
-                     v-model="settingsDialog.options.username"
-                  ></c-text-field>
-                  <c-error
-                     v-for="(error, i) of settingsDialog.errors.errors"
-                     :key="i"
-                     :error="error"
-                  ></c-error>
-               </div>
-            </v-fade-transition>
-         </c-dialog-card>
+      <v-dialog v-model="appSettings" width="500">
+         <c-app-settings v-on:close-dialog="appSettings = !appSettings"></c-app-settings>
       </v-dialog>
    </div>
 </template>
@@ -70,10 +41,11 @@
 import DialogCard from './DialogCard.vue';
 import ProgressSpinner from './ProgressSpinner.vue';
 import TextField from './form-controls/TextField.vue';
+import AppSettings from './dialogs/AppSettings.vue';
 import Errors from './Errors.vue';
 import Icons from '../constants/Icons';
 import Pages from '../constants/Pages';
-import * as appController from '../controllers/application';
+import colors from 'vuetify/lib/util/colors';
 
 export default {
    name: 'SpeedDial',
@@ -86,28 +58,11 @@ export default {
       'c-progress-spinner': ProgressSpinner,
       'c-error': Errors,
       'c-text-field': TextField,
+      'c-app-settings': AppSettings,
    },
    data() {
-      // TODO consolidate and rework this without all the actions
       return {
-         settingsDialog: {
-            flag: false,
-            processing: false,
-            options: {
-               username: null,
-            },
-            errors: {
-               errors: [],
-               hasErrors: null,
-            },
-            dialogCard: {
-               title: 'Application Settings',
-               text: 'Edit application settings',
-               primaryBtn: {
-                  action: 'save-settings',
-               },
-            },
-         },
+         appSettings: false,
          links: [
             {
                label: 'Home',
@@ -132,6 +87,7 @@ export default {
                icon: Icons.CONTROLS.SETTINGS,
                action: 'open-settings',
                requiresLoginAccess: true,
+               color: colors.grey.darken2,
             },
             {
                label: 'Games',
@@ -150,26 +106,8 @@ export default {
       };
    },
    methods: {
-      closeDialog() {
-         this.settingsDialog.options = {};
-         this.settingsDialog.errors = {};
-         this.settingsDialog.flag = false;
-         this.settingsDialog.processing = false;
-      },
       openSettings() {
-         this.settingsDialog.options.username = this.username;
-         this.settingsDialog.flag = true;
-      },
-      async saveSettings() {
-         // validate settings
-         this.settingsDialog.errors = appController.getValidationErrors(
-            this.settingsDialog.options
-         );
-         if (this.settingsDialog.errors.hasErrors) return;
-         // save settings
-         this.settingsDialog.processing = true;
-         await appController.saveSettings(this.settingsDialog.options);
-         this.closeDialog();
+         this.appSettings = !this.appSettings;
       },
       linkActions(link) {
          if (link.action) this.$emit(link.action);

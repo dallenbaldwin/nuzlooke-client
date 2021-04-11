@@ -1,11 +1,7 @@
 <template>
    <div>
       <v-row>
-         <v-toolbar>
-            <v-spacer></v-spacer>
-            <c-btn :icon="Icons.CONTROLS.SEARCH" :isIcon="true" color="primary"></c-btn>
-            <c-btn :icon="Icons.CONTROLS.FILTER" :isIcon="true" color="teal"></c-btn>
-         </v-toolbar>
+         <c-toolbar :filter="true" v-on:filter="filter.flag = !filter.flag"></c-toolbar>
       </v-row>
       <v-row>
          <v-expansion-panels popout class="mt-1">
@@ -50,6 +46,7 @@ import Gymcordian from '../components/gyms/Gymcordian.vue';
 import DialogCard from '../components/DialogCard.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import Button from '../components/Button.vue';
+import Toolbar from '../components/Toolbar.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import * as util from '../util/util';
 import PokemonTypes from '../constants/PokemonTypes';
@@ -62,9 +59,9 @@ export default {
       'c-text-field': TextField,
       'c-combobox': Combobox,
       'c-btn': Button,
+      'c-toolbar': Toolbar,
    },
    data() {
-      // TODO move speed dial actions into toolbar
       return {
          filter: {
             flag: false,
@@ -111,7 +108,8 @@ export default {
          );
          return isTypes && isSpecies && isPriority;
       },
-      openFilter() {
+      clickFilter() {
+         // this is inherited from Game.vue and App.vue
          this.filter.flag = true;
       },
       closeDialog() {
