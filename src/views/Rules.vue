@@ -8,6 +8,7 @@
             filter-label="Filter"
             v-on:filter="clickFilter"
             v-on:add="clickAdd"
+            :sort="false"
          ></c-toolbar>
       </v-row>
       <v-row class="d-flex flex-row justify-space-around align-start">

@@ -21,6 +21,8 @@ export default Object.freeze({
       EVOLVE: 'mdi-arrow-up-circle',
       HELP: 'mdi-help-circle',
       SEARCH: 'mdi-magnify',
+      SORTUP: 'mdi-sort-ascending',
+      SORTDOWN: 'mdi-sort-descending',
    },
    PAGES: {
       POKEMON: 'mdi-pokeball',

@@ -4,7 +4,7 @@
       outlined
       :label="label"
       :items="items"
-      clearable
+      :clearable="clearable"
       :clear-icon="Icons.CONTROLS.CLOSE"
       :disabled="disabled"
       :value="value"
@@ -34,6 +34,7 @@ export default {
       disabled: { required: false, default: false },
       multiple: { required: false, default: false },
       types: { required: false, default: false },
+      clearable: { required: false, default: true },
    },
 };
 </script>

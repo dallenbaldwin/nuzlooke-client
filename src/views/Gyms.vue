@@ -1,7 +1,11 @@
 <template>
    <div>
       <v-row>
-         <c-toolbar :filter="true" v-on:filter="filter.flag = !filter.flag"></c-toolbar>
+         <c-toolbar
+            :filter="true"
+            v-on:filter="filter.flag = !filter.flag"
+            :sort="false"
+         ></c-toolbar>
       </v-row>
       <v-row>
          <v-expansion-panels popout class="mt-1">

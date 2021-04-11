@@ -4,7 +4,7 @@
          <v-row>
             <c-speed-dial
                class="c-speed-dial"
-               :actions="actions"
+               :actions="speedDialActions"
                v-on:logout="logout"
                v-on:filter-games="filter.flag = !filter.flag"
                v-on:create-game="createGame = !createGame"
@@ -28,9 +28,19 @@
             :add="true"
             :filter="true"
             add-label="Create Game"
+            :sort-value="sort.value"
             v-on:add="createGame = !createGame"
             v-on:filter="filter.flag = !filter.flag"
-         ></c-toobar>
+            v-on:click-sort-dir="getSortDir"
+         >
+            <c-combobox
+               :clearable="false"
+               label="Sort"
+               :items="sort.items"
+               v-model="sort.value"
+               @input="setSort"
+            ></c-combobox>
+         </c-toobar>
       </v-row>
       <v-row>
          <v-expansion-panels popout class="mt-1">
@@ -98,7 +108,12 @@ export default {
    data() {
       return {
          createGame: false,
-         // filter games
+         // TODO implement sort
+         sort: {
+            items: ['None', 'Name', 'Version', 'Generation', 'Status', 'Console'],
+            value: 'None',
+            dir: 'asc',
+         },
          filter: {
             flag: false,
             dialogCard: {
@@ -118,8 +133,7 @@ export default {
                { value: true, text: 'Finished' },
             ],
          },
-         // speed dial buttons
-         actions: [
+         speedDialActions: [
             {
                label: 'Filter',
                icon: Icons.CONTROLS.FILTER,
@@ -136,6 +150,13 @@ export default {
       };
    },
    methods: {
+      getSortDir(payload) {
+         this.sort.dir = payload.dir;
+         this.setSort();
+      },
+      setSort() {
+         console.log(`${this.sort.value}-${this.sort.dir}`);
+      },
       clickAdd() {
          // inherited from App.vue
          this.createGame = true;
@@ -169,6 +190,7 @@ export default {
             this.getFinishedStatus(game.is_finished),
             this.filter.values.finished.map(v => this.getFinishedStatus(v.value))
          );
+         // TODO add console
          return isLabel && isGeneration && isVersion && isFinished;
       },
    },

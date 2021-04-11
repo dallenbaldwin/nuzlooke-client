@@ -47,6 +47,7 @@ import Pages from '../constants/Pages';
 import colors from 'vuetify/lib/util/colors';
 
 export default {
+   // TODO put all the actions into here and filter based on the current page
    name: 'SpeedDial',
    props: {
       actions: { required: true },

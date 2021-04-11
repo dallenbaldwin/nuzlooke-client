@@ -1,7 +1,20 @@
 <template>
    <div>
       <v-row>
-         <c-toolbar :filter="true" v-on:filter="filter.flag = !filter.flag"></c-toolbar>
+         <c-toolbar
+            :filter="true"
+            v-on:filter="filter.flag = !filter.flag"
+            v-on:click-sort-dir="getSortDir"
+            :sort-value="sort.value"
+         >
+            <c-combobox
+               :clearable="false"
+               label="Sort"
+               :items="sort.items"
+               v-model="sort.value"
+               @input="setSort"
+            ></c-combobox>
+         </c-toolbar>
       </v-row>
       <v-row class="d-flex justify-center align-content-start flex-row overflow-y-auto">
          <c-route-card
@@ -64,6 +77,12 @@ export default {
    },
    data() {
       return {
+         // TODO implement sort
+         sort: {
+            items: ['Status', 'Name', 'Nickname'],
+            value: 'Name',
+            dir: 'asc',
+         },
          filter: {
             flag: false,
             dialogCard: {
@@ -103,6 +122,13 @@ export default {
       },
    },
    methods: {
+      getSortDir(payload) {
+         this.sort.dir = payload.dir;
+         this.setSort();
+      },
+      setSort() {
+         console.log(`${this.sort.value}-${this.sort.dir}`);
+      },
       getFilter(encounter) {
          const isStatus = util.includesOrEmptyArray(
             encounter.result.constant,

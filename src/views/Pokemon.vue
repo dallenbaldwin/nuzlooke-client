@@ -1,7 +1,20 @@
 <template>
    <div>
       <v-row>
-         <c-toolbar :filter="true" v-on:filter="filter.flag = !filter.flag"></c-toolbar>
+         <c-toolbar
+            :filter="true"
+            v-on:filter="filter.flag = !filter.flag"
+            v-on:click-sort-dir="getSortDir"
+            :sort-value="sort.value"
+         >
+            <c-combobox
+               :clearable="false"
+               label="Sort"
+               :items="sort.items"
+               v-model="sort.value"
+               @input="setSort"
+            ></c-combobox
+         ></c-toolbar>
       </v-row>
       <v-row>
          <v-expansion-panels multiple popout class="mt-1">
@@ -110,6 +123,12 @@ export default {
    },
    data() {
       return {
+         // TODO implement sort
+         sort: {
+            items: ['None', 'Type', 'Species'],
+            value: 'None',
+            dir: 'asc',
+         },
          filter: {
             flag: false,
             dialogCard: {
@@ -154,6 +173,13 @@ export default {
       },
    },
    methods: {
+      getSortDir(payload) {
+         this.sort.dir = payload.dir;
+         this.setSort();
+      },
+      setSort() {
+         console.log(`${this.sort.value}-${this.sort.dir}`);
+      },
       getPanelCount(partyState) {
          if (pokemonController.isPC(partyState)) return this.pc.length;
          else if (pokemonController.isGraveyard(partyState)) return this.graveyard.length;
