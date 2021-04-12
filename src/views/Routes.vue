@@ -1,19 +1,8 @@
 <template>
    <div>
       <v-row>
-         <c-toolbar
-            :filter="true"
-            v-on:filter="filter.flag = !filter.flag"
-            v-on:click-sort-dir="getSortDir"
-            :sort-value="sort.value"
-         >
-            <c-combobox
-               :clearable="false"
-               label="Sort"
-               :items="sort.items"
-               v-model="sort.value"
-               @input="setSort"
-            ></c-combobox>
+         <c-toolbar :filter="true" v-on:filter="filter.flag = !filter.flag">
+            <c-sort :items="sort.items" v-on:set-sort="setSort"></c-sort>
          </c-toolbar>
       </v-row>
       <v-row class="d-flex justify-center align-content-start flex-row overflow-y-auto">
@@ -26,6 +15,7 @@
       </v-row>
       <v-dialog v-model="filter.flag" width="500">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
+            <c-sort v-if="mobile()" :items="sort.items" v-on:set-sort="setSort"></c-sort>
             <c-combobox
                label="Status"
                v-model="filter.values.status"
@@ -61,6 +51,7 @@ import Combobox from '../components/form-controls/Combobox.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import RouteCard from '../components/routes/RouteCard.vue';
 import Toolbar from '../components/Toolbar.vue';
+import Sort from '../components/form-controls/Sort.vue';
 import Button from '../components/Button.vue';
 import * as util from '../util/util';
 import PokemonTypes from '../constants/PokemonTypes';
@@ -74,14 +65,18 @@ export default {
       'c-combobox': Combobox,
       'c-btn': Button,
       'c-toolbar': Toolbar,
+      'c-sort': Sort,
    },
    data() {
       return {
-         // TODO implement sort
          sort: {
-            items: ['Status', 'Name', 'Nickname'],
-            value: 'Name',
-            dir: 'asc',
+            items: ['None', 'Status', 'Name', 'Nickname'],
+            map: {
+               null: 'sort_id',
+               Status: 'constant',
+               Name: 'label',
+               Nickname: 'nickname',
+            },
          },
          filter: {
             flag: false,
@@ -100,6 +95,9 @@ export default {
       };
    },
    computed: {
+      encounters() {
+         return this.game.encounters;
+      },
       pokemonTypes() {
          return Object.values(PokemonTypes).map(t => t.label);
       },
@@ -122,12 +120,26 @@ export default {
       },
    },
    methods: {
-      getSortDir(payload) {
-         this.sort.dir = payload.dir;
-         this.setSort();
-      },
-      setSort() {
-         console.log(`${this.sort.value}-${this.sort.dir}`);
+      setSort(payload) {
+         let asc = payload.dir === 'asc';
+         if (['Status', 'Nickname'].includes(payload.value)) {
+            this.encounters.sort((a, b) => {
+               let aVal = a.result[this.sort.map[payload.value]].toLowerCase();
+               let bVal = b.result[this.sort.map[payload.value]].toLowerCase();
+               if (aVal > bVal) return asc ? 1 : -1;
+               if (aVal < bVal) return asc ? -1 : 1;
+               return 0;
+            });
+         } else {
+            this.encounters.sort((a, b) => {
+               let aVal = a[this.sort.map[payload.value]].toString().toLowerCase();
+               let bVal = b[this.sort.map[payload.value]].toString().toLowerCase();
+               if (aVal > bVal) return asc ? 1 : -1;
+               if (aVal < bVal) return asc ? -1 : 1;
+               return 0;
+            });
+         }
+         this.$forceUpdate();
       },
       getFilter(encounter) {
          const isStatus = util.includesOrEmptyArray(
@@ -155,6 +167,9 @@ export default {
       },
       closeDialog() {
          this.filter.flag = false;
+      },
+      mounted() {
+         this.setSort({ value: null, dir: 'asc' });
       },
    },
 };

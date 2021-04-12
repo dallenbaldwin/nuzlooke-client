@@ -4,10 +4,9 @@
          <v-row>
             <c-speed-dial
                class="c-speed-dial"
-               :actions="speedDialActions"
                v-on:logout="logout"
-               v-on:filter-games="filter.flag = !filter.flag"
-               v-on:create-game="createGame = !createGame"
+               v-on:filter="filter.flag = !filter.flag"
+               v-on:add="createGame = !createGame"
             ></c-speed-dial>
          </v-row>
          <v-row>
@@ -28,18 +27,10 @@
             :add="true"
             :filter="true"
             add-label="Create Game"
-            :sort-value="sort.value"
             v-on:add="createGame = !createGame"
             v-on:filter="filter.flag = !filter.flag"
-            v-on:click-sort-dir="getSortDir"
          >
-            <c-combobox
-               :clearable="false"
-               label="Sort"
-               :items="sort.items"
-               v-model="sort.value"
-               @input="setSort"
-            ></c-combobox>
+            <c-sort :items="sort.items" v-on:set-sort="setSort"></c-sort>
          </c-toobar>
       </v-row>
       <v-row>
@@ -57,6 +48,7 @@
       </v-dialog>
       <v-dialog v-model="filter.flag" width="500">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
+            <c-sort v-if="mobile()" :items="sort.items" v-on:set-sort="setSort"></c-sort>
             <c-text-field label="Name" v-model="filter.values.label"></c-text-field>
             <c-combobox
                label="Version"
@@ -93,6 +85,7 @@ import CreateGame from '../components/dialogs/CreateGame.vue';
 import * as util from '../util/util';
 import Icons from '../constants/Icons';
 import GameVersions from '../constants/GameVersions';
+import Sort from '../components/form-controls/Sort.vue';
 
 export default {
    name: 'Games',
@@ -104,15 +97,21 @@ export default {
       'c-combobox': Combobox,
       'c-toobar': Toolbar,
       'c-create-game': CreateGame,
+      'c-sort': Sort,
    },
    data() {
       return {
+         unsortedGames: this.games,
          createGame: false,
-         // TODO implement sort
          sort: {
-            items: ['None', 'Name', 'Version', 'Generation', 'Status', 'Console'],
-            value: 'None',
-            dir: 'asc',
+            items: ['None', 'Name', 'Version', 'Generation', 'Status'],
+            map: {
+               null: 'game_id',
+               Name: 'label',
+               Version: 'version',
+               Generation: 'generation',
+               Status: 'is_finished',
+            },
          },
          filter: {
             flag: false,
@@ -133,29 +132,28 @@ export default {
                { value: true, text: 'Finished' },
             ],
          },
-         speedDialActions: [
-            {
-               label: 'Filter',
-               icon: Icons.CONTROLS.FILTER,
-               action: 'filter-games',
-               color: 'primary',
-            },
-            {
-               label: 'Create Game',
-               icon: Icons.CONTROLS.PLUS,
-               action: 'create-game',
-               color: 'success',
-            },
-         ],
       };
    },
    methods: {
-      getSortDir(payload) {
-         this.sort.dir = payload.dir;
-         this.setSort();
-      },
-      setSort() {
-         console.log(`${this.sort.value}-${this.sort.dir}`);
+      setSort(payload) {
+         let asc = payload.dir === 'asc';
+         if (['Version', 'Generation'].includes(payload.value)) {
+            this.games.sort((a, b) => {
+               let aVal = a.version[this.sort.map[payload.value]].toLowerCase();
+               let bVal = b.version[this.sort.map[payload.value]].toLowerCase();
+               if (aVal > bVal) return asc ? 1 : -1;
+               if (aVal < bVal) return asc ? -1 : 1;
+               return 0;
+            });
+         } else {
+            this.games.sort((a, b) => {
+               let aVal = a[this.sort.map[payload.value]].toString().toLowerCase();
+               let bVal = b[this.sort.map[payload.value]].toString().toLowerCase();
+               if (aVal > bVal) return asc ? 1 : -1;
+               if (aVal < bVal) return asc ? -1 : 1;
+               return 0;
+            });
+         }
       },
       clickAdd() {
          // inherited from App.vue
@@ -190,7 +188,6 @@ export default {
             this.getFinishedStatus(game.is_finished),
             this.filter.values.finished.map(v => this.getFinishedStatus(v.value))
          );
-         // TODO add console
          return isLabel && isGeneration && isVersion && isFinished;
       },
    },
@@ -217,6 +214,9 @@ export default {
       userId() {
          return this.$store.state.userId;
       },
+   },
+   mounted() {
+      this.setSort({ value: null, dir: 'asc' });
    },
 };
 </script>

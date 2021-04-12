@@ -1,20 +1,9 @@
 <template>
    <div>
       <v-row>
-         <c-toolbar
-            :filter="true"
-            v-on:filter="filter.flag = !filter.flag"
-            v-on:click-sort-dir="getSortDir"
-            :sort-value="sort.value"
-         >
-            <c-combobox
-               :clearable="false"
-               label="Sort"
-               :items="sort.items"
-               v-model="sort.value"
-               @input="setSort"
-            ></c-combobox
-         ></c-toolbar>
+         <c-toolbar :filter="true" v-on:filter="filter.flag = !filter.flag">
+            <c-sort :items="sort.items" v-on:set-sort="setSort"></c-sort>
+         </c-toolbar>
       </v-row>
       <v-row>
          <v-expansion-panels multiple popout class="mt-1">
@@ -71,6 +60,12 @@
       </v-row>
       <v-dialog v-model="filter.flag" width="500">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
+            <c-sort v-if="mobile()" :items="sort.items" v-on:set-sort="setSort"></c-sort>
+            <c-checkbox
+               :false-value="null"
+               v-model="filter.values.canEvolve"
+               label="Can Evolve"
+            ></c-checkbox>
             <c-text-field
                label="Nickname"
                v-model="filter.values.nickname"
@@ -97,7 +92,9 @@
 <script>
 import Button from '../components/Button.vue';
 import DialogCard from '../components/dialogs/DialogCard.vue';
+import Checkbox from '../components/form-controls/Checkbox.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
+import Sort from '../components/form-controls/Sort.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import PokemonCard from '../components/pokemon/PokemonCard.vue';
 import PokemonType from '../components/pokemon/PokemonType.vue';
@@ -120,14 +117,22 @@ export default {
       'c-pokemon-type': PokemonType,
       'c-btn': Button,
       'c-toolbar': Toolbar,
+      'c-sort': Sort,
+      'c-checkbox': Checkbox,
    },
    data() {
       return {
-         // TODO implement sort
          sort: {
-            items: ['None', 'Type', 'Species'],
-            value: 'None',
-            dir: 'asc',
+            items: ['None', 'Nickname', 'Species'],
+            map: {
+               null: 'id',
+               Nickname: 'nickname',
+               Species: 'species',
+            },
+            values: {
+               value: null,
+               dir: null,
+            },
          },
          filter: {
             flag: false,
@@ -139,6 +144,7 @@ export default {
                nickname: null,
                types: null,
                species: null,
+               canEvolve: null,
             },
          },
       };
@@ -173,12 +179,30 @@ export default {
       },
    },
    methods: {
-      getSortDir(payload) {
-         this.sort.dir = payload.dir;
-         this.setSort();
-      },
-      setSort() {
-         console.log(`${this.sort.value}-${this.sort.dir}`);
+      setSort(payload) {
+         let asc = payload.dir === 'asc';
+         this.party.sort((a, b) => {
+            let aVal = a[this.sort.map[payload.value]].toString().toLowerCase();
+            let bVal = b[this.sort.map[payload.value]].toString().toLowerCase();
+            if (aVal > bVal) return asc ? 1 : -1;
+            if (aVal < bVal) return asc ? -1 : 1;
+            return 0;
+         });
+         this.pc.sort((a, b) => {
+            let aVal = a[this.sort.map[payload.value]].toString().toLowerCase();
+            let bVal = b[this.sort.map[payload.value]].toString().toLowerCase();
+            if (aVal > bVal) return asc ? 1 : -1;
+            if (aVal < bVal) return asc ? -1 : 1;
+            return 0;
+         });
+         this.graveyard.sort((a, b) => {
+            let aVal = a[this.sort.map[payload.value]].toString().toLowerCase();
+            let bVal = b[this.sort.map[payload.value]].toString().toLowerCase();
+            if (aVal > bVal) return asc ? 1 : -1;
+            if (aVal < bVal) return asc ? -1 : 1;
+            return 0;
+         });
+         this.$forceUpdate();
       },
       getPanelCount(partyState) {
          if (pokemonController.isPC(partyState)) return this.pc.length;
@@ -191,6 +215,9 @@ export default {
          if (pokemonController.isParty(partyState)) return this.party;
          else if (pokemonController.isPC(partyState)) return this.pc;
          else if (pokemonController.isGraveyard(partyState)) return this.graveyard;
+      },
+      canEvolve(pokemon) {
+         return pokemon.evolves_to.filter(e => e).length > 0;
       },
       getFilter(pokemon) {
          const isNickname = util.likeOrUndefined(
@@ -205,7 +232,11 @@ export default {
             pokemon.types,
             this.filter.values.types
          );
-         return isNickname && isSpecies && isType;
+         const canEvolve = util.isOrUndefined(
+            this.canEvolve(pokemon),
+            this.filter.values.canEvolve
+         );
+         return isNickname && isSpecies && isType && canEvolve;
       },
       clickFilter() {
          // this is inherited from Game.vue and App.vue
@@ -214,6 +245,9 @@ export default {
       closeDialog() {
          this.filter.flag = false;
       },
+   },
+   mounted() {
+      this.setSort({ value: null, dir: 'asc' });
    },
 };
 </script>
