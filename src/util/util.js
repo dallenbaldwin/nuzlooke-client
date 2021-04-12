@@ -23,6 +23,7 @@ export const login = () => {
          let user = new APIResponse(res).data;
          store.commit('login', {
             id: user.id,
+            app_settings: user.app_settings,
             username: user.username || user.email,
             games: user.games,
          });
@@ -77,5 +78,3 @@ export const includesOrEmptyArray = (a, b) => {
       }).length > 0
    );
 };
-
-// TODO save filters to store and apply them when opening each page

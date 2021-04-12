@@ -12,6 +12,7 @@ export default new Vuex.Store({
       username: null,
       userGames: null,
       isLoggedIn: false,
+      app_settings: {},
    },
    mutations: {
       login(state, payload) {
@@ -19,6 +20,7 @@ export default new Vuex.Store({
          state.userId = payload.id;
          state.username = payload.username;
          state.userGames = payload.games;
+         state.app_settings = payload.app_settings || {};
       },
       setUsername(state, payload) {
          state.username = payload;
@@ -26,17 +28,24 @@ export default new Vuex.Store({
       setUserGames(state, payload) {
          state.userGames = payload;
       },
+      setSaveFilters(state, payload) {
+         state.app_settings.save_filters = payload;
+      },
       logout(state) {
          state.isLoggedIn = false;
          state.userId = null;
          state.username = null;
          state.userGames = null;
+         state.app_settings = {};
       },
       selectGame(state, payload) {
          state.game = payload;
       },
       exitGame(state) {
          state.game = null;
+      },
+      savePageFilters(state, payload) {
+         state.app_settings[payload.page] = payload.values;
       },
       deleteExistingRuleByLabel(state, payload) {
          const i = state.game.game_rules.findIndex(r => r.label === payload.label);

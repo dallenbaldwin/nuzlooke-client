@@ -9,7 +9,13 @@
       </v-fade-transition>
       <v-fade-transition>
          <div v-show="!processing">
-            <c-text-field label="Username" v-model="values.username"></c-text-field>
+            <c-text-field label="Username" v-model="username"></c-text-field>
+            <!-- I'm not going to implement this until i can get to work in a not hacky way -->
+            <!-- <v-checkbox
+               label="Save Filters"
+               v-model="saveFilters"
+               class="ma-3"
+            ></v-checkbox> -->
             <c-error
                v-for="(error, i) of errors.errors"
                :key="i"
@@ -53,13 +59,21 @@ export default {
       };
    },
    computed: {
-      username() {
-         return this.$store.state.username;
+      username: {
+         get() {
+            return this.$store.state.username;
+         },
+         set(newVal) {
+            this.$store.commit('setUsername', newVal);
+         },
       },
-      values() {
-         return Object({
-            username: this.username,
-         });
+      saveFilters: {
+         get() {
+            return this.$store.state.app_settings.save_filters;
+         },
+         set(newVal) {
+            this.$store.commit('setSaveFilters', newVal);
+         },
       },
    },
    methods: {
@@ -70,11 +84,13 @@ export default {
       },
       async saveSettings() {
          // validate settings
-         this.errors = appController.getValidationErrors(this.values);
+         this.errors = appController.getValidationErrors({
+            username: this.username,
+         });
          if (this.errors.hasErrors) return;
          // save settings
          this.processing = true;
-         await appController.saveSettings(this.values);
+         await appController.saveSettings();
          this.closeDialog();
       },
    },

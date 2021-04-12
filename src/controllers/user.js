@@ -20,7 +20,6 @@ export const addGameSnapshot = snapshot => {
 
 export const updateUser = async options => {
    try {
-      if (options.username) store.commit('setUsername', options.username);
       await services.updateUserById(store.state.userId, options);
    } catch (err) {
       alert(prettySON([err, err.stack]));

@@ -19,13 +19,13 @@
       </v-row>
       <v-dialog v-model="filter.flag" width="500">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
-            <v-checkbox
+            <c-checkbox
                v-model="filter.values.priority"
                label="Has Priority Move"
                :false-value="null"
                :true-value="true"
             >
-            </v-checkbox>
+            </c-checkbox>
             <c-combobox
                label="Species"
                :items="gymPokemons"
@@ -51,6 +51,7 @@ import DialogCard from '../components/dialogs/DialogCard.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import Button from '../components/Button.vue';
 import Toolbar from '../components/Toolbar.vue';
+import Checkbox from '../components/form-controls/Checkbox.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import * as util from '../util/util';
 import PokemonTypes from '../constants/PokemonTypes';
@@ -64,6 +65,7 @@ export default {
       'c-combobox': Combobox,
       'c-btn': Button,
       'c-toolbar': Toolbar,
+      'c-checkbox': Checkbox,
    },
    data() {
       return {
