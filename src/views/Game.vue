@@ -2,12 +2,12 @@
    <v-container class="fill-height">
       <v-row>
          <c-speed-dial
-            :actions="actions"
             v-if="!mobile()"
             v-on:logout="logout"
             v-on:exit-game="exitGame"
-            v-on:create-rule="createRule"
+            v-on:add="createRule"
             v-on:filter="openFilter"
+            :finished="gameFinished"
          ></c-speed-dial>
       </v-row>
       <v-row class="mt-6 pt-6">
@@ -45,7 +45,6 @@ export default {
    },
    data() {
       return {
-         gameFinished: false,
          filter: false,
          tab: null,
          tabs: [
@@ -66,60 +65,8 @@ export default {
       game() {
          return this.$store.state.game;
       },
-      actions() {
-         const a = [
-            {
-               label: 'Filter',
-               icon: Icons.CONTROLS.FILTER,
-               route: null,
-               dark: true,
-               action: 'filter',
-               color: 'primary',
-               tab: TabMap.POKEMON,
-               disabled: false,
-            },
-            {
-               label: 'Filter',
-               icon: Icons.CONTROLS.FILTER,
-               route: null,
-               dark: true,
-               action: 'filter',
-               color: 'primary',
-               tab: TabMap.ROUTES,
-               disabled: false,
-            },
-            {
-               label: 'Filter',
-               icon: Icons.CONTROLS.FILTER,
-               route: null,
-               dark: true,
-               action: 'filter',
-               color: 'primary',
-               tab: TabMap.GYMS,
-               disabled: false,
-            },
-            {
-               label: 'Filter',
-               icon: Icons.CONTROLS.FILTER,
-               route: null,
-               dark: true,
-               action: 'filter',
-               color: 'primary',
-               tab: TabMap.RULES,
-               disabled: false,
-            },
-            {
-               label: 'Create Rule',
-               icon: Icons.CONTROLS.PLUS,
-               route: null,
-               dark: true,
-               action: 'create-rule',
-               color: 'green',
-               tab: TabMap.RULES,
-               disabled: this.game.is_finished,
-            },
-         ];
-         return a.filter(e => e.tab === this.tab);
+      gameFinished() {
+         return this.$store.state.game.is_finished;
       },
    },
    methods: {

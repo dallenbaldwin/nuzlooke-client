@@ -1,5 +1,5 @@
 <template>
-   <div>
+   <div v-if="mobile()">
       <v-app-bar elevation="1" bottom app>
          <v-app-bar-nav-icon
             v-show="currentPage !== Pages.GAMES"
@@ -12,7 +12,7 @@
                class="ma-3"
                :icon="Icons.CONTROLS.PLUS"
                :isFab="true"
-               @click="clickAdd"
+               @click="$emit('add')"
                color="success"
             ></c-btn>
             <c-btn
@@ -20,7 +20,7 @@
                class="ma-3"
                :icon="Icons.CONTROLS.FILTER"
                :isFab="true"
-               @click="clickFilter"
+               @click="$emit('filter')"
                color="primary"
             ></c-btn>
             <c-btn
@@ -29,7 +29,7 @@
                :icon="Icons.CONTROLS.SETTINGS"
                :color="Colors.grey.darken2"
                :isFab="true"
-               @click="appSettings = !appSettings"
+               @click="settings = !settings"
             ></c-btn>
             <c-btn
                v-show="btnSupport.LOGOUT.includes(currentPage)"
@@ -60,8 +60,8 @@
             </v-list-item>
          </v-list>
       </v-navigation-drawer>
-      <v-dialog v-model="appSettings" width="500">
-         <c-app-settings v-on:close-dialog="appSettings = !appSettings"></c-app-settings>
+      <v-dialog v-model="settings" width="500">
+         <c-app-settings v-on:close-dialog="settings = !settings"></c-app-settings>
       </v-dialog>
    </div>
 </template>
@@ -89,7 +89,7 @@ export default {
    },
    data() {
       return {
-         appSettings: false,
+         settings: false,
          drawer: false,
          btnSupport: {
             FILTER: [Pages.GAMES, Pages.POKEMON, Pages.RULES, Pages.ROUTES, Pages.GYMS],
@@ -171,12 +171,6 @@ export default {
          } else if (action === 'exit-game') {
             util.exitGame();
          }
-      },
-      clickFilter() {
-         this.$emit('filter');
-      },
-      clickAdd() {
-         this.$emit('add');
       },
    },
    computed: {

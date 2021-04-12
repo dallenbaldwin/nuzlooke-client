@@ -6,33 +6,54 @@
                ><v-icon>{{ Icons.CONTROLS.MENU }}</v-icon></v-btn
             >
          </template>
-         <v-btn
+         <c-fab-btn
+            v-show="btnSupport[link.btnSupport].includes(currentPage)"
             :color="link.color"
-            fab
-            v-for="link of pageLinks"
-            :key="link.label"
-            dark
-            @click="linkActions(link)"
-            class="ma-4"
-         >
-            <v-icon>{{ link.icon }}</v-icon>
-            <div class="c-fab-bottom-text">{{ link.label }}</div>
-         </v-btn>
-         <v-btn
-            :disabled="action.disabled"
-            fab
-            v-for="action of actions"
-            :key="action.label"
-            @click="linkActions(action)"
-            class="ma-4 white--text"
-            :color="action.color"
-         >
-            <v-icon>{{ action.icon }}</v-icon>
-            <div class="c-fab-bottom-text">{{ action.label }}</div>
-         </v-btn>
+            v-for="(link, i) of links"
+            :key="i"
+            @click="goTo(link.route)"
+            :icon="link.icon"
+            :label="link.label"
+            :disabled="false"
+         ></c-fab-btn>
+         <c-fab-btn
+            v-show="btnSupport.GAMES.includes(currentPage)"
+            :icon="Icons.PAGES.GAMES"
+            label="games"
+            @click="$emit('exit-game')"
+         ></c-fab-btn>
+         <!-- TODO logout is global. should probably change that to be controller based -->
+         <c-fab-btn
+            v-show="btnSupport.LOGOUT.includes(currentPage)"
+            label="sign out"
+            :icon="Icons.CONTROLS.LOGOUT"
+            @click="logout"
+         ></c-fab-btn>
+         <c-fab-btn
+            v-show="btnSupport.APPSETTINGS.includes(currentPage)"
+            label="settings"
+            :icon="Icons.CONTROLS.SETTINGS"
+            :color="Colors.grey.darken2"
+            @click="settings = !settings"
+         ></c-fab-btn>
+         <c-fab-btn
+            v-show="btnSupport.FILTER.includes(currentPage)"
+            label="filter"
+            :icon="Icons.CONTROLS.FILTER"
+            color="primary"
+            @click="$emit('filter')"
+         ></c-fab-btn>
+         <c-fab-btn
+            v-show="btnSupport.ADD.includes(currentPage)"
+            :disabled="finished"
+            :label="toCreate()"
+            :icon="Icons.CONTROLS.PLUS"
+            color="success"
+            @click="$emit('add')"
+         ></c-fab-btn>
       </v-speed-dial>
-      <v-dialog v-model="appSettings" width="500">
-         <c-app-settings v-on:close-dialog="appSettings = !appSettings"></c-app-settings>
+      <v-dialog v-model="settings" width="500">
+         <app-settings v-on:close-dialog="settings = !settings"></app-settings>
       </v-dialog>
    </div>
 </template>
@@ -40,96 +61,77 @@
 <script>
 import ProgressSpinner from './ProgressSpinner.vue';
 import TextField from './form-controls/TextField.vue';
-import AppSettings from './dialogs/AppSettings.vue';
+import Button from './Button.vue';
 import Errors from './Errors.vue';
 import Icons from '../constants/Icons';
 import Pages from '../constants/Pages';
 import colors from 'vuetify/lib/util/colors';
+import FabBtn from './speed-dial/FabBtn.vue';
 
 export default {
-   // TODO put all the actions into here and filter based on the current page
    name: 'SpeedDial',
    props: {
-      actions: { required: true },
       finished: { required: false, default: false },
    },
    components: {
+      AppSettings: () => import('./dialogs/AppSettings.vue'),
       'c-progress-spinner': ProgressSpinner,
       'c-error': Errors,
       'c-text-field': TextField,
-      'c-app-settings': AppSettings,
+      'c-btn': Button,
+      'c-fab-btn': FabBtn,
    },
    data() {
       return {
-         appSettings: false,
+         settings: false,
+         btnSupport: {
+            FILTER: [Pages.GAMES, Pages.GAME],
+            ADD: [Pages.GAMES, Pages.GAME],
+            APPSETTINGS: [Pages.GAMES, Pages.GAME],
+            LOGOUT: [Pages.GAME, Pages.GAMES],
+            HOME: [Pages.LOGIN, Pages.REGISTER],
+            SIGNIN: [Pages.HOME, Pages.REGISTER],
+            REGISTER: [Pages.HOME, Pages.LOGIN],
+            GAMES: [Pages.GAME],
+         },
          links: [
             {
                label: 'Home',
                icon: Icons.PAGES.HOME,
                route: Pages.HOME,
-               requiresLoginAccess: false,
+               btnSupport: 'HOME',
             },
             {
                label: 'Sign In',
                icon: Icons.PAGES.LOGIN,
                route: Pages.LOGIN,
-               requiresLoginAccess: false,
+               btnSupport: 'SIGNIN',
             },
             {
                label: 'Register',
                icon: Icons.PAGES.REGISTER,
                route: Pages.REGISTER,
-               requiresLoginAccess: false,
-            },
-            {
-               label: 'Sign Out',
-               icon: Icons.CONTROLS.LOGOUT,
-               action: 'logout',
-               requiresLoginAccess: true,
-            },
-            {
-               label: 'Games',
-               icon: Icons.PAGES.GAMES,
-               route: Pages.GAMES,
-               action: 'exit-game',
-               requiresLoginAccess: true,
-            },
-            {
-               label: 'Settings',
-               icon: Icons.CONTROLS.SETTINGS,
-               action: 'open-settings',
-               requiresLoginAccess: true,
-               color: colors.grey.darken2,
+               btnSupport: 'REGISTER',
             },
          ],
       };
    },
    methods: {
-      openSettings() {
-         this.appSettings = !this.appSettings;
+      toCreate() {
+         // this will have to be refactored if we add more creates
+         if (this.currentPage === 'games') return 'create game';
+         else if (this.currentPage === 'game') return 'create rule';
       },
-      linkActions(link) {
-         if (link.action) this.$emit(link.action);
-         if (link.action === 'open-settings') {
-            this.openSettings();
-            return;
-         }
-         // hacky fix
-         if (link.route && link.route !== Pages.GAMES)
-            this.navigate({ name: link.route });
+      goTo(route) {
+         this.navigate({ name: route });
       },
    },
    computed: {
       isLoggedIn() {
          return this.$store.state.isLoggedIn;
       },
-      username() {
-         return this.$store.state.username;
-      },
-      pageLinks() {
-         return this.links
-            .filter(link => link.route !== this.$route.name)
-            .filter(link => link.requiresLoginAccess === this.isLoggedIn);
+      currentPage() {
+         return this.$route.name;
       },
    },
 };
@@ -143,12 +145,5 @@ export default {
 
 .v-btn--floating {
    position: relative;
-}
-
-.c-fab-bottom-text {
-   position: absolute;
-   top: 35px;
-   color: #272727;
-   padding: 10px;
 }
 </style>
