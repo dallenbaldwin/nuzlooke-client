@@ -92,8 +92,5 @@ export default {
    },
    methods: {},
    computed: {},
-   mounted() {
-      console.log(process.env.NODE_ENV);
-   },
 };
 </script>
