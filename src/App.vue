@@ -33,6 +33,9 @@ export default {
          this.$refs.eventBus.clickFilter();
       },
    },
+   mounted() {
+      console.log(process.env.NODE_ENV);
+   },
 };
 </script>
 

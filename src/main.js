@@ -21,5 +21,3 @@ new Vue({
       return h(App);
    },
 }).$mount('#app');
-
-console.log(process.env.NODE_ENV);
