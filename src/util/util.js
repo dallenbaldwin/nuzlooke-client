@@ -18,12 +18,12 @@ export const logout = () => {
 export const login = () => {
    // FIXME: this will need to be reworked when we get to authorization
    userServices
-      .getUserById('dca794f5-c680-42c2-aedb-a33a40200c49')
+      .getUserById('a4e26652-b42e-4590-a506-c51da884a4f6')
       .then(res => {
          let user = new APIResponse(res).data;
          store.commit('login', {
             id: user.id,
-            app_settings: user.app_settings,
+            app_settings: user.app_settings || {},
             username: user.username || user.email,
             games: user.games,
          });

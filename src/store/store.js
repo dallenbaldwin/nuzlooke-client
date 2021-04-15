@@ -20,7 +20,7 @@ export default new Vuex.Store({
          state.userId = payload.id;
          state.username = payload.username;
          state.userGames = payload.games;
-         state.app_settings = payload.app_settings || {};
+         state.app_settings = payload.app_settings;
       },
       setUsername(state, payload) {
          state.username = payload;
