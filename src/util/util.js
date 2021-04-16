@@ -18,7 +18,7 @@ export const logout = () => {
 export const login = () => {
    // FIXME: this will need to be reworked when we get to authorization
    userServices
-      .getUserById('a4e26652-b42e-4590-a506-c51da884a4f6')
+      .getUserById('18d59666-f047-4091-ae19-3ce1fd3de227')
       .then(res => {
          let user = new APIResponse(res).data;
          store.commit('login', {
