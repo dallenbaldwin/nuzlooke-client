@@ -1,18 +1,17 @@
 <template>
    <div>
       <v-card
-         @click="authenticate(provider.label)"
+         @click="provider.handler"
          v-for="(provider, i) of providers"
          :key="i"
-         min-width="300"
+         min-width="262"
          class="ma-3"
          outlined
          elevation="1"
       >
          <v-card-text class="d-flex flex-row align-center">
-            <v-icon :color="provider.color">{{ provider.icon }}</v-icon>
-            <v-spacer></v-spacer>
-            <span class="text-button font-weight-bold">
+            <v-icon x-large :color="provider.color">{{ provider.icon }}</v-icon>
+            <span class="mx-6 text-h5">
                {{ provider.label }}
             </span>
          </v-card-text>
@@ -22,26 +21,42 @@
 
 <script>
 import Icons from '../../constants/Icons';
-import colors from 'vuetify/lib/util/colors';
 
 export default {
    name: 'LoginProviders',
    data() {
       return {
          providers: [
-            { label: 'Google', icon: Icons.BRANDS.GOOGLE, color: colors.red.accent4 },
+            {
+               label: 'Google',
+               icon: Icons.BRANDS.GOOGLE,
+               color: '#DB4437',
+               handler: this.withGoogle,
+            },
             {
                label: 'Facebook',
                icon: Icons.BRANDS.FACEBOOK,
-               color: colors.blue.darken3,
+               color: '#1778F2',
+               handler: this.withFacebook,
             },
-            { label: 'Apple', icon: Icons.BRANDS.APPLE, color: colors.grey.darken2 },
+            {
+               label: 'Apple',
+               icon: Icons.BRANDS.APPLE,
+               color: '#555555',
+               handler: this.withApple,
+            },
          ],
       };
    },
    methods: {
-      authenticate(provider) {
-         alert(`authenticate with ${provider}`);
+      withGoogle() {
+         alert('google!');
+      },
+      withFacebook() {
+         alert('facebook!');
+      },
+      withApple() {
+         alert('apple!');
       },
    },
 };
