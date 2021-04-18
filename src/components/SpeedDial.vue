@@ -43,6 +43,7 @@
             color="primary"
             @click="$emit('filter')"
          ></c-fab-btn>
+         <!-- FIXME can only create rules on rules tab -->
          <c-fab-btn
             v-show="btnSupport.ADD.includes(currentPage)"
             :disabled="finished"

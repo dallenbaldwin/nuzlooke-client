@@ -5,7 +5,7 @@
             v-for="(error, i) of errors.errors"
             :key="i"
             :error="error"
-            :max-width="262"
+            :max-width="mobile() ? null : 262"
             class="ma-3"
          ></c-error>
       </v-fade-transition>
