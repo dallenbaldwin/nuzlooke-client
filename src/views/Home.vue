@@ -1,26 +1,26 @@
 <template>
    <v-container>
       <v-row>
-         <v-col><c-speed-dial :actions="null" v-if="!mobile()"></c-speed-dial></v-col>
+         <v-col><c-speed-dial v-if="!mobile()"></c-speed-dial></v-col>
       </v-row>
       <v-row>
          <v-col>
-            <div class="text-h2 text-center">Nuzlooke</div>
-            <div class="mt-6 text-h4 text-center">A Nuzlocke Manager</div>
-            <v-divider class="mt-6 mx-auto" inset></v-divider>
-            <div class="mt-6 text-center">
-               <v-btn x-large @click="navigate({ name: Pages.LOGIN })">
+            <div class="ma-3 text-h2 text-center">Nuzlooke</div>
+            <div class="ma-3 text-h4 text-center">A Nuzlocke Manager</div>
+            <v-divider style="max-width: 100%" class="ma-6" inset></v-divider>
+            <div class="ma-6 text-center" style="max-width: 300">
+               <v-btn dark x-large @click="navigate({ name: Pages.LOGIN })">
                   <v-icon large class="mr-3">{{ Icons.PAGES.LOGIN }}</v-icon>
                   Sign In
                </v-btn>
             </div>
-            <div class="mt-6 text-center">
-               <v-btn x-large @click="navigate({ name: Pages.REGISTER })">
+            <div class="ma-6 text-center">
+               <v-btn dark x-large @click="navigate({ name: Pages.REGISTER })">
                   <v-icon large class="mr-3">{{ Icons.PAGES.REGISTER }}</v-icon>
                   Register
                </v-btn>
             </div>
-            <v-divider class="mt-6 mx-auto" inset></v-divider>
+            <v-divider style="max-width: 100%" class="ma-6" inset></v-divider>
          </v-col>
       </v-row>
       <v-row>
@@ -33,9 +33,11 @@
             <div class="text-h4">Features</div>
             <v-list>
                <v-list-item v-for="feature of features" :key="feature.icon">
-                  <v-list-item-icon
-                     ><v-icon>{{ feature.icon }}</v-icon></v-list-item-icon
-                  >
+                  <v-list-item-icon>
+                     <v-icon :color="Colors.grey.darken4">
+                        {{ feature.icon }}
+                     </v-icon>
+                  </v-list-item-icon>
                   <v-list-item-content>
                      <v-list-item-subtitle>{{ feature.text }}</v-list-item-subtitle>
                   </v-list-item-content>
