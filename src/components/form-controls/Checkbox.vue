@@ -1,15 +1,14 @@
 <template>
+   <!-- :value="value" -->
    <v-checkbox
       hide-details
-      :checked="value"
-      :value="value"
+      :input-value="value"
       @change="$emit('input', $event)"
       :label="label"
       :false-value="falseValue"
       :true-value="trueValue"
       class="ma-3 pt-0"
-   >
-   </v-checkbox>
+   ></v-checkbox>
 </template>
 
 <script>
