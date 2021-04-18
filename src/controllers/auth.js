@@ -6,17 +6,15 @@ import * as util from '../util/util';
 
 export const getValidationErrors = obj => {
    const errors = [];
-   if (util.isUndefined(obj.password)) errors.push('You need to enter a password!');
-   if (!isEmail(obj.email)) errors.push('Please enter a valid email!');
-   if (obj.isRegister && !passwordsMatch(obj.password, obj.confirmPassword))
-      errors.push('Your passwords need to match!');
+   if (util.isUndefined(obj.password)) errors.push('Please enter a password');
+   if (!isEmail(obj.email)) errors.push('Please enter a valid email');
+   if (obj.isRegister && obj.password !== obj.confirmPassword)
+      errors.push('The entered passwords do not match');
    return {
       hasErrors: errors.length > 0,
       errors: errors,
    };
 };
-
-const passwordsMatch = (a, b) => a === b;
 
 const isEmail = email => {
    const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
