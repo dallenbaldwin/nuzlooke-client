@@ -1,11 +1,17 @@
 <template>
-   <v-alert text dense type="error">
+   <v-alert :max-width="maxWidth" text dense type="error" class="text-wrap">
       {{ error }}
    </v-alert>
 </template>
 
 <script>
-export default { name: 'Errors', props: ['error'] };
+export default {
+   name: 'Errors',
+   props: {
+      error: { required: true },
+      'max-width': { required: false, default: 900 },
+   },
+};
 </script>
 
 <style></style>
