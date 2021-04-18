@@ -1,36 +1,20 @@
 import { isMobile } from 'mobile-device-detect';
 import store from '../store/store';
 import router from '../router/router';
-import * as userServices from '../services/user';
 import Pages from '../constants/Pages';
-import APIResponse from '../models/APIResponse';
 
 export const navigate = endpoint => {
    router.replace(endpoint);
 };
 
+// TODO put this into authController
 export const logout = () => {
    store.commit('exitGame');
    store.commit('logout');
    navigate({ name: Pages.HOME });
 };
 
-export const login = () => {
-   // FIXME: this will need to be reworked when we get to authorization
-   userServices
-      .getUserById('18d59666-f047-4091-ae19-3ce1fd3de227')
-      .then(res => {
-         let user = new APIResponse(res).data;
-         store.commit('login', {
-            id: user.id,
-            app_settings: user.app_settings || {},
-            username: user.username || user.email,
-            games: user.games,
-         });
-         navigate({ name: Pages.GAMES });
-      })
-      .catch(err => alert(err.stack));
-};
+// TODO put this into gameController
 export const exitGame = () => {
    store.commit('exitGame');
    navigate({ name: Pages.GAMES });

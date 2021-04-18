@@ -4,8 +4,10 @@ import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
+const set = property => (store, payload) => (store[property] = payload);
+
 export default new Vuex.Store({
-   plugins: [createPersistedState({ storage: window.sessionStorage })],
+   plugins: [createPersistedState({ storage: window.localStorage })],
    state: {
       game: null,
       userId: null,
@@ -13,23 +15,25 @@ export default new Vuex.Store({
       userGames: null,
       isLoggedIn: false,
       app_settings: {},
+      token: null,
    },
    mutations: {
+      selectGame: set('game'),
+      setUserId: set('userId'),
+      setUsername: set('username'),
+      setUserGames: set('userGames'),
+      setIsLoggedIn: set('isLoggedIn'),
+      setToken: set('token'),
+      setSaveFilters(state, payload) {
+         state.app_settings.save_filters = payload;
+      },
       login(state, payload) {
          state.isLoggedIn = true;
          state.userId = payload.id;
          state.username = payload.username;
-         state.userGames = payload.games;
+         state.userGames = payload.userGames;
          state.app_settings = payload.app_settings;
-      },
-      setUsername(state, payload) {
-         state.username = payload;
-      },
-      setUserGames(state, payload) {
-         state.userGames = payload;
-      },
-      setSaveFilters(state, payload) {
-         state.app_settings.save_filters = payload;
+         state.token = payload.token;
       },
       logout(state) {
          state.isLoggedIn = false;
@@ -37,9 +41,7 @@ export default new Vuex.Store({
          state.username = null;
          state.userGames = null;
          state.app_settings = {};
-      },
-      selectGame(state, payload) {
-         state.game = payload;
+         state.token = null;
       },
       exitGame(state) {
          state.game = null;
@@ -103,11 +105,6 @@ export default new Vuex.Store({
       removePokemonFromPokemons(state, payload) {
          const i = state.game.pokemons.findIndex(p => p.id === payload.id);
          if (i !== -1) state.game.pokemons.splice(i, 1);
-      },
-   },
-   actions: {
-      authenticate(context, payload) {
-         context.commit('authenticate', payload);
       },
    },
 });

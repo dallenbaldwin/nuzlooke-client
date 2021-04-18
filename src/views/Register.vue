@@ -12,7 +12,7 @@
                Welcome to Nuzlooke!
             </div>
             <div class="text-h6">
-               Register with login information or use one of the providers below
+               Register with your email and password or use one of the providers below
             </div>
          </v-col>
       </v-row>

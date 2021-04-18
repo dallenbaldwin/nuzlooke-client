@@ -10,7 +10,7 @@
                Welcome back to Nuzlooke!
             </div>
             <div class="text-h6">
-               Sign in with login information or use one of the providers below
+               Sign in with your email and password or use one of the providers below
             </div>
          </v-col>
       </v-row>
