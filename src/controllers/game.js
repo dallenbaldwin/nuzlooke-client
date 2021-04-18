@@ -65,7 +65,7 @@ export const createNewGame = async (label, version, rules) => {
          .withGameRules(newRules)
          .build();
       const res = await services.createGame(newGame);
-      const createdGame = new APIResponse(res).data;
+      const createdGame = APIResponse.fromResponse(res).data;
       const gameSnapshot = getSnapshot(createdGame);
       userController.addGameSnapshot(gameSnapshot);
       await userController.updateUserGames();
@@ -85,7 +85,7 @@ export const updateGameRulesInDB = async game => {
 
 export const goToGame = async (gameId, route) => {
    const res = await services.getGameById(gameId);
-   const game = new APIResponse(res).data;
+   const game = APIResponse.fromResponse(res).data;
    store.commit('selectGame', game);
    if (util.mobile()) util.navigate({ name: route, params: { gameId: game.id } });
    else util.navigate({ name: 'game', params: { gameId: game.id, tab: route } });
