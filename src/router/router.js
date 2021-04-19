@@ -9,6 +9,8 @@ import Pokemon from '../views/Pokemon';
 import Routes from '../views/Routes';
 import Gyms from '../views/Gyms';
 import Rules from '../views/Rules';
+import Pages from '../constants/Pages';
+import store from '../store/store';
 
 Vue.use(VueRouter);
 
@@ -62,6 +64,15 @@ const routes = [
 
 const router = new VueRouter({
    routes,
+});
+
+router.beforeEach((to, from, next) => {
+   // redirect to login page if not logged in and trying to access a restricted page
+   const publicPages = [Pages.HOME, Pages.LOGIN, Pages.REGISTER];
+   if (!publicPages.includes(to.name) && !store.state.isLoggedIn) {
+      return next('/login');
+   }
+   next();
 });
 
 export default router;
