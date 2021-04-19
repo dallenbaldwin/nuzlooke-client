@@ -1,5 +1,6 @@
 import Pages from '../constants/Pages';
 import APIResponse from '../models/APIResponse';
+import User from '../models/User';
 import * as services from '../services/auth';
 import store from '../store/store';
 import * as util from '../util/util';
@@ -34,7 +35,11 @@ const login = res => {
 
 export const register = async obj => {
    try {
-      let response = await services.register(obj);
+      const user = User.builder()
+         .withEmail(obj.email)
+         .withPassword(obj.password)
+         .build();
+      let response = await services.register(user);
       response = APIResponse.fromResponse(response).data;
       login(response);
    } catch (err) {
@@ -47,7 +52,24 @@ export const register = async obj => {
 
 export const authenticate = async obj => {
    try {
-      let response = await services.login(obj);
+      const user = User.builder()
+         .withEmail(obj.email)
+         .withPassword(obj.password)
+         .build();
+      let response = await services.login(user);
+      response = APIResponse.fromResponse(response).data;
+      login(response);
+   } catch (err) {
+      return APIResponse.builder()
+         .withStatus(err.response.status)
+         .withError(err.response.data.error)
+         .build();
+   }
+};
+
+export const loginWithGoogle = async googleUser => {
+   try {
+      let response = await services.oauth('google', googleUser);
       response = APIResponse.fromResponse(response).data;
       login(response);
    } catch (err) {
