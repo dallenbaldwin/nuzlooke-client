@@ -73,6 +73,7 @@ export const loginWithGoogle = async googleUser => {
       response = APIResponse.fromResponse(response).data;
       login(response);
    } catch (err) {
+      console.log(err);
       return APIResponse.builder()
          .withStatus(err.response.status)
          .withError(err.response.data.error)
