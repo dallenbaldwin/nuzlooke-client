@@ -71,7 +71,6 @@ export default {
             const GoogleUser = await this.$gAuth.signIn();
             await authController.loginWithGoogle(GoogleUser);
          } catch (err) {
-            console.log(err);
             if (err.error === 'popup_closed_by_user') return;
             this.errors.push(err.error ? err.error : err);
          }
