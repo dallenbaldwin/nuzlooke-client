@@ -22,7 +22,6 @@
             label="games"
             @click="$emit('exit-game')"
          ></c-fab-btn>
-         <!-- TODO logout is global. should probably change that to be controller based -->
          <c-fab-btn
             v-show="btnSupport.LOGOUT.includes(currentPage)"
             label="sign out"
@@ -43,11 +42,10 @@
             color="primary"
             @click="$emit('filter')"
          ></c-fab-btn>
-         <!-- FIXME can only create rules on rules tab -->
          <c-fab-btn
-            v-show="btnSupport.ADD.includes(currentPage)"
+            v-show="canAdd(currentPage)"
             :disabled="finished"
-            :label="toCreate()"
+            :label="toCreate(currentPage)"
             :icon="Icons.CONTROLS.PLUS"
             color="success"
             @click="$emit('add')"
@@ -68,11 +66,15 @@ import Icons from '../constants/Icons';
 import Pages from '../constants/Pages';
 import colors from 'vuetify/lib/util/colors';
 import FabBtn from './speed-dial/FabBtn.vue';
+import TabMap from '../constants/TabMap';
+import * as authController from '../controllers/auth';
+import * as util from '../util/util';
 
 export default {
    name: 'SpeedDial',
    props: {
       finished: { required: false, default: false },
+      tab: { required: false, default: null },
    },
    components: {
       AppSettings: () => import('./dialogs/AppSettings.vue'),
@@ -87,7 +89,8 @@ export default {
          settings: false,
          btnSupport: {
             FILTER: [Pages.GAMES, Pages.GAME],
-            ADD: [Pages.GAMES, Pages.GAME],
+            'ADD-PAGES': [Pages.GAMES, Pages.GAME],
+            'ADD-TABS': [TabMap.RULES],
             APPSETTINGS: [Pages.GAMES, Pages.GAME],
             LOGOUT: [Pages.GAME, Pages.GAMES],
             HOME: [Pages.LOGIN, Pages.REGISTER],
@@ -118,13 +121,19 @@ export default {
       };
    },
    methods: {
-      toCreate() {
-         // this will have to be refactored if we add more creates
-         if (this.currentPage === 'games') return 'create game';
-         else if (this.currentPage === 'game') return 'create rule';
+      toCreate(page) {
+         return `create ${page.replace('s', '')}`;
       },
       goTo(route) {
-         this.navigate({ name: route });
+         util.navigate({ name: route });
+      },
+      canAdd(page) {
+         if (page !== Pages.GAME) return this.btnSupport['ADD-PAGES'].includes(page);
+         else if (page === Pages.GAME)
+            return this.btnSupport['ADD-TABS'].includes(this.tab);
+      },
+      logout() {
+         authController.logout();
       },
    },
    computed: {

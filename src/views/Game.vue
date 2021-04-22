@@ -8,6 +8,7 @@
             v-on:add="createRule"
             v-on:filter="openFilter"
             :finished="gameFinished"
+            :tab="tab"
          ></c-speed-dial>
       </v-row>
       <v-row class="mt-6 pt-6">
@@ -36,6 +37,8 @@ import Pokemon from './Pokemon';
 import Routes from './Routes';
 import Gyms from './Gyms';
 import Rules from './Rules';
+import * as authController from '../controllers/auth';
+import * as gameController from '../controllers/game';
 
 export default {
    name: 'Game',
@@ -81,6 +84,12 @@ export default {
       },
       openFilter() {
          this.$refs.eventBus.clickFilter();
+      },
+      logout() {
+         authController.logout();
+      },
+      exitGame() {
+         gameController.exitGame();
       },
    },
    mounted() {

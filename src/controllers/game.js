@@ -132,3 +132,8 @@ export const getSnapshot = game => {
       .withVersion(game.version)
       .build();
 };
+
+export const exitGame = () => {
+   store.commit('exitGame');
+   util.navigate({ name: Pages.GAMES });
+};

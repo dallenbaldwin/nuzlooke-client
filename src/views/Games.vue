@@ -86,6 +86,7 @@ import * as util from '../util/util';
 import Icons from '../constants/Icons';
 import GameVersions from '../constants/GameVersions';
 import Sort from '../components/form-controls/Sort.vue';
+import * as authController from '../controllers/auth';
 
 export default {
    name: 'Games',
@@ -135,6 +136,9 @@ export default {
       };
    },
    methods: {
+      logout() {
+         authController.logout();
+      },
       setSort(payload) {
          let asc = payload.dir === 'asc';
          if (['Version', 'Generation'].includes(payload.value)) {

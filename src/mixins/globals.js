@@ -21,8 +21,6 @@ export default {
    },
    methods: {
       navigate: util.navigate,
-      logout: util.logout,
-      exitGame: util.exitGame,
       mobile: util.mobile,
       arrayify: util.arrayify,
       deClassify: util.deClassify,

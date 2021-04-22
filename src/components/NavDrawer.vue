@@ -76,6 +76,8 @@ import Icons from '../constants/Icons';
 import * as util from '../util/util';
 import GameVersions from '../constants/GameVersions';
 import Pages from '../constants/Pages';
+import * as authController from '../controllers/auth';
+import * as gameController from '../controllers/game';
 
 export default {
    // TODO refactor the jank
@@ -167,10 +169,13 @@ export default {
       // this is janky
       reactToAction(action) {
          if (action === 'logout') {
-            util.logout();
+            this.logout();
          } else if (action === 'exit-game') {
-            util.exitGame();
+            gameController.exitGame();
          }
+      },
+      logout() {
+         authController.logout();
       },
    },
    computed: {

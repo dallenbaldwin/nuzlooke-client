@@ -1,23 +1,8 @@
 import { isMobile } from 'mobile-device-detect';
-import store from '../store/store';
 import router from '../router/router';
-import Pages from '../constants/Pages';
 
 export const navigate = endpoint => {
    router.replace(endpoint);
-};
-
-// TODO put this into authController
-export const logout = () => {
-   store.commit('exitGame');
-   store.commit('logout');
-   navigate({ name: Pages.HOME });
-};
-
-// TODO put this into gameController
-export const exitGame = () => {
-   store.commit('exitGame');
-   navigate({ name: Pages.GAMES });
 };
 
 export const arrayify = (...values) => {

@@ -33,6 +33,12 @@ const login = res => {
    util.navigate({ name: Pages.GAMES });
 };
 
+export const logout = () => {
+   store.commit('exitGame');
+   store.commit('logout');
+   util.navigate({ name: Pages.HOME });
+};
+
 export const register = async obj => {
    try {
       const user = User.builder()
