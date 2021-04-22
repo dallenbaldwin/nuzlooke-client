@@ -14,9 +14,9 @@ import globals from './mixins/globals';
 Vue.mixin(globals);
 
 import GoogleAuth from './services/google.js';
-// FIXME this needs to be an env variable in netlify
+
 Vue.use(GoogleAuth, {
-   clientId: '117152946095-d8n9qdlm3p78k8u6arfgd7so2mva2qov.apps.googleusercontent.com',
+   clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
    scope: 'profile email',
    prompt: 'select_account',
 });

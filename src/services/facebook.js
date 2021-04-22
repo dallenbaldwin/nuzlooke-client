@@ -3,8 +3,7 @@ export const initFacebookSDK = () => {
       // wait for facebook sdk to initialize before starting the vue app
       window.fbAsyncInit = function() {
          FB.init({
-            // FIXME this needs to be an env variable in netlify
-            appId: process.env.FACEBOOK_APP_ID || '503771524156657',
+            appId: process.env.VUE_APP_FACEBOOK_APP_ID,
             cookie: true,
             xfbml: true,
             version: 'v10.0',
@@ -13,7 +12,7 @@ export const initFacebookSDK = () => {
          // auto authenticate with the api if already logged in with facebook
          FB.getLoginStatus(({ authResponse }) => {
             if (authResponse) {
-               // TODO
+               // TODO facebook auth
                // accountService.apiAuthenticate(authResponse.accessToken).then(resolve);
             } else {
                resolve();
