@@ -80,7 +80,6 @@ import * as authController from '../controllers/auth';
 import * as gameController from '../controllers/game';
 
 export default {
-   // TODO refactor the jank
    name: 'NavDrawer',
    components: {
       'c-text-field': TextField,

@@ -25,7 +25,7 @@ export default class APIResponse {
    static build() {
       return new APIResponse(this.status, this.data, this.error);
    }
-   // TODO better error handling throughout app. don't just alert the errors
+   // TODO better error handling throughout app when pinging the api. don't just alert the error stacks
    static fromResponse(response) {
       return new APIResponse(
          response.status,

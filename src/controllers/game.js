@@ -8,6 +8,7 @@ import * as userController from '../controllers/user';
 import GameVersions from '../constants/GameVersions';
 import GameSnapshot from '../models/GameSnapshot';
 import GameRules from '../constants/GameRules';
+import Pages from '../constants/Pages';
 
 export const updateEncountersAndPokemonsInDB = async () => {
    try {
