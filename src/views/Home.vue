@@ -1,9 +1,6 @@
 <template>
    <v-container>
       <v-row>
-         <v-col><c-speed-dial v-if="!mobile()"></c-speed-dial></v-col>
-      </v-row>
-      <v-row>
          <v-col>
             <div class="ma-3 text-h2 text-center">Nuzlooke</div>
             <div class="ma-3 text-h4 text-center">A Nuzlocke Manager</div>
