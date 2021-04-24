@@ -22,13 +22,15 @@ const isEmail = email => {
    return pattern.test(email);
 };
 
-const login = res => {
+const login = response => {
+   if (response.error) return response.error;
+   response = response.data;
    store.commit('login', {
-      id: res.id,
-      username: res.username || undefined,
-      userGames: res.games,
-      app_settings: res.app_settings,
-      token: res.token,
+      id: response.id,
+      username: response.username || undefined,
+      userGames: response.games,
+      app_settings: response.app_settings,
+      token: response.token,
    });
    util.navigate({ name: Pages.GAMES });
 };
@@ -40,42 +42,24 @@ export const logout = () => {
 };
 
 export const register = async obj => {
-   try {
-      const user = User.builder()
-         .withEmail(obj.email)
-         .withPassword(obj.password)
-         .build();
-      let response = await services.register(user);
-      response = APIResponse.fromResponse(response).data;
-      login(response);
-   } catch (err) {
-      return APIResponse.builder()
-         .withStatus(err.response.status)
-         .withError(err.response.data.error)
-         .build();
-   }
+   const user = User.builder()
+      .withEmail(obj.email)
+      .withPassword(obj.password)
+      .build();
+   const response = await services.register(user);
+   return login(response);
 };
 
 export const authenticate = async obj => {
-   try {
-      const user = User.builder()
-         .withEmail(obj.email)
-         .withPassword(obj.password)
-         .build();
-      let response = await services.login(user);
-      response = APIResponse.fromResponse(response).data;
-      login(response);
-   } catch (err) {
-      return APIResponse.fromError(err);
-   }
+   const user = User.builder()
+      .withEmail(obj.email)
+      .withPassword(obj.password)
+      .build();
+   const response = await services.login(user);
+   return login(response);
 };
 
 export const loginWithGoogle = async googleUser => {
-   try {
-      let response = await services.oauth('google', googleUser);
-      response = APIResponse.fromResponse(response).data;
-      login(response);
-   } catch (err) {
-      return APIResponse.fromError(err);
-   }
+   const response = await services.oauth('google', googleUser);
+   return login(response);
 };

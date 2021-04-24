@@ -1,3 +1,5 @@
+import { errorCatch } from '../util/util';
+
 export default class APIResponse {
    constructor(status, data, error) {
       this.status = status;
@@ -27,14 +29,13 @@ export default class APIResponse {
    }
    // TODO better error handling throughout app when pinging the api. don't just alert the error stacks
    static fromResponse(response) {
-      return new APIResponse(
-         response.status,
-         response.data ? response.data.data : undefined,
-         response.data ? response.data.error : undefined
-      );
+      return APIResponse.builder()
+         .withStatus(response.status)
+         .withData(response.data.data)
+         .build();
    }
    static fromError(error) {
-      return APIResponse.builder
+      return APIResponse.builder()
          .withStatus(error.response.status)
          .withError(error.response.data.error)
          .build();
