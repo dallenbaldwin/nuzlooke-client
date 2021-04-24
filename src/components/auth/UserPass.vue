@@ -86,7 +86,7 @@ export default {
          if (this.errors.hasErrors) return;
          const auth = await authController.authenticate(this.values);
          if (!util.isUndefined(auth)) {
-            this.errors.errors.push(auth);
+            this.errors.errors.push(...auth);
          }
       },
       async register() {
@@ -95,7 +95,7 @@ export default {
          if (this.errors.hasErrors) return;
          const register = await authController.register(this.values);
          if (!util.isUndefined(register)) {
-            this.errors.errors.push(register);
+            this.errors.errors.push(...register);
          }
       },
       forgotPassword() {

@@ -56,6 +56,7 @@ export const updatePokemonInStore = pokemon => {
    store.commit('updatePokemon', pokemon);
 };
 
+// TODO after game service reconfigure, check that this works of if we need to change it
 export const updatePokemonsInDB = () => {
    gameServices.updateGameById(store.state.game.id, {
       pokemons: store.state.game.pokemons,
