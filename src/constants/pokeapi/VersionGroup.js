@@ -1,5 +1,5 @@
 export default Object.freeze({
-   LETSGO: 'lets-go',
+   // LETSGO: 'lets-go',
    RUBYSAPPHIRE: 'ruby-sapphire',
    EMERALD: 'emerald',
    FIREREDLEAFGREEN: 'firered-leafgreen',
