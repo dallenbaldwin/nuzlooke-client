@@ -58,6 +58,7 @@ import Button from '../Button.vue';
 import TextField from '../form-controls/TextField.vue';
 import Combobox from '../form-controls/Combobox.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
+import Errors from '../Errors.vue';
 import * as util from '../../util/util';
 import * as gameController from '../../controllers/game';
 
@@ -70,6 +71,7 @@ export default {
       'c-text-field': TextField,
       'c-combobox': Combobox,
       'c-progress-spinner': ProgressSpinner,
+      'c-error': Errors,
    },
    data() {
       return {
@@ -152,11 +154,18 @@ export default {
          this.errors = gameController.getValidationErrors(this.values);
          if (this.errors.hasErrors) return;
          this.processingGame = true;
-         await gameController.createNewGame(
-            this.values.label,
-            this.values.version.value,
+         const start = await gameController.createGame(
+            null,
+            null,
+            // this.values.label,
+            // this.values.version.value,
             this.values.rules.map(rule => rule.values.value)
          );
+         if (start) {
+            this.processingGame = false;
+            this.errors.errors.push(...start);
+            return;
+         }
          this.closeDialog();
       },
       closeDialog() {
