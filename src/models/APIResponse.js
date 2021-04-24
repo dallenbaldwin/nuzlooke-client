@@ -33,4 +33,10 @@ export default class APIResponse {
          response.data ? response.data.error : undefined
       );
    }
+   static fromError(error) {
+      return APIResponse.builder
+         .withStatus(error.response.status)
+         .withError(error.response.data.error)
+         .build();
+   }
 }

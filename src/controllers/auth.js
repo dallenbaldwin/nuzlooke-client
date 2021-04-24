@@ -66,10 +66,7 @@ export const authenticate = async obj => {
       response = APIResponse.fromResponse(response).data;
       login(response);
    } catch (err) {
-      return APIResponse.builder()
-         .withStatus(err.response.status)
-         .withError(err.response.data.error)
-         .build();
+      return APIResponse.fromError(err);
    }
 };
 
@@ -79,9 +76,6 @@ export const loginWithGoogle = async googleUser => {
       response = APIResponse.fromResponse(response).data;
       login(response);
    } catch (err) {
-      return APIResponse.builder()
-         .withStatus(err.response.status)
-         .withError(err.response.data.error)
-         .build();
+      return APIResponse.fromError(err);
    }
 };
