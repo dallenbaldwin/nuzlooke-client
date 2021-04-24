@@ -12,7 +12,7 @@ export const getEncountersByVersion = async version => {
       const encounters = await services.getEncountersByVersion(version);
       return APIResponse.fromResponse(encounters);
    } catch (err) {
-      return APIResponse.fromResponse(err);
+      return APIResponse.fromError(err);
    }
 };
 
@@ -46,16 +46,16 @@ export const getEncounterErrors = (results, update = false) => {
          rulesController.isActive(GameRules.USE_NICKNAMES) &&
          util.isUndefined(results.nickname)
       ) {
-         errors.push('Captured Pokemon need a nickname!');
+         errors.push('Captured Pokemon need a nickname');
       }
       if (util.isUndefined(species)) {
-         errors.push(`You must select a Pokemon!`);
+         errors.push(`You must select a Pokemon`);
       }
       if (
          pokemonController.isParty(results.destination) &&
          util.isUndefined(results.replacement)
       ) {
-         errors.push(`You must select a Party Member!`);
+         errors.push(`You must select a Party Member`);
       }
    } else if (isAvailable(results.constant) && !update) {
       if (!util.isUndefined(species)) {
@@ -71,7 +71,7 @@ export const getEncounterErrors = (results, update = false) => {
          errors.push(`Something went wrong. Must be Caught to have a nickname.`);
       }
       if (util.isUndefined(species)) {
-         errors.push(`You must select a Pokemon!`);
+         errors.push(`You must select a Pokemon`);
       }
    }
    return errors;

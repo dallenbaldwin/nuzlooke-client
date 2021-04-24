@@ -11,7 +11,7 @@ export const saveSettings = async () => {
 
 export const getValidationErrors = options => {
    const errors = [];
-   if (isUndefined(options.username)) errors.push('Username cannot be empty!');
+   if (isUndefined(options.username)) errors.push('Username cannot be empty');
    return {
       errors: errors,
       hasErrors: errors.length > 0,
