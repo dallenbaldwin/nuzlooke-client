@@ -4,6 +4,17 @@ import EncounterResultConst from '../constants/EncounterResultConst';
 import * as util from '../util/util';
 import * as rulesController from '../controllers/rules';
 import * as pokemonController from '../controllers/pokemon';
+import * as services from '../services/encounters';
+import APIResponse from '../models/APIResponse';
+
+export const getEncountersByVersion = async version => {
+   try {
+      const encounters = await services.getEncountersByVersion(version);
+      return APIResponse.fromResponse(encounters);
+   } catch (err) {
+      return APIResponse.fromResponse(err);
+   }
+};
 
 export const getEncounterById = id => {
    return store.state.game.encounters.find(e => id === e.id);

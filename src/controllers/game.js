@@ -9,6 +9,8 @@ import GameVersions from '../constants/GameVersions';
 import GameSnapshot from '../models/GameSnapshot';
 import GameRules from '../constants/GameRules';
 import Pages from '../constants/Pages';
+import TabMap from '../constants/TabMap';
+import * as routeController from './route';
 
 export const updateEncountersAndPokemonsInDB = async () => {
    try {
@@ -70,7 +72,16 @@ export const createNewGame = async (label, version, rules) => {
       const gameSnapshot = getSnapshot(createdGame);
       userController.addGameSnapshot(gameSnapshot);
       await userController.updateUserGames();
-      await goToGame(createdGame.id, util.mobile() ? 'routes' : '0');
+      const encounters = await routeController.getEncountersByVersion(version);
+      await goToGame(createdGame.id, util.mobile() ? Pages.RULES : TabMap.RULES);
+      store.commit('setEncounters', encounters.data);
+      await updateEncountersAndPokemonsInDB();
+      //
+      // if 30 seconds feels too long
+      // routeController.getEncountersByVersion(version).then(encounters => {
+      //    store.commit('setEncounters', encounters);
+      //    updateEncountersAndPokemonsInDB();
+      // });
    } catch (err) {
       alert(util.errorCatch(err));
    }

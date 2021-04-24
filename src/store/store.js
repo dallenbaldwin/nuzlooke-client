@@ -7,7 +7,7 @@ Vue.use(Vuex);
 const set = property => (store, payload) => (store[property] = payload);
 
 export default new Vuex.Store({
-   plugins: [createPersistedState({ storage: window.localStorage })],
+   plugins: [createPersistedState({ storage: window.sessionStorage })],
    state: {
       game: null,
       userId: null,
@@ -86,6 +86,9 @@ export default new Vuex.Store({
       },
       addGameSnapshot(state, payload) {
          state.userGames.push(payload);
+      },
+      setEncounters(state, payload) {
+         state.game.encounters = payload;
       },
       updateEncounter(state, payload) {
          const i = state.game.encounters.findIndex(e => e.id === payload.id);
