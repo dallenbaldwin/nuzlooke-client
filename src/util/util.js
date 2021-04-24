@@ -5,9 +5,7 @@ export const navigate = endpoint => {
    router.replace(endpoint);
 };
 
-export const arrayify = (...values) => {
-   return Array.from([...values]).flatMap(x => x);
-};
+export const arrayify = (...values) => Array.from([...values]).flatMap(x => x);
 
 export const toTitleCase = str =>
    str
