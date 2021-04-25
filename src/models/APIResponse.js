@@ -1,5 +1,3 @@
-import { errorCatch, prettySON } from '../util/util';
-
 export default class APIResponse {
    constructor(status, data, error) {
       this.status = status;
@@ -29,14 +27,12 @@ export default class APIResponse {
    }
    // TODO better error handling throughout app when pinging the api. don't just alert the error stacks
    static fromResponse(response) {
-      // console.log(prettySON(response));
       return APIResponse.builder()
          .withStatus(response.status)
          .withData(response.data.data)
          .build();
    }
    static fromError(error) {
-      // console.log(prettySON(error));
       let errors = error.response.data.error;
       return APIResponse.builder()
          .withStatus(error.response.status)
