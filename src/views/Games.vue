@@ -78,10 +78,10 @@
 import SpeedDial from '../components/SpeedDial.vue';
 import DialogCard from '../components/dialogs/DialogCard.vue';
 import Gamecordian from '../components/games/Gamecordian.vue';
+import CreateGame from '../components/games/CreateGame.vue';
 import TextField from '../components/form-controls/TextField.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import Toolbar from '../components/Toolbar.vue';
-import CreateGame from '../components/dialogs/CreateGame.vue';
 import * as util from '../util/util';
 import Icons from '../constants/Icons';
 import GameVersions from '../constants/GameVersions';

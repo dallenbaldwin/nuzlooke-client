@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import DialogCard from './DialogCard.vue';
+import DialogCard from '../dialogs/DialogCard.vue';
 import GameRules from '../../constants/GameRules';
 import GameVersions from '../../constants/GameVersions';
 import Button from '../Button.vue';
