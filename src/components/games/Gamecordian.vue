@@ -87,6 +87,7 @@
             </v-row>
          </v-container>
       </v-expansion-panel-content>
+      <!-- TODO great candidates for components -->
       <v-dialog v-model="finishGame.flag" width="500">
          <c-dialog-card
             :props="finishGame.dialogCard"
@@ -133,6 +134,13 @@
             </v-fade-transition>
          </c-dialog-card>
       </v-dialog>
+      <v-dialog v-model="errors.hasErrors" width="500">
+         <c-error-card
+            :status="errors.status"
+            :errors="errors.errors"
+            v-on:close-dialog="closeDialog"
+         ></c-error-card>
+      </v-dialog>
    </v-expansion-panel>
 </template>
 
@@ -144,6 +152,7 @@ import PokeSprite from '../pokemon/PokeSprite.vue';
 import BadgeSprite from '../gyms/BadgeSprite.vue';
 import TextField from '../form-controls/TextField.vue';
 import Errors from '../Errors.vue';
+import ErrorCard from '../dialogs/ErrorCard.vue';
 import * as gameController from '../../controllers/game';
 import Icons from '../../constants/Icons';
 import TabMap from '../../constants/TabMap';
@@ -161,10 +170,16 @@ export default {
       'c-badge-sprite': BadgeSprite,
       'c-error': Errors,
       'c-text-field': TextField,
+      'c-error-card': ErrorCard,
    },
    data() {
       return {
          processingGame: false,
+         errors: {
+            errors: [],
+            hasErrors: false,
+            status: null,
+         },
          gameBtns: [
             {
                label: 'Pokemon',
@@ -255,6 +270,8 @@ export default {
          this.editGame.values = {};
          this.deleteGame.flag = false;
          this.finishGame.flag = false;
+         this.errors.errors = [];
+         this.errors.hasErrors = false;
       },
       clickFinishGame() {
          this.finishGame.flag = true;
@@ -294,7 +311,13 @@ export default {
          else await this.toGame(btn.desktopRoute);
       },
       async toGame(route) {
-         await gameController.goToGame(this.game.game_id, route);
+         this.errors.hasErrors = false;
+         const goToResponse = await gameController.goToGame(this.game.game_id, route);
+         if (goToResponse) {
+            this.errors.hasErrors = true;
+            this.errors.status = goToResponse.status;
+            this.errors.errors.push(...goToResponse.error);
+         }
       },
    },
 };

@@ -39,4 +39,15 @@ export default class APIResponse {
          .withError(typeof errors === 'string' ? [errors] : errors)
          .build();
    }
+   static withDummyError() {
+      const dummy = {
+         response: {
+            status: 400,
+            data: {
+               error: ['this is the error!', 'and another error!'],
+            },
+         },
+      };
+      return APIResponse.fromError(dummy);
+   }
 }
