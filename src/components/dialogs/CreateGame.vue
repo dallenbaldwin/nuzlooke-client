@@ -155,10 +155,8 @@ export default {
          if (this.errors.hasErrors) return;
          this.processingGame = true;
          const start = await gameController.createGame(
-            null,
-            null,
-            // this.values.label,
-            // this.values.version.value,
+            this.values.label,
+            this.values.version.value,
             this.values.rules.map(rule => rule.values.value)
          );
          if (start) {
