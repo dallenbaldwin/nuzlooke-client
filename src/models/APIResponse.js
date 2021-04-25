@@ -1,13 +1,13 @@
 export default class APIResponse {
-   constructor(status, data, error) {
+   constructor(status, data, errors) {
       this.status = status;
       this.data = data;
-      this.error = error;
+      this.errors = errors;
    }
    static builder() {
       this.status = undefined;
       this.data = undefined;
-      this.error = undefined;
+      this.errors = undefined;
       return this;
    }
    static withStatus(val) {
@@ -18,12 +18,12 @@ export default class APIResponse {
       this.data = val;
       return this;
    }
-   static withError(val) {
-      this.error = val;
+   static withErrors(val) {
+      this.errors = val;
       return this;
    }
    static build() {
-      return new APIResponse(this.status, this.data, this.error);
+      return new APIResponse(this.status, this.data, this.errors);
    }
    static fromResponse(response) {
       return APIResponse.builder()
@@ -35,7 +35,7 @@ export default class APIResponse {
       let errors = error.response.data.error;
       return APIResponse.builder()
          .withStatus(error.response.status)
-         .withError(typeof errors === 'string' ? [errors] : errors)
+         .withErrors(typeof errors === 'string' ? [errors] : errors)
          .build();
    }
    static withDummyError() {

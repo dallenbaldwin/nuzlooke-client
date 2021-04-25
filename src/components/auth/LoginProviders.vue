@@ -23,15 +23,7 @@
             <span class="mx-6 text-h5">{{ provider.label }}</span>
          </v-card-text>
       </v-card>
-      <v-fade-transition group key="i">
-         <c-error
-            v-for="(error, i) of errors"
-            :key="i"
-            :error="error"
-            :max-width="mobile() ? null : 262"
-            class="ma-3"
-         ></c-error>
-      </v-fade-transition>
+      <c-errors v-if="errors" :errors="errors"></c-errors>
    </div>
 </template>
 
@@ -43,11 +35,11 @@ import * as authController from '../../controllers/auth';
 export default {
    name: 'LoginProviders',
    components: {
-      'c-error': Errors,
+      'c-errors': Errors,
    },
    data() {
       return {
-         errors: [],
+         errors: null,
          providers: [
             {
                label: 'Google',
@@ -62,18 +54,15 @@ export default {
    },
    methods: {
       authenticate(provider) {
-         this.errors = [];
+         this.errors = null;
          if (provider === 'Google') return this.withGoogle();
          else if (provider === 'Facebook') return this.withFacebook();
       },
       async withGoogle() {
-         try {
-            const GoogleUser = await this.$gAuth.signIn();
-            await authController.loginWithGoogle(GoogleUser);
-         } catch (err) {
-            if (err.error === 'popup_closed_by_user') return;
-            this.errors.push(err.error ? err.error : err);
-         }
+         const GoogleUser = await this.$gAuth.signIn();
+         const response = await authController.loginWithGoogle(GoogleUser);
+         if (response && response.error === 'popup_closed_by_user') return;
+         this.errors = response;
       },
       async withFacebook() {
          alert('facebook!');

@@ -1,14 +1,5 @@
 <template>
    <div>
-      <v-fade-transition group>
-         <c-error
-            v-for="(error, i) of errors.errors"
-            :key="i"
-            :error="error"
-            :max-width="mobile() ? null : 262"
-            class="ma-3"
-         ></c-error>
-      </v-fade-transition>
       <c-text-field label="Email" v-model="values.email"></c-text-field>
       <c-text-field
          label="Password"
@@ -43,6 +34,7 @@
             </c-btn>
          </div>
       </div>
+      <c-errors v-if="errors" :errors="errors"></c-errors>
    </div>
 </template>
 
@@ -51,7 +43,6 @@ import Button from '../Button.vue';
 import Errors from '../Errors.vue';
 import Checkbox from '../form-controls/Checkbox.vue';
 import TextField from '../form-controls/TextField.vue';
-import * as util from '../../util/util';
 import * as authController from '../../controllers/auth';
 
 export default {
@@ -63,7 +54,7 @@ export default {
       'c-text-field': TextField,
       'c-btn': Button,
       'c-checkbox': Checkbox,
-      'c-error': Errors,
+      'c-errors': Errors,
    },
    computed: {},
    data() {
@@ -74,33 +65,28 @@ export default {
             confirmPassword: null,
             remember: false,
          },
-         errors: {
-            errors: [],
-         },
+         errors: null,
       };
    },
    methods: {
       async authenticate() {
-         this.values.isRegister = this.isRegister;
          this.errors = authController.getValidationErrors(this.values);
-         if (this.errors.hasErrors) return;
+         if (this.errors) return;
          const auth = await authController.authenticate(this.values);
-         if (!util.isUndefined(auth)) {
-            this.errors.errors.push(...auth);
-         }
+         if (auth) this.errors = auth;
       },
       async register() {
-         this.values.isRegister = this.isRegister;
          this.errors = authController.getValidationErrors(this.values);
-         if (this.errors.hasErrors) return;
+         if (this.errors) return;
          const register = await authController.register(this.values);
-         if (!util.isUndefined(register)) {
-            this.errors.errors.push(...register);
-         }
+         if (register) this.errors = register;
       },
       forgotPassword() {
          alert('well that sucks!');
       },
+   },
+   mounted() {
+      this.values.isRegister = this.isRegister;
    },
 };
 </script>

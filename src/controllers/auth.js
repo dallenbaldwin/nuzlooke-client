@@ -11,10 +11,7 @@ export const getValidationErrors = obj => {
    if (!isEmail(obj.email)) errors.push('Please enter a valid email');
    if (obj.isRegister && obj.password !== obj.confirmPassword)
       errors.push('The entered passwords do not match');
-   return {
-      hasErrors: errors.length > 0,
-      errors: errors,
-   };
+   if (errors.length > 0) return { errors: errors };
 };
 
 const isEmail = email => {
@@ -24,7 +21,7 @@ const isEmail = email => {
 
 // FIXME use error-card
 const login = response => {
-   if (response.error) return response.error;
+   if (response.errors) return response;
    response = response.data;
    store.commit('login', {
       id: response.id,
