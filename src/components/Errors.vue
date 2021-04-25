@@ -5,6 +5,7 @@
 </template>
 
 <script>
+// TODO make this array compatible
 export default {
    name: 'Errors',
    props: {

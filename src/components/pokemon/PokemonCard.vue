@@ -40,6 +40,7 @@
                >
             </div>
          </v-card-text>
+         <!-- TODO componentize for error handling -->
          <v-dialog v-model="graveyardData.flag" width="500">
             <c-dialog-card
                :props="graveyardData.dialogCard"

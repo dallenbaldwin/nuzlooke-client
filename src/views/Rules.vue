@@ -39,7 +39,7 @@
 import DialogCard from '../components/dialogs/DialogCard.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import RuleCard from '../components/rules/RuleCard.vue';
-import CreateRule from '../components/dialogs/CreateRule.vue';
+import CreateRule from '../components/rules/CreateRule.vue';
 import Toolbar from '../components/Toolbar.vue';
 import * as util from '../util/util';
 

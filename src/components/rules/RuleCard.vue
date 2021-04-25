@@ -193,9 +193,9 @@ export default {
       },
       closeError() {
          this.processingRule = false;
-         this.errors.hasErrors = false;
-         this.errors.errors = [];
-         this.errors.status = null;
+         // this.errors.hasErrors = false;
+         // this.errors.errors = [];
+         // this.errors.status = null;
       },
    },
    computed: {

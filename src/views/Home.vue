@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import SpeedDial from '../components/SpeedDial.vue';
+import SpeedDial from '../components/speed-dial/SpeedDial.vue';
 import Icons from '../constants/Icons';
 
 export default {

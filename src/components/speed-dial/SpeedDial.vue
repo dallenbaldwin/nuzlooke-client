@@ -58,17 +58,17 @@
 </template>
 
 <script>
-import ProgressSpinner from './ProgressSpinner.vue';
-import TextField from './form-controls/TextField.vue';
-import Button from './Button.vue';
-import Errors from './Errors.vue';
-import Icons from '../constants/Icons';
-import Pages from '../constants/Pages';
+import ProgressSpinner from '../ProgressSpinner.vue';
+import TextField from '../form-controls/TextField.vue';
+import Button from '../Button.vue';
+import Errors from '../Errors.vue';
+import Icons from '../../constants/Icons';
+import Pages from '../../constants/Pages';
 import colors from 'vuetify/lib/util/colors';
-import FabBtn from './speed-dial/FabBtn.vue';
-import TabMap from '../constants/TabMap';
-import * as authController from '../controllers/auth';
-import * as util from '../util/util';
+import FabBtn from './FabBtn.vue';
+import TabMap from '../../constants/TabMap';
+import * as authController from '../../controllers/auth';
+import * as util from '../../util/util';
 
 export default {
    name: 'SpeedDial',
@@ -77,7 +77,7 @@ export default {
       tab: { required: false, default: null },
    },
    components: {
-      AppSettings: () => import('./dialogs/AppSettings.vue'),
+      AppSettings: () => import('../dialogs/AppSettings.vue'),
       'c-progress-spinner': ProgressSpinner,
       'c-error': Errors,
       'c-text-field': TextField,

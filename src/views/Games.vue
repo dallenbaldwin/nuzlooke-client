@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import SpeedDial from '../components/SpeedDial.vue';
+import SpeedDial from '../components/speed-dial/SpeedDial.vue';
 import DialogCard from '../components/dialogs/DialogCard.vue';
 import Gamecordian from '../components/games/Gamecordian.vue';
 import CreateGame from '../components/games/CreateGame.vue';

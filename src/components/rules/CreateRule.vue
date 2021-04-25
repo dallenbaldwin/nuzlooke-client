@@ -58,13 +58,13 @@
 </template>
 
 <script>
-import DialogCard from './DialogCard.vue';
+import DialogCard from '../dialogs/DialogCard.vue';
 import Combobox from '../form-controls/Combobox.vue';
 import TextField from '../form-controls/TextField.vue';
 import TextArea from '../form-controls/TextArea.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
 import Errors from '../Errors.vue';
-import ErrorCard from './ErrorCard.vue';
+import ErrorCard from '../dialogs/ErrorCard.vue';
 import Button from '../Button.vue';
 import * as rulesController from '../../controllers/rules';
 import GameRules from '../../constants/GameRules';

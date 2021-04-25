@@ -30,7 +30,7 @@
 
 <script>
 import NavDrawer from '../components/NavDrawer.vue';
-import SpeedDial from '../components/SpeedDial.vue';
+import SpeedDial from '../components/speed-dial/SpeedDial.vue';
 import LoginProviders from '../components/auth/LoginProviders.vue';
 import UserPass from '../components/auth/UserPass.vue';
 
