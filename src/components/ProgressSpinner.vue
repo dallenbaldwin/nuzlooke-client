@@ -1,5 +1,8 @@
 <template>
-   <div class="text-center mt-3 mb-3">
+   <div class="text-center ma-3">
+      <div class="text-button ma-1">
+         Processing request...
+      </div>
       <v-progress-circular
          indeterminate
          :size="size"
