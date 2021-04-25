@@ -114,11 +114,7 @@
                      label="Name"
                      v-model="editGame.values.label"
                   ></c-text-field>
-                  <c-error
-                     v-for="(error, i) of editGame.errors.errors"
-                     :key="i"
-                     :error="error"
-                  ></c-error>
+                  <c-errors :errors="errors"></c-errors>
                </div>
             </v-fade-transition>
          </c-dialog-card>
@@ -168,7 +164,7 @@ export default {
       'c-progress-spinner': ProgressSpinner,
       'c-poke-sprite': PokeSprite,
       'c-badge-sprite': BadgeSprite,
-      'c-error': Errors,
+      'c-errors': Errors,
       'c-text-field': TextField,
       'c-error-card': ErrorCard,
    },

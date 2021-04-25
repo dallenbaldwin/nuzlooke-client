@@ -7,7 +7,7 @@
          If the error(s) persists, note the error(s) and what you were doing when they
          happened. Then contact our support team so we can look into the issue
       </div>
-      <c-error v-for="(error, i) of errors" :key="i" :error="error"></c-error>
+      <c-errors :errors="errors"></c-errors>
    </c-dialog-card>
 </template>
 
@@ -19,7 +19,7 @@ export default {
    name: 'ErrorCard',
    components: {
       'c-dialog-card': DialogCard,
-      'c-error': Errors,
+      'c-errors': Errors,
    },
    props: {
       errors: { required: true },

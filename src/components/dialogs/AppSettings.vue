@@ -16,11 +16,7 @@
                v-model="saveFilters"
                class="ma-3"
             ></v-checkbox> -->
-            <c-error
-               v-for="(error, i) of errors.errors"
-               :key="i"
-               :error="error"
-            ></c-error>
+            <c-errors :errors="errors"></c-errors>
          </div>
       </v-fade-transition>
    </c-dialog-card>
@@ -38,7 +34,7 @@ export default {
    components: {
       'c-dialog-card': DialogCard,
       'c-text-field': TextField,
-      'c-error': Errors,
+      'c-errors': Errors,
       'c-progress-spinner': ProgressSpinner,
    },
    props: {},
