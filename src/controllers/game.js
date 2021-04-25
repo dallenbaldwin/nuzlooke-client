@@ -3,122 +3,132 @@ import store from '../store/store';
 import * as services from '../services/game';
 import * as util from '../util/util';
 import Game from '../models/Game';
-import APIResponse from '../models/APIResponse';
 import * as userController from '../controllers/user';
 import GameVersions from '../constants/GameVersions';
 import GameSnapshot from '../models/GameSnapshot';
 import GameRules from '../constants/GameRules';
 import Pages from '../constants/Pages';
 import TabMap from '../constants/TabMap';
-import * as routeController from './route';
+import { getEncountersByVersion } from '../services/encounters';
+// temp
+import APIResponse from '../models/APIResponse';
 
+// TODO handle error
 export const updateEncountersAndPokemonsInDB = async () => {
-   try {
-      await services.updateGameById(store.state.game.id, {
-         pokemons: store.state.game.pokemons,
-         encounters: store.state.game.encounters,
-      });
-   } catch (err) {
-      alert(util.errorCatch(err));
-   }
+   const response = await services.updateGameById(store.state.game.id, {
+      pokemons: store.state.game.pokemons,
+      encounters: store.state.game.encounters,
+   });
+   if (response && response.error) return response;
 };
 
 export const updateGymsInDB = async () => {
-   try {
-      const res = await services.updateGameById(store.state.game.id, {
-         gyms: store.state.game.gyms,
-      });
-   } catch (err) {
-      alert(util.errorCatch(err));
-   }
+   const response = await services.updateGameById(store.state.game.id, {
+      gyms: store.state.game.gyms,
+   });
+   if (response && response.error) return response;
 };
 
 export const getValidationErrors = (options, isEdit = false) => {
    const errors = [];
    if (util.isUndefined(options.label))
-      errors.push('You must give this playthrough a Name!');
+      errors.push('You must give this playthrough a Name');
    if (util.isUndefined(options.version) && !isEdit)
-      errors.push('You must select a Version!');
+      errors.push('You must select a Version');
    let rules = options.rules.map(r => r.values).filter(r => !util.isUndefined(r));
    if (rules.length !== options.rules.length && !isEdit)
-      errors.push('A Pre-defined Rule is missing a selection!');
+      errors.push('A Pre-defined Rule is missing a selection');
    let set = new Set();
    rules.forEach(rule => {
       set.add(rule.value);
    });
    if (set.size !== rules.length && !isEdit)
-      errors.push('You cannot have two of the same Pre-defined Rule!');
+      errors.push('You cannot have two of the same Pre-defined Rule');
    return {
       errors: errors,
       hasErrors: errors.length > 0,
    };
 };
 
-export const createNewGame = async (label, version, rules) => {
-   // TODO rework to create the game, then ask for the routes, possibly in a loop??
-   try {
-      const newRules = rules.map(rule => {
-         let defaultRule = Object.values(GameRules).find(gr => gr.id === rule);
-         defaultRule.is_active = true;
-         return defaultRule;
-      });
-      const newGame = Game.builder()
+export const createGame = async (label, version, rules) => {
+   // get encounters first in order to prevent rogue game creation ~40s max
+   const encountersResponse = await getEncountersByVersion(version);
+   if (encountersResponse && encountersResponse.error) return encountersResponse;
+   // create game
+   const newRules = rules.map(rule => {
+      let defaultRule = Object.values(GameRules).find(gr => gr.id === rule);
+      defaultRule.is_active = true;
+      return defaultRule;
+   });
+   const createResponse = await services.createGame(
+      Game.builder()
          .withLabel(label)
          .withVersion(version)
          .withGameRules(newRules)
-         .build();
-      const res = await services.createGame(newGame);
-      const createdGame = APIResponse.fromResponse(res).data;
-      const gameSnapshot = getSnapshot(createdGame);
-      userController.addGameSnapshot(gameSnapshot);
-      await userController.updateUserGames();
-      const encounters = await routeController.getEncountersByVersion(version);
-      await goToGame(createdGame.id, util.mobile() ? Pages.RULES : TabMap.RULES);
-      store.commit('setEncounters', encounters.data);
-      await updateEncountersAndPokemonsInDB();
-      //
-      // if 30 seconds feels too long
-      // routeController.getEncountersByVersion(version).then(encounters => {
-      //    store.commit('setEncounters', encounters);
-      //    updateEncountersAndPokemonsInDB();
-      // });
-   } catch (err) {
-      alert(util.errorCatch(err));
-   }
+         .build()
+   );
+   if (createResponse && createResponse.error) return createResponse;
+   const createdGame = createResponse.data;
+   // update game in database with encounters
+   const updateResponse = await services.updateGameById(createdGame.id, {
+      encounters: encountersResponse.data,
+   });
+   if (updateResponse && updateResponse.error) return updateResponse;
+   // update user snapshot
+   const gameSnapshot = buildSnapshot(createdGame);
+   userController.addGameSnapshot(gameSnapshot);
+   const updateGameResponse = await userController.updateUserGames();
+   if (updateGameResponse && updateGameResponse.error) return updateGameResponse;
+   // go into the game
+   const goToResponse = await goToGame(
+      createdGame.id,
+      util.mobile() ? Pages.RULES : TabMap.RULES
+   );
+   if (goToResponse && goToResponse.error) return goToResponse;
 };
 
+// TODO handle errors
 export const updateGameRulesInDB = async game => {
-   try {
-      await services.updateGameById(game.id, { game_rules: game.game_rules });
-   } catch (err) {
-      alert(util.errorCatch(err));
-   }
+   const response = await services.updateGameById(game.id, {
+      game_rules: game.game_rules,
+   });
+   if (response && response.error) return response;
 };
 
 export const goToGame = async (gameId, route) => {
-   const res = await services.getGameById(gameId);
-   const game = APIResponse.fromResponse(res).data;
+   const response = await services.getGameById(gameId);
+   if (response && response.error) return response;
+   const game = response.data;
    store.commit('selectGame', game);
    if (util.mobile()) util.navigate({ name: route, params: { gameId: game.id } });
    else util.navigate({ name: 'game', params: { gameId: game.id, tab: route } });
 };
 
+// TODO handle errors
 export const deleteExistingGame = async gameId => {
    store.commit('deleteExistingGame', gameId);
-   await services.deleteGameById(gameId);
-   await userController.updateUserGames();
+   const deleteResponse = await services.deleteGameById(gameId);
+   if (deleteResponse && deleteResponse.error) return deleteResponse;
+   const updateResponse = await userController.updateUserGames();
+   if (updateResponse && updateResponse.error) return updateResponse;
 };
 
+// TODO handle errors
 export const finishGame = async gameId => {
    store.commit('finishGame', gameId);
-   await userController.updateUserGames();
-   await services.updateGameById(gameId, { is_finished: true });
+   const updateUGResponse = await userController.updateUserGames();
+   if (updateUGResponse && updateUGResponse.error) return updateUGResponse;
+   const updateGResponse = await services.updateGameById(gameId, { is_finished: true });
+   if (updateGResponse && updateGResponse.error) return updateGResponse;
 };
 
+// TODO handle errors
 export const updateGameLabel = async (gameId, label) => {
    store.commit('updateGameLabel', { gameId: gameId, label: label });
-   await userController.updateUserGames();
-   await services.updateGameById(gameId, { label: label });
+   const updateUGResponse = await userController.updateUserGames();
+   if (updateUGResponse && updateUGResponse.error) return updateUGResponse;
+   const updateGResponse = await services.updateGameById(gameId, { label: label });
+   if (updateGResponse && updateGResponse.error) return updateGResponse;
 };
 
 export const getConsoleIcon = family => {
@@ -134,7 +144,7 @@ export const getPartyIconUrls = game =>
 export const getGymBadgeIconsUrls = game =>
    game.gyms.filter(g => g.is_defeated).map(g => g.badge.sprite_url);
 
-export const getSnapshot = game => {
+export const buildSnapshot = game => {
    return GameSnapshot.builder()
       .withGameId(game.id)
       .withGymBadgeIconUrls(getGymBadgeIconsUrls(game))

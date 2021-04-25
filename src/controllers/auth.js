@@ -22,6 +22,7 @@ const isEmail = email => {
    return pattern.test(email);
 };
 
+// FIXME use error-card
 const login = response => {
    if (response.error) return response.error;
    response = response.data;

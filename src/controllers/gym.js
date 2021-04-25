@@ -5,9 +5,11 @@ import * as userController from './user';
 export const setEarnedBadge = async gym => {
    store.commit('earnedBadge', gym);
    const gymBadgeUrls = gameController.getGymBadgeIconsUrls(store.state.game);
-   const snapshot = gameController.getSnapshot(store.state.game);
+   const snapshot = gameController.buildSnapshot(store.state.game);
    snapshot.gym_badge_icon_urls = gymBadgeUrls;
    store.commit('updateGameSnapshot', snapshot);
-   await userController.updateUserGames();
-   await gameController.updateGymsInDB();
+   const updateUGResponse = await userController.updateUserGames();
+   if (updateUGResponse.error) return updateUGResponse;
+   const updateGymResponse = await gameController.updateGymsInDB();
+   if (updateGymResponse.error) return updateGymResponse;
 };

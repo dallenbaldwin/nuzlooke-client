@@ -1,32 +1,34 @@
-import * as pokeapiServices from '../services/pokeapi';
+import * as services from '../services/pokeapi';
 import UserPokemon from '../models/UserPokemon';
 import { errorCatch } from '../util/util';
 import store from '../store/store';
 
+// TODO error handling at ... every step??
 export const buildUserPokemon = async (species, nickname, partyState) => {
-   try {
-      species = species.toLowerCase();
-      const pokeData = await pokeapiServices.getPokemonBySpecies(species);
-      const speciesData = await pokeapiServices.get(pokeData.species.url);
-      const evoData = await pokeapiServices.get(speciesData.evolution_chain.url);
-      const evolvesTo = getNextEvolution(evoData.chain, species);
-      const evolvesToPokemon = await validateEvolutions(evolvesTo);
-      const english = getEnglish(speciesData.names);
-      return (
-         UserPokemon.builder()
-            .withSpecies(english ? english : normalizeKabob(pokeData.species.name))
-            .withNickname(nickname)
-            .withPartyState(partyState)
-            .withSpritUrl(pokeData.sprites.front_default)
-            // this will have to be refactored eventually
-            .withIconUrl(pokeData.sprites.versions['generation-vii'].icons.front_default)
-            .withTypes(pokeData.types.map(t => normalizeKabob(t.type.name)))
-            .withEvolvesTo(evolvesToPokemon)
-            .build()
-      );
-   } catch (err) {
-      alert(errorCatch(err));
-   }
+   species = species.toLowerCase();
+   const pokeData = await services.getPokemonBySpecies(species);
+   if (pokeData && pokeData.error) return pokeData;
+   const speciesData = await services.get(pokeData.data.species.url);
+   if (speciesData && speciesData.error) return speciesData;
+   const evoData = await services.get(speciesData.data.evolution_chain.url);
+   const evolvesTo = getNextEvolution(evoData.chain, species);
+   const evolvesToPokemon = await getValidEvolutions(evolvesTo);
+   if (evolvesToPokemon && evolvesToPokemon.error) return evolvesToPokemon;
+   const english = getEnglish(speciesData.data.names);
+   return (
+      UserPokemon.builder()
+         .withSpecies(english ? english : normalizeKabob(pokeData.data.species.name))
+         .withNickname(nickname)
+         .withPartyState(partyState)
+         .withSpritUrl(pokeData.data.sprites.front_default)
+         // this will have to be refactored eventually
+         .withIconUrl(
+            pokeData.data.sprites.versions['generation-vii'].icons.front_default
+         )
+         .withTypes(pokeData.data.types.map(t => normalizeKabob(t.type.name)))
+         .withEvolvesTo(evolvesToPokemon.data)
+         .build()
+   );
 };
 
 const getEnglish = languages => {
@@ -52,16 +54,20 @@ const getNextEvolution = (chain, currentSpecies) => {
    }
 };
 
-const validateEvolutions = async evolutions => {
+const getValidEvolutions = async evolutions => {
    if (!evolutions) return;
    const version = store.state.game.version.version; // should never be able to call this method when game doesn't exist
    const validEvolutions = [];
    for (let evolution of evolutions) {
-      const pokeData = await pokeapiServices.getPokemonBySpecies(evolution.name);
-      const isValid = pokeData.game_indices.map(i => i.version.name).includes(version);
+      const pokeData = await services.getPokemonBySpecies(evolution.name);
+      if (pokeData && pokeData.error) return pokeData;
+      const isValid = pokeData.data.game_indices
+         .map(i => i.version.name)
+         .includes(version);
       if (isValid) {
-         const speciesData = await pokeapiServices.get(evolution.url);
-         const english = getEnglish(speciesData.names);
+         const speciesData = await services.get(evolution.url);
+         if (speciesData && speciesData.error) return speciesData;
+         const english = getEnglish(speciesData.data.names);
          if (english) validEvolutions.push(english);
       }
    }

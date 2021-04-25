@@ -2,11 +2,13 @@ import * as userController from '../controllers/user';
 import { isUndefined } from '../util/util';
 import store from '../store/store';
 
+// TODO implement error handling
 export const saveSettings = async () => {
-   await userController.updateUser({
+   const response = await userController.updateUser({
       username: store.state.username,
       app_settings: store.state.app_settings,
    });
+   if (response && response.error) return response;
 };
 
 export const getValidationErrors = options => {
@@ -18,8 +20,12 @@ export const getValidationErrors = options => {
    };
 };
 
+// TODO implement error handling
 export const saveFilters = async (page, values) => {
    console.log({ page: page, values: values });
    store.commit('savePageFilters', { page: page, values: values });
-   await userController.updateUser({ app_settings: store.state.app_settings });
+   const response = await userController.updateUser({
+      app_settings: store.state.app_settings,
+   });
+   if (response && response.error) return response;
 };

@@ -30,6 +30,7 @@ const buildDefaultRule = options => {
    return stockRule;
 };
 
+// TODO error handling
 export const createNewRule = async options => {
    let newRule;
    if (options.useStock) {
@@ -38,16 +39,19 @@ export const createNewRule = async options => {
       newRule = buildCustomRule(options);
    }
    store.commit('addNewRule', newRule);
-   await updateGameRulesInDB(store.state.game);
+   const response = await updateGameRulesInDB(store.state.game);
+   if (response && response.error) return response;
 };
 
+// TODO error handling
 export const updateRule = async options => {
    if (options.useStock) {
       updateRuleById(options);
    } else {
       updateRuleByLabel(options);
    }
-   await updateGameRulesInDB(store.state.game);
+   const response = await updateGameRulesInDB(store.state.game);
+   if (response && response.error) return response;
 };
 
 const updateRuleById = options => {
@@ -61,10 +65,12 @@ const updateRuleByLabel = options => {
    });
 };
 
+// TODO error handling
 export const deleteRule = async rule => {
    if (rule.id === 0) store.commit('deleteExistingRuleByLabel', rule);
    else store.commit('deleteExistingRuleById', rule);
-   await updateGameRulesInDB(store.state.game);
+   const response = await updateGameRulesInDB(store.state.game);
+   if (response && response.error) return response;
 };
 
 export const getValidationErrors = options => {
@@ -72,17 +78,17 @@ export const getValidationErrors = options => {
    if (options.useStock) {
       // check for stock errors
       if (util.isUndefined(options.stock))
-         errors.push('You must select a Pre-defined Rule!');
+         errors.push('You must select a Pre-defined Rule');
       if (
          !util.isUndefined(options.stock) &&
          store.state.game.game_rules.map(r => r.id).includes(options.stock.value)
       )
-         errors.push('This Rule already exists!');
+         errors.push('This Rule already exists');
    } else {
       // check for custom errors
-      if (util.isUndefined(options.label)) errors.push('You must give rules a Name!');
+      if (util.isUndefined(options.label)) errors.push('You must give rules a Name');
       if (util.isUndefined(options.description))
-         errors.push('You must give rules a Description!');
+         errors.push('You must give rules a Description');
       // only need to worry about adding new custom rules
       if (
          !options.isUpdate &&
@@ -91,7 +97,7 @@ export const getValidationErrors = options => {
             .map(r => r.label.toLowerCase())
             .includes(options.label.toLowerCase())
       )
-         errors.push('This Rule already exists!');
+         errors.push('This Rule already exists');
    }
    return {
       errors: errors,

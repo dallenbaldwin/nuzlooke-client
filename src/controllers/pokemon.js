@@ -26,15 +26,19 @@ export const evolvePokemon = async (pokemon, evolvesTo) => {
       pokemon.nickname,
       pokemon.party_state
    );
+   if (evolved && evolved.error) return evolved;
    evolved.id = pokemon.id;
-   await updatePokemonsAndGame(evolved);
+   const update = await updatePokemonsAndGame(evolved);
+   if (update && update.error) return update;
 };
 
 export const updatePokemonsAndGame = async pokemon => {
    updatePokemonInStore(pokemon);
-   updatePokemonsInDB();
+   const updateDB = await updatePokemonsInDB();
+   if (updateDB && updateDB.error) return updateDB;
    userController.updateSnapshotPartyUrls(store.state.game.id);
-   await userController.updateUserGames();
+   const updateUG = await userController.updateUserGames();
+   if (updateUG && updateUG.error) return updateUG;
 };
 
 export const sendToStorage = pokemon => {
@@ -56,11 +60,11 @@ export const updatePokemonInStore = pokemon => {
    store.commit('updatePokemon', pokemon);
 };
 
-// TODO after game service reconfigure, check that this works of if we need to change it
-export const updatePokemonsInDB = () => {
-   gameServices.updateGameById(store.state.game.id, {
+export const updatePokemonsInDB = async () => {
+   const update = await gameServices.updateGameById(store.state.game.id, {
       pokemons: store.state.game.pokemons,
    });
+   if (update && update.error) return update;
 };
 
 export const pushNewPokemon = newPokemon => {

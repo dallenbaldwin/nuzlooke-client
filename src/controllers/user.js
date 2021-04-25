@@ -1,29 +1,24 @@
 import store from '../store/store';
 import * as services from '../services/user';
 import * as gameController from './game';
-import { prettySON } from '../util/util';
 import APIResponse from '../models/APIResponse';
 
+// TODO find references and error handle
 export const updateUserGames = async () => {
-   try {
-      const res = await services.updateUserById(store.state.userId, {
-         games: store.state.userGames,
-      });
-   } catch (err) {
-      alert(err);
-   }
+   const response = await services.updateUserById(store.state.userId, {
+      games: store.state.userGames,
+   });
+   if (response && response.error) return response;
 };
 
 export const addGameSnapshot = snapshot => {
    store.commit('addGameSnapshot', snapshot);
 };
 
+// TODO error handling
 export const updateUser = async options => {
-   try {
-      await services.updateUserById(store.state.userId, options);
-   } catch (err) {
-      alert(prettySON([err, err.stack]));
-   }
+   const response = await services.updateUserById(store.state.userId, options);
+   if (response && response.error) return response;
 };
 
 export const updateSnapshotPartyUrls = id => {
