@@ -42,14 +42,14 @@
                v-if="isAvailable"
                color="green"
                :icon="Icons.CONTROLS.EXCLAIM"
-               @click="clickNewEncounter"
+               @click="newEncounter = !newEncounter"
                :disabled="game.is_finished"
             >
                Encounter
             </c-btn>
             <c-btn
                v-if="!isAvailable"
-               @click="clickResetEncounter"
+               @click="resetEncounter = !resetEncounter"
                color="orange"
                :icon="Icons.CONTROLS.EXCLAIM"
                :disabled="game.is_finished"
@@ -57,100 +57,17 @@
                Reset
             </c-btn>
          </v-card-actions>
-         <v-dialog v-model="newEncounterDialog" width="500">
-            <c-dialog-card
-               :props="newEncounterDialogCard"
-               v-on:close-dialog="closeDialog"
-               v-on:new-encounter="confirmNewEncounter"
-            >
-               <v-slide-y-transition>
-                  <div v-show="processingEncounter">
-                     <c-progress-spinner></c-progress-spinner>
-                  </div>
-               </v-slide-y-transition>
-               <v-slide-y-transition>
-                  <div v-show="!processingEncounter">
-                     <v-radio-group column v-model="newEncounter.result.constant">
-                        <v-radio
-                           v-for="(result, i) of Object.values(EncounterResultConst)"
-                           :key="`${result}-${i}`"
-                           :label="result"
-                           :value="result"
-                        ></v-radio>
-                     </v-radio-group>
-                     <c-combobox
-                        v-model="newEncounter.result.species"
-                        :items="newEncounter.pokemons"
-                        label="Pokemon"
-                        :disabled="
-                           newEncounter.result.constant === EncounterResultConst.AVAILABLE
-                        "
-                     >
-                     </c-combobox>
-                     <c-text-field
-                        v-model="newEncounter.result.nickname"
-                        label="Nickname"
-                        :disabled="
-                           newEncounter.result.constant !== EncounterResultConst.CAUGHT
-                        "
-                     ></c-text-field>
-                     <v-slide-y-transition>
-                        <v-card elevation="0" v-show="showPartyManagerOptions">
-                           <v-card-title>You have 6 Pokemon in your Party!</v-card-title>
-                           <v-card-subtitle
-                              >You can only keep up to 6 Pokemon in your Party. Would you
-                              like to switch a current party member for
-                              {{ newEncounter.result.nickname }}?</v-card-subtitle
-                           >
-                           <v-card-text>
-                              <v-radio-group
-                                 v-model="newEncounter.result.destination"
-                                 row
-                                 mandatory
-                              >
-                                 <v-radio
-                                    :value="PartyState.PC"
-                                    label="Send to Storage"
-                                 ></v-radio>
-                                 <v-radio
-                                    :value="PartyState.PARTY"
-                                    label="Send to Party"
-                                 ></v-radio>
-                              </v-radio-group>
-                              <c-combobox
-                                 label="Party Member"
-                                 :items="partyPokemons"
-                                 v-model="newEncounter.result.replacement"
-                                 :disabled="
-                                    newEncounter.result.destination === PartyState.PC
-                                 "
-                              >
-                              </c-combobox>
-                           </v-card-text>
-                        </v-card>
-                     </v-slide-y-transition>
-                     <c-errors
-                        v-for="(error, i) of newEncounter.errors"
-                        :key="i"
-                        :error="error"
-                     >
-                     </c-errors>
-                  </div>
-               </v-slide-y-transition>
-            </c-dialog-card>
+         <v-dialog v-model="newEncounter" width="500">
+            <c-new-encounter
+               :encounter="encounter"
+               v-on:close-dialog="newEncounter = !newEncounter"
+            ></c-new-encounter>
          </v-dialog>
-         <v-dialog v-model="resetEncounterDialog" width="500">
-            <c-dialog-card
-               :props="resetEncounterDialogCard"
-               v-on:close-dialog="closeDialog"
-               v-on:reset-encounter="confirmResetEncounter"
-            >
-               <v-slide-y-transition>
-                  <div v-show="processingEncounter">
-                     <c-progress-spinner></c-progress-spinner>
-                  </div>
-               </v-slide-y-transition>
-            </c-dialog-card>
+         <v-dialog v-model="resetEncounter" width="500">
+            <c-reset-encounter
+               :encounter="encounter"
+               v-on:close-dialog="resetEncounter = !resetEncounter"
+            ></c-reset-encounter>
          </v-dialog>
       </v-card>
    </v-lazy>
@@ -159,200 +76,35 @@
 <script>
 import PokeSprite from '../pokemon/PokeSprite.vue';
 import Button from '../Button.vue';
-import ProgressSpinner from '../../components/ProgressSpinner.vue';
 import DialogCard from '../../components/dialogs/DialogCard.vue';
-import Errors from '../../components/Errors.vue';
-import TextField from '../form-controls/TextField.vue';
-import Combobox from '../form-controls/Combobox.vue';
+import ResetEncounter from './ResetEncounter.vue';
+import NewEncounter from './NewEncounter.vue';
 import EncounterResultConst from '../../constants/EncounterResultConst';
-import EncounterResult from '../../models/EncounterResult';
-import PartyState from '../../constants/PartyState';
-import * as pokemonController from '../../controllers/pokemon';
-import * as routeController from '../../controllers/route';
-import * as pokeapiController from '../../controllers/pokeapi';
-import * as userController from '../../controllers/user';
-import * as gameController from '../../controllers/game';
-import * as util from '../../util/util';
 
 export default {
    name: 'RouteCard',
-   props: ['encounter'],
+   props: {
+      encounter: { required: true },
+   },
    components: {
       'c-poke-sprite': PokeSprite,
       'c-btn': Button,
       'c-dialog-card': DialogCard,
-      'c-progress-spinner': ProgressSpinner,
-      'c-errors': Errors,
-      'c-text-field': TextField,
-      'c-combobox': Combobox,
+      'c-reset-encounter': ResetEncounter,
+      'c-new-encounter': NewEncounter,
    },
    data() {
       return {
          isActive: false,
-         processingEncounter: false,
-         // new encounter
-         newEncounter: {
-            result: {
-               constant: null,
-               species: null,
-               nickname: null,
-               destination: null,
-               replacement: null,
-            },
-            id: null,
-            pokemons: null,
-            label: null,
-            errors: null,
-         },
-         newEncounterDialog: false,
-         newEncounterDialogCard: {
-            title: 'New Encounter',
-            primaryBtn: { action: 'new-encounter' },
-         },
-         // reset encounter
-         resetEncounterDialog: false,
-         resetEncounter: null,
-         resetEncounterDialogCard: {
-            title: `Reset ${this.encounter.label}?`,
-            text: `Are you sure you want to reset ${this.encounter.label}? Any associated Pokemon will be removed from your list. This action cannot be undone.`,
-            primaryBtn: { action: 'reset-encounter', color: 'orange', text: 'Reset' },
-         },
+         newEncounter: false,
+         resetEncounter: false,
       };
    },
-   watch: {
-      newEncounter: {
-         handler(newVal) {
-            if (routeController.isFledFainted(newVal.result.constant)) {
-               this.newEncounter.result.nickname = null;
-            } else if (routeController.isAvailable(newVal.result.constant)) {
-               this.newEncounter.result.nickname = null;
-               this.newEncounter.result.species = null;
-            }
-            if (pokemonController.isPC(newVal.result.destination)) {
-               this.newEncounter.result.replacement = null;
-            }
-         },
-         deep: true,
-      },
-      showPartyManagerOptions(newVal) {
-         if (newVal === false) {
-            this.newEncounter.result.destination = null;
-            this.newEncounter.result.replacement = null;
-         }
-      },
-   },
-   methods: {
-      clickResetEncounter() {
-         this.resetEncounter = this.encounter;
-         this.resetEncounterDialog = true;
-      },
-      async confirmResetEncounter() {
-         this.processingEncounter = true;
-         let pokemon = pokemonController.getPokemonById(
-            this.resetEncounter.result.pokemon_id
-         );
-         if (pokemon) pokemonController.removeFromList(pokemon);
-         this.encounter.result.pokemon_id = null;
-         this.encounter.result.species = null;
-         this.encounter.result.constant = EncounterResultConst.AVAILABLE;
-         this.encounter.result.sprite_url = null;
-         this.encounter.result.nickname = null;
-         routeController.updateEncounterInStore(this.encounter);
-         await gameController.updateEncountersAndPokemonsInDB();
-         userController.updateSnapshotPartyUrls(this.game.id);
-         await userController.updateUserGames();
-         this.closeDialog();
-      },
-      clickNewEncounter() {
-         this.newEncounterDialogCard.title = this.encounter.label;
-         this.newEncounter.label = this.encounter.label;
-         this.newEncounter.pokemons = this.encounter.pokemons.map(p =>
-            Object({ value: p.sprite_url, text: p.species })
-         );
-         this.newEncounter.id = this.encounter.id;
-         this.newEncounter.result.constant = EncounterResultConst.AVAILABLE;
-         this.newEncounter.result.species = null;
-         this.newEncounter.result.destination = null;
-         this.newEncounter.result.replacement = null;
-         this.newEncounterDialog = true;
-         this.newEncounter.errors = [];
-      },
-      async confirmNewEncounter() {
-         // validate for data errors
-         this.newEncounter.errors = routeController.getEncounterErrors(
-            this.newEncounter.result
-         );
-         if (!util.isEmptyArray(this.newEncounter.errors)) return;
-         // ignore when they confirm on available
-         if (routeController.isAvailable(this.newEncounter.result.constant)) {
-            this.closeDialog();
-            return;
-         }
-         // start process
-         this.processingEncounter = true;
-         // set result
-         this.encounter.result = EncounterResult.builder()
-            .withNickname(this.newEncounter.result.nickname)
-            .withSpecies(this.newEncounter.result.species.text)
-            .withConstant(this.newEncounter.result.constant)
-            .build();
-         // pokeapi and set new user pokemon
-         const newPokemon = await pokeapiController.buildUserPokemon(
-            this.newEncounter.result.species.text,
-            this.newEncounter.result.nickname,
-            undefined
-         );
-         this.encounter.result.sprite_url = newPokemon.sprite_url;
-         // handle capture situations
-         if (routeController.isCaught(this.newEncounter.result.constant)) {
-            this.encounter.result.pokemon_id = newPokemon.id;
-            if (pokemonController.isParty(this.newEncounter.result.destination)) {
-               newPokemon.party_state = PartyState.PARTY;
-               const replacement = pokemonController.getPokemonById(
-                  this.newEncounter.result.replacement.value
-               );
-               replacement.party_state = PartyState.PC;
-               pokemonController.updatePokemonInStore(replacement);
-            } else if (!this.showPartyManagerOptions) {
-               newPokemon.party_state = PartyState.PARTY;
-            } else {
-               newPokemon.party_state = PartyState.PC;
-            }
-            pokemonController.pushNewPokemon(newPokemon);
-         }
-         routeController.updateEncounterInStore(this.encounter);
-         await gameController.updateEncountersAndPokemonsInDB();
-         userController.updateSnapshotPartyUrls(this.game.id);
-         await userController.updateUserGames();
-         this.closeDialog();
-      },
-      closeDialog() {
-         this.newEncounterDialog = false;
-         this.resetEncounterDialog = false;
-         this.processingEncounter = false;
-      },
-   },
+   watch: {},
+   methods: {},
    computed: {
       game() {
          return this.$store.state.game;
-      },
-      partyPokemons() {
-         return this.game.pokemons
-            .filter(p => p.party_state === PartyState.PARTY)
-            .map(p =>
-               Object({
-                  value: p.id,
-                  text: p.species,
-                  disabled: false,
-               })
-            );
-      },
-      partyIsFull() {
-         return pokemonController.getPartyLength() === pokemonController.PARTY_MAX_SIZE;
-      },
-      showPartyManagerOptions() {
-         const caught = routeController.isCaught(this.newEncounter.result.constant);
-         return this.partyIsFull && caught;
       },
       isAvailable() {
          return this.encounter.result.constant === EncounterResultConst.AVAILABLE;
