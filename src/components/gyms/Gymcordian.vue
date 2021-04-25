@@ -48,7 +48,6 @@
                      color="success"
                      inset
                      label="Earned"
-                     :value="gym.is_defeated"
                      v-model="isDefeated"
                      @change="setEarnedBadge"
                   ></v-switch>
@@ -65,6 +64,13 @@
             </v-row>
          </v-container>
       </v-expansion-panel-content>
+      <v-dialog v-model="errors.hasErrors" width="500" @click:outside="closeError">
+         <c-error-card
+            :errors="errors.errors"
+            :status="errors.status"
+            v-on:close-dialog="closeError"
+         ></c-error-card>
+      </v-dialog>
    </v-expansion-panel>
 </template>
 
@@ -73,6 +79,7 @@ import BadgeSprite from './BadgeSprite.vue';
 import PokemonType from '../pokemon/PokemonType.vue';
 import Pokecordian from './Pokecordian.vue';
 import Button from '../Button.vue';
+import ErrorCard from '../dialogs/ErrorCard.vue';
 import * as util from '../../util/util';
 import * as gymController from '../../controllers/gym';
 
@@ -84,10 +91,16 @@ export default {
       'c-pokemon-type': PokemonType,
       'c-pokecordian': Pokecordian,
       'c-btn': Button,
+      'c-error-card': ErrorCard,
    },
    data() {
       return {
          isDefeated: this.gym.is_defeated,
+         errors: {
+            hasErrors: false,
+            errors: [],
+            status: null,
+         },
       };
    },
    computed: {
@@ -99,20 +112,32 @@ export default {
       },
       leaderText() {
          const t = [this.gym.leader.label];
-         if (
-            this.gym.leader.label !== '...' &&
-            !util.isUndefined(this.gym.leader.flavor_text)
-         )
-            t.push(':');
+         if (!util.isUndefined(this.gym.leader.flavor_text)) t.push(':');
          t.push(this.gym.leader.flavor_text);
          return t.join(' ');
       },
    },
    methods: {
-      setEarnedBadge() {
+      // this throws an error in the console for some reason... everything works, the switch just doesn't like @change
+      async setEarnedBadge() {
          this.gym.is_defeated = Boolean(this.isDefeated);
-         gymController.setEarnedBadge(this.gym);
+         const earned = await gymController.setEarnedBadge(this.gym);
+         if (earned) {
+            this.gym.is_defeated = !this.gym.is_defeated;
+            this.isDefeated = !this.isDefeated;
+            this.errors.hasErrors = true;
+            this.errors.status = earned.status;
+            this.errors.errors.push(...earned.error);
+         }
       },
+      closeError() {
+         this.errors.errors = [];
+         this.errors.status = null;
+         this.errors.hasErrors = false;
+      },
+   },
+   beforeMount() {
+      this.isDefeated = this.gym.is_defeated;
    },
 };
 </script>

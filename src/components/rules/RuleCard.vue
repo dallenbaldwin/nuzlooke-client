@@ -21,6 +21,7 @@
             >
          </v-card-actions>
       </v-card>
+      <!-- TODO add error handling after making this into components -->
       <v-dialog v-model="editRule.flag" width="500">
          <c-dialog-card
             :finished="gameFinished"
@@ -99,7 +100,6 @@ import TextField from '../form-controls/TextField.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
 import Combobox from '../form-controls/Combobox.vue';
 import Errors from '../Errors.vue';
-import * as util from '../../util/util';
 import GameRules from '../../constants/GameRules';
 import * as rulesController from '../../controllers/rules';
 
@@ -159,7 +159,7 @@ export default {
          this.editRule.flag = false;
          this.deleteRule.flag = false;
          this.processingRule = false;
-         this.editRule.errors.errors = [];
+         this.closeError();
       },
       clickEditRule() {
          if (this.gameRule.id === 0) {
@@ -190,6 +190,12 @@ export default {
          this.processingRule = true;
          await rulesController.deleteRule(this.gameRule);
          this.closeDialog();
+      },
+      closeError() {
+         this.processingRule = false;
+         this.errors.hasErrors = false;
+         this.errors.errors = [];
+         this.errors.status = null;
       },
    },
    computed: {

@@ -5,7 +5,7 @@
       </div>
       <div class="ma-3">
          If the error(s) persists, note the error(s) and what you were doing when they
-         happened. Then contact our support team so we can look into the issue',
+         happened. Then contact our support team so we can look into the issue
       </div>
       <c-error v-for="(error, i) of errors" :key="i" :error="error"></c-error>
    </c-dialog-card>

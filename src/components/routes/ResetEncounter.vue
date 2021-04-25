@@ -9,12 +9,20 @@
             <c-progress-spinner></c-progress-spinner>
          </div>
       </v-slide-y-transition>
+      <v-dialog v-model="errors.hasErrors" width="500" @click:outside="closeError">
+         <c-error-card
+            :errors="errors.errors"
+            :status="errors.status"
+            v-on:close-dialog="closeError"
+         ></c-error-card>
+      </v-dialog>
    </c-dialog-card>
 </template>
 
 <script>
 import ProgressSpinner from '../ProgressSpinner.vue';
 import DialogCard from '../dialogs/DialogCard.vue';
+import ErrorCard from '../dialogs/ErrorCard.vue';
 import * as pokemonController from '../../controllers/pokemon';
 import EncounterResultConst from '../../constants/EncounterResultConst';
 import * as userController from '../../controllers/user';
@@ -29,6 +37,7 @@ export default {
    components: {
       'c-dialog-card': DialogCard,
       'c-progress-spinner': ProgressSpinner,
+      'c-error-card': ErrorCard,
    },
    data() {
       return {
@@ -46,9 +55,6 @@ export default {
    },
    methods: {
       closeDialog() {
-         this.processing = false;
-         this.errors.errors = [];
-         this.errors.hasErrors = false;
          this.$emit('close-dialog');
       },
       async resetEncounter() {
@@ -62,11 +68,28 @@ export default {
          this.encounter.result.sprite_url = null;
          this.encounter.result.nickname = null;
          routeController.updateEncounterInStore(this.encounter);
-         const updateEPRequest = await gameController.updateEncountersAndPokemonsInDB();
-         if (updateEPRequest) alert(updateEPRequest);
+         const updatePERequest = await gameController.updateEncountersAndPokemonsInDB();
+         if (updatePERequest) {
+            this.errors.hasErrors = true;
+            this.errors.errors.push(...updatePERequest.error);
+            this.errors.status = updatePERequest.status;
+            return;
+         }
          userController.updateSnapshotPartyUrls(this.game.id);
-         await userController.updateUserGames();
+         const updateUGResponse = await userController.updateUserGames();
+         if (updateUGResponse) {
+            this.errors.hasErrors = true;
+            this.errors.errors.push(...updateUGResponse.error);
+            this.errors.status = updateUGResponse.status;
+            return;
+         }
          this.closeDialog();
+      },
+      closeError() {
+         this.processing = false;
+         this.errors.errors = [];
+         this.errors.hasErrors = false;
+         this.errors.status = null;
       },
    },
    computed: {

@@ -45,13 +45,15 @@
                label="Description"
                v-model="values.description"
             ></c-text-area>
-            <c-error
-               v-for="(error, i) of errors.errors"
-               :key="i"
-               :error="error"
-            ></c-error>
          </div>
       </v-slide-y-transition>
+      <v-dialog width="500" v-model="errors.hasErrors" @click:outside="closeError">
+         <c-error-card
+            v-on:close-dialog="closeError"
+            :errors="errors.errors"
+            :status="errors.status"
+         ></c-error-card>
+      </v-dialog>
    </c-dialog-card>
 </template>
 
@@ -62,6 +64,7 @@ import TextField from '../form-controls/TextField.vue';
 import TextArea from '../form-controls/TextArea.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
 import Errors from '../Errors.vue';
+import ErrorCard from './ErrorCard.vue';
 import Button from '../Button.vue';
 import * as rulesController from '../../controllers/rules';
 import GameRules from '../../constants/GameRules';
@@ -77,6 +80,7 @@ export default {
       'c-btn': Button,
       'c-text-field': TextField,
       'c-dialog-card': DialogCard,
+      'c-error-card': ErrorCard,
    },
    data() {
       return {
@@ -88,7 +92,11 @@ export default {
                action: 'create-rule',
             },
          },
-         errors: { errors: [], hasErrors: false },
+         errors: {
+            status: null,
+            errors: [],
+            hasErrors: false,
+         },
          values: {
             label: null,
             description: null,
@@ -110,16 +118,27 @@ export default {
          this.values.label = null;
          this.values.description = null;
          this.values.stock = null;
-         this.errors.errors = [];
+         this.closeError();
          this.$emit('close-dialog');
       },
       async confirmCreateRule() {
-         // if (!confirm(util.prettySON(this.values))) return;
          this.errors = rulesController.getValidationErrors(this.values);
          if (this.errors.hasErrors) return;
          this.processingRule = true;
-         await rulesController.createNewRule(this.values);
+         const response = await rulesController.createNewRule(this.values);
+         if (response) {
+            this.errors.errors.push(...response.error);
+            this.errors.status = response.status;
+            this.errors.hasErrors = true;
+            return;
+         }
          this.closeDialog();
+      },
+      closeError() {
+         this.processingRule = false;
+         this.errors.errors = [];
+         this.errors.status = null;
+         this.errors.hasErrors = false;
       },
    },
 };

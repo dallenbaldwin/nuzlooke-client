@@ -57,16 +57,22 @@
                   </v-card-text>
                </v-card>
             </v-slide-y-transition>
-            <c-errors v-for="(error, i) of errors.errors" :key="i" :error="error">
-            </c-errors>
          </div>
       </v-slide-y-transition>
+      <v-dialog v-model="errors.hasErrors" width="500" @click:outside="closeError">
+         <c-error-card
+            :errors="errors.errors"
+            :status="errors.status"
+            v-on:close-dialog="closeError"
+         ></c-error-card>
+      </v-dialog>
    </c-dialog-card>
 </template>
 
 <script>
 import ProgressSpinner from '../ProgressSpinner.vue';
 import DialogCard from '../dialogs/DialogCard.vue';
+import ErrorCard from '../dialogs/ErrorCard.vue';
 import Errors from '../Errors.vue';
 import TextField from '../form-controls/TextField.vue';
 import Combobox from '../form-controls/Combobox.vue';
@@ -90,6 +96,7 @@ export default {
       'c-errors': Errors,
       'c-text-field': TextField,
       'c-combobox': Combobox,
+      'c-error-card': ErrorCard,
    },
    data() {
       return {
@@ -106,6 +113,7 @@ export default {
          errors: {
             hasErrors: false,
             errors: [],
+            status: null,
          },
          dialogCard: {
             title: this.encounter.label,
@@ -191,10 +199,27 @@ export default {
          }
          routeController.updateEncounterInStore(this.encounter);
          const updatePERequest = await gameController.updateEncountersAndPokemonsInDB();
-         if (updatePERequest) alert(updatePERequest);
+         if (updatePERequest) {
+            this.errors.hasErrors = true;
+            this.errors.errors.push(...updatePERequest.error);
+            this.errors.status = updatePERequest.status;
+            return;
+         }
          userController.updateSnapshotPartyUrls(this.game.id);
-         await userController.updateUserGames();
+         const updateUGResponse = await userController.updateUserGames();
+         if (updateUGResponse) {
+            this.errors.hasErrors = true;
+            this.errors.errors.push(...updateUGResponse.error);
+            this.errors.status = updateUGResponse.status;
+            return;
+         }
          this.closeDialog();
+      },
+      closeError() {
+         this.processing = false;
+         this.errors.errors = [];
+         this.errors.hasErrors = false;
+         this.errors.status = null;
       },
    },
    computed: {

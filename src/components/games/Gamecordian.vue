@@ -87,7 +87,7 @@
             </v-row>
          </v-container>
       </v-expansion-panel-content>
-      <!-- TODO great candidates for components -->
+      <!-- TODO add error handling to these after making them into components -->
       <v-dialog v-model="finishGame.flag" width="500">
          <c-dialog-card
             :props="finishGame.dialogCard"
@@ -134,11 +134,11 @@
             </v-fade-transition>
          </c-dialog-card>
       </v-dialog>
-      <v-dialog v-model="errors.hasErrors" width="500">
+      <v-dialog v-model="errors.hasErrors" width="500" @click:outside="closeError">
          <c-error-card
             :status="errors.status"
             :errors="errors.errors"
-            v-on:close-dialog="closeDialog"
+            v-on:close-dialog="closeError"
          ></c-error-card>
       </v-dialog>
    </v-expansion-panel>
@@ -264,14 +264,17 @@ export default {
          twoD.push(array.filter((e, i) => i / 9 > 0.44));
          return twoD;
       },
+      closeError() {
+         this.errors.errors = [];
+         this.errors.hasErrors = false;
+         this.errors.status = null;
+      },
       closeDialog() {
          this.processingGame = false;
          this.editGame.flag = false;
          this.editGame.values = {};
          this.deleteGame.flag = false;
          this.finishGame.flag = false;
-         this.errors.errors = [];
-         this.errors.hasErrors = false;
       },
       clickFinishGame() {
          this.finishGame.flag = true;
