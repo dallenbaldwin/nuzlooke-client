@@ -1,24 +1,39 @@
 import axios from 'axios';
+import APIResponse from '../models/APIResponse';
 
 const baseURL = 'https://pokeapi.co/api/v2';
 
 const pokeapi = axios.create({});
 
+// TODO perhaps a custom APIResponse class?
+
 export const get = async endpoint => {
    try {
-      let response = await pokeapi.get(endpoint);
-      return response.data;
+      const response = await pokeapi.get(endpoint);
+      return APIResponse.builder()
+         .withData(response.data)
+         .withStatus(response.status)
+         .build();
    } catch (err) {
-      alert(err);
+      return APIResponse.builder()
+         .withError(err.response.data)
+         .withStatus(err.response.status)
+         .build();
    }
 };
 
 export const getPokemonBySpecies = async (species = 'ditto') => {
    species = species.toLowerCase();
    try {
-      let response = await pokeapi.get(`${baseURL}/pokemon/${species}`);
-      return response.data;
+      const response = await pokeapi.get(`${baseURL}/pokemon/${species}`);
+      return APIResponse.builder()
+         .withData(response.data)
+         .withStatus(response.status)
+         .build();
    } catch (err) {
-      alert(err);
+      return APIResponse.builder()
+         .withError(err.response.data)
+         .withStatus(err.response.status)
+         .build();
    }
 };
