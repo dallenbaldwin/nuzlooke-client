@@ -12,7 +12,6 @@ export const initFacebookSDK = () => {
          // auto authenticate with the api if already logged in with facebook
          FB.getLoginStatus(({ authResponse }) => {
             if (authResponse) {
-               // TODO facebook auth
                // accountService.apiAuthenticate(authResponse.accessToken).then(resolve);
             } else {
                resolve();

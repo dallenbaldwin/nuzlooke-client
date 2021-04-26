@@ -67,6 +67,7 @@ export default {
             this.errors = errors;
          }
       },
+      // TODO facebook auth
       async withFacebook() {
          alert('facebook!');
       },
