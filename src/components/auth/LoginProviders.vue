@@ -23,7 +23,7 @@
             <span class="mx-6 text-h5">{{ provider.label }}</span>
          </v-card-text>
       </v-card>
-      <c-errors v-if="errors" :errors="errors"></c-errors>
+      <c-errors v-if="hasErrors" :errors="errors"></c-errors>
    </div>
 </template>
 
@@ -60,9 +60,12 @@ export default {
       },
       async withGoogle() {
          const GoogleUser = await this.$gAuth.signIn();
-         const response = await authController.loginWithGoogle(GoogleUser);
-         if (response && response.errors.includes('popup_closed_by_user')) return;
-         this.errors = response;
+         let errors = await authController.loginWithGoogle(GoogleUser);
+         if (errors && errors.errors.includes('popup_closed_by_user')) return;
+         else if (errors) {
+            this.hasErrors = true;
+            this.errors = errors;
+         }
       },
       async withFacebook() {
          alert('facebook!');

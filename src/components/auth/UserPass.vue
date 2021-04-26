@@ -34,7 +34,7 @@
             </c-btn>
          </div>
       </div>
-      <c-errors v-if="errors" :errors="errors"></c-errors>
+      <c-errors v-if="hasErrors" :errors="errors"></c-errors>
    </div>
 </template>
 
@@ -66,20 +66,35 @@ export default {
             remember: false,
          },
          errors: null,
+         hasErrors: false,
       };
    },
    methods: {
       async authenticate() {
-         this.errors = authController.getValidationErrors(this.values);
-         if (this.errors) return;
-         const auth = await authController.authenticate(this.values);
-         if (auth) this.errors = auth;
+         let errors = authController.getValidationErrors(this.values);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+            return;
+         }
+         errors = await authController.authenticate(this.values);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+         }
       },
       async register() {
-         this.errors = authController.getValidationErrors(this.values);
-         if (this.errors) return;
-         const register = await authController.register(this.values);
-         if (register) this.errors = register;
+         let errors = authController.getValidationErrors(this.values);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+            return;
+         }
+         errors = await authController.register(this.values);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+         }
       },
       forgotPassword() {
          alert('well that sucks!');
