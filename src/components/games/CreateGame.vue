@@ -41,13 +41,7 @@
             </div>
          </div>
       </v-fade-transition>
-      <v-dialog v-model="errors.hasErrors" width="500" @click:outside="closeError">
-         <c-error-card
-            :errors="errors.errors"
-            :status="errors.status"
-            v-on:close-dialog="closeError"
-         ></c-error-card>
-      </v-dialog>
+      <c-errors :errors="errors" :full-width="true" v-if="errors"></c-errors>
    </c-dialog-card>
 </template>
 
@@ -59,9 +53,9 @@ import Button from '../Button.vue';
 import TextField from '../form-controls/TextField.vue';
 import Combobox from '../form-controls/Combobox.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
-import ErrorCard from '../dialogs/ErrorCard.vue';
-import * as util from '../../util/util';
-import * as gameController from '../../controllers/game';
+import { isUndefined } from '../../util/util';
+import { getValidationErrors, createGame } from '../../controllers/game';
+import ErrorsVue from '../Errors.vue';
 
 export default {
    name: 'CreateGame',
@@ -72,7 +66,7 @@ export default {
       'c-text-field': TextField,
       'c-combobox': Combobox,
       'c-progress-spinner': ProgressSpinner,
-      'c-error-card': ErrorCard,
+      'c-errors': ErrorsVue,
    },
    data() {
       return {
@@ -86,11 +80,7 @@ export default {
                action: 'start-game',
             },
          },
-         errors: {
-            errors: [],
-            hasErrors: false,
-            status: null,
-         },
+         errors: null,
          defaultGameRules: Object.values(GameRules).map(gr =>
             Object({ value: gr.id, text: gr.label })
          ),
@@ -142,7 +132,7 @@ export default {
    },
    methods: {
       addRule() {
-         if (this.values.rules.some(r => util.isUndefined(r.values))) return;
+         if (this.values.rules.some(r => isUndefined(r.values))) return;
          this.values.rules.push({
             items: this.defaultGameRules,
             values: null,
@@ -153,35 +143,25 @@ export default {
       },
       async startGame() {
          // validate
-         this.errors = gameController.getValidationErrors(this.values);
-         if (this.errors.hasErrors) return;
+         this.errors = getValidationErrors(this.values);
+         if (this.errors) return;
          this.processing = true;
-         const start = await gameController.createGame(
+         const errors = await createGame(
             this.values.label,
             this.values.version.value,
             this.values.rules.map(rule => rule.values.value)
          );
-         if (start) {
+         if (errors) {
             this.processing = false;
-            this.errors.status = start.status;
-            this.errors.hasErrors = true;
-            this.errors.errors.push(...start.error);
+            this.errors = errors;
             return;
          }
          this.closeDialog();
       },
       closeDialog() {
          this.processing = false;
-         this.errors.errors = [];
-         this.errors.hasErrors = false;
-         this.errors.status = null;
-         this.closeError();
+         this.errors = null;
          this.$emit('close-dialog');
-      },
-      closeError() {
-         this.errors.errors = [];
-         this.errors.hasErrors = false;
-         this.errors.status = null;
       },
    },
 };
