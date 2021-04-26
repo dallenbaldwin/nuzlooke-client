@@ -40,15 +40,16 @@ export default {
    data() {
       return {
          errors: null,
+         hasErrors: false,
          providers: [
             {
                label: 'Google',
             },
-            {
-               label: 'Facebook',
-               icon: Icons.BRANDS.FACEBOOK,
-               color: '#1778F2',
-            },
+            // {
+            //    label: 'Facebook',
+            //    icon: Icons.BRANDS.FACEBOOK,
+            //    color: '#1778F2',
+            // },
          ],
       };
    },

@@ -9,14 +9,14 @@
       </v-fade-transition>
       <v-fade-transition>
          <div v-show="!processing">
-            <c-text-field label="Username" v-model="username"></c-text-field>
+            <c-text-field label="Username" v-model="values.username"></c-text-field>
             <!-- I'm not going to implement this until i can get to work in a not hacky way -->
             <!-- <v-checkbox
                label="Save Filters"
                v-model="saveFilters"
                class="ma-3"
             ></v-checkbox> -->
-            <c-errors :errors="errors"></c-errors>
+            <c-errors v-if="hasErrors" :full-width="true" :errors="errors"></c-errors>
          </div>
       </v-fade-transition>
    </c-dialog-card>
@@ -27,7 +27,7 @@ import DialogCard from './DialogCard.vue';
 import Errors from '../Errors.vue';
 import TextField from '../form-controls/TextField.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
-import * as appController from '../../controllers/application';
+import { getValidationErrors, saveSettings } from '../../controllers/application';
 
 export default {
    name: 'AppSettings',
@@ -41,10 +41,8 @@ export default {
    data() {
       return {
          processing: false,
-         errors: {
-            errors: [],
-            hasErrors: null,
-         },
+         hasErrors: false,
+         errors: null,
          dialogCard: {
             title: 'Application Settings',
             text: 'Edit application settings',
@@ -52,43 +50,40 @@ export default {
                action: 'save-settings',
             },
          },
+         values: {
+            username: null,
+         },
       };
-   },
-   computed: {
-      username: {
-         get() {
-            return this.$store.state.username;
-         },
-         set(newVal) {
-            this.$store.commit('setUsername', newVal);
-         },
-      },
-      saveFilters: {
-         get() {
-            return this.$store.state.app_settings.save_filters;
-         },
-         set(newVal) {
-            this.$store.commit('setSaveFilters', newVal);
-         },
-      },
    },
    methods: {
       closeDialog() {
-         this.errors = {};
+         this.errors = null;
+         this.hasErrors = false;
          this.processing = false;
          this.$emit('close-dialog');
       },
       async saveSettings() {
          // validate settings
-         this.errors = appController.getValidationErrors({
-            username: this.username,
-         });
-         if (this.errors.hasErrors) return;
+         let errors = getValidationErrors(this.values);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+            return;
+         }
          // save settings
          this.processing = true;
-         await appController.saveSettings();
+         errors = await saveSettings(this.values);
+         if (errors) {
+            this.processing = false;
+            this.errors = errors;
+            this.hasErrors = true;
+            return;
+         }
          this.closeDialog();
       },
+   },
+   mounted() {
+      this.values.username = this.$store.state.username;
    },
 };
 </script>
