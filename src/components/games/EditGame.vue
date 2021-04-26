@@ -1,0 +1,75 @@
+<template>
+   <c-dialog-card
+      :props="dialogCard"
+      v-on:close-dialog="closeDialog"
+      v-on:edit-game="confirmEdit"
+   >
+      <v-fade-transition>
+         <c-progress-spinner v-show="processingGame"></c-progress-spinner>
+      </v-fade-transition>
+      <v-fade-transition>
+         <div v-show="!processingGame">
+            <c-text-field label="Name" v-model="values.label"></c-text-field>
+            <c-errors :full-width="true" v-if="errors" :errors="errors"></c-errors>
+         </div>
+      </v-fade-transition>
+   </c-dialog-card>
+</template>
+
+<script>
+import { getValidationErrors, updateGameLabel } from '../../controllers/game';
+import DialogCardVue from '../dialogs/DialogCard.vue';
+import ErrorsVue from '../Errors.vue';
+import TextFieldVue from '../form-controls/TextField.vue';
+import ProgressSpinnerVue from '../ProgressSpinner.vue';
+
+export default {
+   name: 'EditGame',
+   components: {
+      'c-errors': ErrorsVue,
+      'c-progress-spinner': ProgressSpinnerVue,
+      'c-text-field': TextFieldVue,
+      'c-dialog-card': DialogCardVue,
+   },
+   props: { game: { required: true } },
+   data() {
+      return {
+         processingGame: false,
+         values: {
+            label: this.game.label,
+         },
+         dialogCard: {
+            title: `Edit ${this.game.label}?`,
+            text: `Edit settings for ${this.game.label}`,
+            primaryBtn: {
+               action: 'edit-game',
+            },
+         },
+         errors: null,
+      };
+   },
+   computed: {},
+   methods: {
+      closeDialog() {
+         this.processingGame = false;
+         this.errors = null;
+         if (!this.values.label) this.values.label = this.game.label;
+         this.$emit('close-dialog');
+      },
+      async confirmEdit() {
+         this.errors = getValidationErrors(this.values, true);
+         if (this.errors) return;
+         this.processingGame = true;
+         const errors = await updateGameLabel(this.game.game_id, this.values.label);
+         if (errors) {
+            this.errors = errors;
+            this.processingGame = false;
+            return;
+         }
+         this.closeDialog();
+      },
+   },
+};
+</script>
+
+<style></style>
