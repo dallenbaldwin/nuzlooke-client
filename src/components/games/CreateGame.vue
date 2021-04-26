@@ -41,7 +41,7 @@
             </div>
          </div>
       </v-fade-transition>
-      <c-errors :errors="errors" :full-width="true" v-if="errors"></c-errors>
+      <c-errors :errors="errors" :full-width="true" v-if="hasErrors"></c-errors>
    </c-dialog-card>
 </template>
 
@@ -81,6 +81,7 @@ export default {
             },
          },
          errors: null,
+         hasErrors: false,
          defaultGameRules: Object.values(GameRules).map(gr =>
             Object({ value: gr.id, text: gr.label })
          ),
@@ -143,16 +144,21 @@ export default {
       },
       async startGame() {
          // validate
-         this.errors = getValidationErrors(this.values);
-         if (this.errors) return;
+         let errors = getValidationErrors(this.values);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+            return;
+         }
          this.processing = true;
-         const errors = await createGame(
+         errors = await createGame(
             this.values.label,
             this.values.version.value,
             this.values.rules.map(rule => rule.values.value)
          );
          if (errors) {
             this.processing = false;
+            this.hasErrors = true;
             this.errors = errors;
             return;
          }
@@ -161,6 +167,7 @@ export default {
       closeDialog() {
          this.processing = false;
          this.errors = null;
+         this.hasErrors = false;
          this.$emit('close-dialog');
       },
    },

@@ -10,7 +10,7 @@
       <v-fade-transition>
          <div v-show="!processingGame">
             <c-text-field label="Name" v-model="values.label"></c-text-field>
-            <c-errors :full-width="true" v-if="errors" :errors="errors"></c-errors>
+            <c-errors :full-width="true" v-if="hasErrors" :errors="errors"></c-errors>
          </div>
       </v-fade-transition>
    </c-dialog-card>
@@ -18,6 +18,7 @@
 
 <script>
 import { getValidationErrors, updateGameLabel } from '../../controllers/game';
+import { isUndefined } from '../../util/util';
 import DialogCardVue from '../dialogs/DialogCard.vue';
 import ErrorsVue from '../Errors.vue';
 import TextFieldVue from '../form-controls/TextField.vue';
@@ -36,7 +37,7 @@ export default {
       return {
          processingGame: false,
          values: {
-            label: this.game.label,
+            label: null,
          },
          dialogCard: {
             title: `Edit ${this.game.label}?`,
@@ -46,6 +47,7 @@ export default {
             },
          },
          errors: null,
+         hasErrors: false,
       };
    },
    computed: {},
@@ -53,21 +55,30 @@ export default {
       closeDialog() {
          this.processingGame = false;
          this.errors = null;
-         if (!this.values.label) this.values.label = this.game.label;
+         this.hasErrors = false;
+         if (isUndefined(this.values.label)) this.values.label = this.game.label;
          this.$emit('close-dialog');
       },
       async confirmEdit() {
-         this.errors = getValidationErrors(this.values, true);
-         if (this.errors) return;
+         let errors = getValidationErrors(this.values, true);
+         if (this.errors) {
+            this.hasErrors = true;
+            this.errors = errors;
+            return;
+         }
          this.processingGame = true;
-         const errors = await updateGameLabel(this.game.game_id, this.values.label);
+         errors = await updateGameLabel(this.game.game_id, this.values.label);
          if (errors) {
+            this.hasErrors = true;
             this.errors = errors;
             this.processingGame = false;
             return;
          }
          this.closeDialog();
       },
+   },
+   mounted() {
+      this.values.label = this.game.label;
    },
 };
 </script>

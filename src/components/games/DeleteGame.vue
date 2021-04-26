@@ -7,7 +7,7 @@
       <v-fade-transition>
          <c-progress-spinner v-show="processingGame"></c-progress-spinner>
       </v-fade-transition>
-      <c-errors :errors="errors" :full-width="true" v-if="errors"></c-errors>
+      <c-errors :errors="errors" :full-width="true" v-if="hasErrors"></c-errors>
    </c-dialog-card>
 </template>
 
@@ -36,12 +36,14 @@ export default {
             },
          },
          errors: null,
+         hasErrors: false,
       };
    },
    computed: {},
    methods: {
       closeDialog() {
          this.errors = null;
+         this.hasErrors = false;
          this.processingGame = false;
          this.$emit('close-dialog');
       },
@@ -50,6 +52,7 @@ export default {
          const errors = await deleteExistingGame(this.game.game_id);
          if (errors) {
             this.processingGame = false;
+            this.hasErrors = true;
             this.errors = errors;
             return;
          }

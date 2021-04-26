@@ -9,17 +9,23 @@
       <v-expansion-panel-content>
          <v-container>
             <v-row id="manageBtns" class="d-flex flex-row justify-end ma-3">
-               <c-btn @click="clickDeleteGame" color="red" :icon="Icons.CONTROLS.DELETE">
-                  Delete
+               <c-btn
+                  @click="deleteGame = !deleteGame"
+                  color="red"
+                  :icon="Icons.CONTROLS.DELETE"
+                  >Delete
                </c-btn>
                <c-btn
-                  @click="clickFinishGame"
+                  @click="finishGame = !finishGame"
                   :icon="Icons.CONTROLS.CONFIRM"
                   :disabled="game.is_finished"
-                  >Finish</c-btn
-               >
-               <c-btn @click="clickEditGame" color="warning" :icon="Icons.CONTROLS.EDIT">
-                  Edit
+                  >Finish
+               </c-btn>
+               <c-btn
+                  @click="editGame = !editGame"
+                  color="warning"
+                  :icon="Icons.CONTROLS.EDIT"
+                  >Edit
                </c-btn>
             </v-row>
             <v-row class="d-flex justify-space-around">
@@ -87,54 +93,20 @@
             </v-row>
          </v-container>
       </v-expansion-panel-content>
-      <!-- TODO add error handling to these after making them into components -->
-      <v-dialog v-model="finishGame.flag" width="500">
-         <c-dialog-card
-            :props="finishGame.dialogCard"
-            v-on:close-dialog="closeDialog"
-            v-on:finish-game="confirmFinish"
-         >
-         </c-dialog-card>
-         <v-fade-transition>
-            <c-progress-spinner v-show="processingGame"></c-progress-spinner>
-         </v-fade-transition>
+      <v-dialog v-model="finishGame" width="500" @click:outside="closeDialog">
+         <c-finish-game :game="game" v-on:close-dialog="closeDialog"></c-finish-game>
       </v-dialog>
-      <v-dialog v-model="editGame.flag" width="500">
-         <c-dialog-card
-            :props="editGame.dialogCard"
-            v-on:close-dialog="closeDialog"
-            v-on:edit-game="confirmEdit"
-         >
-            <v-fade-transition>
-               <c-progress-spinner v-show="processingGame"></c-progress-spinner>
-            </v-fade-transition>
-            <v-fade-transition>
-               <div v-show="!processingGame">
-                  <c-text-field
-                     label="Name"
-                     v-model="editGame.values.label"
-                  ></c-text-field>
-                  <c-errors :errors="errors"></c-errors>
-               </div>
-            </v-fade-transition>
-         </c-dialog-card>
+      <v-dialog v-model="editGame" width="500" @click:outside="closeDialog">
+         <c-edit-game :game="game" v-on:close-dialog="closeDialog"></c-edit-game>
       </v-dialog>
-      <v-dialog v-model="deleteGame.flag" width="500">
-         <c-dialog-card
-            :props="deleteGame.dialogCard"
-            v-on:close-dialog="closeDialog"
-            v-on:delete-game="confirmDelete(game.game_id)"
-         >
-            <v-fade-transition>
-               <c-progress-spinner v-show="processingGame"></c-progress-spinner>
-            </v-fade-transition>
-         </c-dialog-card>
+      <v-dialog v-model="deleteGame" width="500" @click:outside="closeDialog">
+         <c-delete-game :game="game" v-on:close-dialog="closeDialog"></c-delete-game>
       </v-dialog>
-      <v-dialog v-model="errors.hasErrors" width="500" @click:outside="closeError">
+      <v-dialog v-model="showErrors" width="500" @click:outside="closeDialog">
          <c-error-card
-            :status="errors.status"
-            :errors="errors.errors"
-            v-on:close-dialog="closeError"
+            v-if="errors"
+            :errors="errors"
+            v-on:close-dialog="closeDialog"
          ></c-error-card>
       </v-dialog>
    </v-expansion-panel>
@@ -143,13 +115,13 @@
 <script>
 import DialogCard from '../dialogs/DialogCard.vue';
 import Button from '../Button.vue';
-import ProgressSpinner from '../ProgressSpinner.vue';
 import PokeSprite from '../pokemon/PokeSprite.vue';
 import BadgeSprite from '../gyms/BadgeSprite.vue';
-import TextField from '../form-controls/TextField.vue';
-import Errors from '../Errors.vue';
 import ErrorCard from '../dialogs/ErrorCard.vue';
-import * as gameController from '../../controllers/game';
+import DeleteGame from './DeleteGame.vue';
+import EditGame from './EditGame.vue';
+import FinishGame from './FinishGame.vue';
+import { getConsoleIcon, goToGame } from '../../controllers/game';
 import Icons from '../../constants/Icons';
 import TabMap from '../../constants/TabMap';
 import Pages from '../../constants/Pages';
@@ -161,21 +133,16 @@ export default {
    components: {
       'c-dialog-card': DialogCard,
       'c-btn': Button,
-      'c-progress-spinner': ProgressSpinner,
       'c-poke-sprite': PokeSprite,
       'c-badge-sprite': BadgeSprite,
-      'c-errors': Errors,
-      'c-text-field': TextField,
       'c-error-card': ErrorCard,
+      'c-delete-game': DeleteGame,
+      'c-edit-game': EditGame,
+      'c-finish-game': FinishGame,
    },
    data() {
       return {
-         processingGame: false,
-         errors: {
-            errors: [],
-            hasErrors: false,
-            status: null,
-         },
+         errors: null,
          gameBtns: [
             {
                label: 'Pokemon',
@@ -202,49 +169,15 @@ export default {
                icon: Icons.PAGES.RULES,
             },
          ],
-         editGame: {
-            flag: false,
-            values: {
-               label: null,
-            },
-            dialogCard: {
-               title: `Edit ${this.game.label}?`,
-               text: `Edit settings for ${this.game.label}`,
-               primaryBtn: {
-                  action: 'edit-game',
-               },
-            },
-            errors: {
-               errors: [],
-               hasErrors: false,
-            },
-         },
-         deleteGame: {
-            flag: false,
-            dialogCard: {
-               title: `Delete ${this.game.label}?`,
-               text: 'This action cannot be undone. Are you sure you want to continue?',
-               secondaryBtn: {
-                  action: 'delete-game',
-               },
-            },
-         },
-         finishGame: {
-            flag: false,
-            dialogCard: {
-               title: `Finish ${this.game.label}?`,
-               text: `This action cannot be undone. The game will enter a Read-Only state, where most functions will be disabled. Are you sure you want to continue?`,
-               primaryBtn: {
-                  text: 'Finish Game',
-                  action: 'finish-game',
-               },
-            },
-         },
+         showErrors: false,
+         editGame: false,
+         deleteGame: false,
+         finishGame: false,
       };
    },
    computed: {
       consoleIcon() {
-         return gameController.getConsoleIcon(this.game.version.version_group);
+         return getConsoleIcon(this.game.version.version_group);
       },
    },
    methods: {
@@ -260,62 +193,23 @@ export default {
          twoD.push(array.filter((e, i) => i / 9 > 0.44));
          return twoD;
       },
-      closeError() {
-         this.errors.errors = [];
-         this.errors.hasErrors = false;
-         this.errors.status = null;
-      },
       closeDialog() {
-         this.processingGame = false;
-         this.editGame.flag = false;
-         this.editGame.values = {};
-         this.deleteGame.flag = false;
-         this.finishGame.flag = false;
-      },
-      clickFinishGame() {
-         this.finishGame.flag = true;
-      },
-      async confirmFinish() {
-         this.processingGame = true;
-         await gameController.finishGame(this.game.game_id);
-         this.closeDialog();
-      },
-      clickDeleteGame() {
-         this.deleteGame.flag = true;
-      },
-      async confirmDelete() {
-         this.processingGame = true;
-         await gameController.deleteExistingGame(this.game.game_id);
-         this.closeDialog();
-      },
-      clickEditGame() {
-         this.editGame.values.label = this.game.label;
-         this.editGame.flag = true;
-      },
-      async confirmEdit() {
-         this.editGame.errors = gameController.getValidationErrors(
-            this.editGame.values,
-            true
-         );
-         if (this.editGame.errors.hasErrors) return;
-         this.processingGame = true;
-         await gameController.updateGameLabel(
-            this.game.game_id,
-            this.editGame.values.label
-         );
-         this.closeDialog();
+         this.errors = null;
+         this.showErrors = false;
+         this.editGame = false;
+         this.deleteGame = false;
+         this.finishGame = false;
       },
       async toMobileOrDesktop(btn) {
          if (mobile()) await this.toGame(btn.mobileRoute);
          else await this.toGame(btn.desktopRoute);
       },
       async toGame(route) {
-         this.errors.hasErrors = false;
-         const goToResponse = await gameController.goToGame(this.game.game_id, route);
+         const goToResponse = await goToGame(this.game.game_id, route);
          if (goToResponse) {
-            this.errors.hasErrors = true;
-            this.errors.status = goToResponse.status;
-            this.errors.errors.push(...goToResponse.error);
+            this.errors = goToResponse;
+            this.showErrors = true;
+            return;
          }
       },
    },
