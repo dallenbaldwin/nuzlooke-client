@@ -11,7 +11,6 @@ import Pages from '../constants/Pages';
 import TabMap from '../constants/TabMap';
 import { getEncountersByVersion } from '../services/encounters';
 
-// TODO handle errors
 export const updateEncountersAndPokemonsInDB = async () => {
    const response = await services.updateGameById(store.state.game.id, {
       pokemons: store.state.game.pokemons,
@@ -20,7 +19,6 @@ export const updateEncountersAndPokemonsInDB = async () => {
    if (response && response.errors) return response;
 };
 
-// TODO handle errors
 export const updateGymsInDB = async () => {
    const response = await services.updateGameById(store.state.game.id, {
       gyms: store.state.game.gyms,
@@ -85,7 +83,6 @@ export const createGame = async (label, version, rules) => {
    if (goToResponse && goToResponse.errors) return goToResponse;
 };
 
-// TODO handle errors
 export const updateGameRulesInDB = async game => {
    const response = await services.updateGameById(game.id, {
       game_rules: game.game_rules,
