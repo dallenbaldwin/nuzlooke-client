@@ -2,7 +2,7 @@
    <c-dialog-card
       :props="dialogCard"
       v-on:close-dialog="closeDialog"
-      v-on:finish-game="confirmFinish"
+      v-on:delete-game="confirmDelete"
    >
       <v-fade-transition>
          <c-progress-spinner v-show="processingGame"></c-progress-spinner>
@@ -12,16 +12,16 @@
 </template>
 
 <script>
-import { finishGame } from '../../controllers/game';
+import { deleteExistingGame } from '../../controllers/game';
 import DialogCardVue from '../dialogs/DialogCard.vue';
 import ErrorsVue from '../Errors.vue';
 import ProgressSpinnerVue from '../ProgressSpinner.vue';
 
 export default {
-   name: 'FinishGame',
+   name: 'DeleteGame',
    components: {
-      'c-progress-spinner': ProgressSpinnerVue,
       'c-dialog-card': DialogCardVue,
+      'c-progress-spinner': ProgressSpinnerVue,
       'c-errors': ErrorsVue,
    },
    props: { game: { required: true } },
@@ -29,11 +29,10 @@ export default {
       return {
          processingGame: false,
          dialogCard: {
-            title: `Finish ${this.game.label}?`,
-            text: `This action cannot be undone. The game will enter a Read-Only state, where most functions will be disabled. Are you sure you want to continue?`,
-            primaryBtn: {
-               text: 'Finish Game',
-               action: 'finish-game',
+            title: `Delete ${this.game.label}?`,
+            text: 'This action cannot be undone. Are you sure you want to continue?',
+            secondaryBtn: {
+               action: 'delete-game',
             },
          },
          errors: null,
@@ -46,9 +45,9 @@ export default {
          this.processingGame = false;
          this.$emit('close-dialog');
       },
-      async confirmFinish() {
+      async confirmDelete() {
          this.processingGame = true;
-         const errors = await finishGame(this.game.game_id);
+         const errors = await deleteExistingGame(this.game.game_id);
          if (errors) {
             this.processingGame = false;
             this.errors = errors;
