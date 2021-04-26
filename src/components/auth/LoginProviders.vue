@@ -61,7 +61,7 @@ export default {
       async withGoogle() {
          const GoogleUser = await this.$gAuth.signIn();
          const response = await authController.loginWithGoogle(GoogleUser);
-         if (response && response.error === 'popup_closed_by_user') return;
+         if (response && response.errors.includes('popup_closed_by_user')) return;
          this.errors = response;
       },
       async withFacebook() {
