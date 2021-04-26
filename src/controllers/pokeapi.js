@@ -25,7 +25,7 @@ export const buildUserPokemon = async (species, nickname, partyState) => {
             pokeData.data.sprites.versions['generation-vii'].icons.front_default
          )
          .withTypes(pokeData.data.types.map(t => normalizeKabob(t.type.name)))
-         .withEvolvesTo(evolvesToPokemon.data)
+         .withEvolvesTo(evolvesToPokemon)
          .build()
    );
 };
