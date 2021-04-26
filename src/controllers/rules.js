@@ -40,7 +40,7 @@ export const createNewRule = async options => {
    }
    store.commit('addNewRule', newRule);
    const response = await updateGameRulesInDB(store.state.game);
-   if (response && response.error) return response;
+   if (response && response.errors) return response;
 };
 
 // TODO error handling
@@ -51,7 +51,7 @@ export const updateRule = async options => {
       updateRuleByLabel(options);
    }
    const response = await updateGameRulesInDB(store.state.game);
-   if (response && response.error) return response;
+   if (response && response.errors) return response;
 };
 
 const updateRuleById = options => {
@@ -70,7 +70,7 @@ export const deleteRule = async rule => {
    if (rule.id === 0) store.commit('deleteExistingRuleByLabel', rule);
    else store.commit('deleteExistingRuleById', rule);
    const response = await updateGameRulesInDB(store.state.game);
-   if (response && response.error) return response;
+   if (response && response.errors) return response;
 };
 
 export const getValidationErrors = options => {

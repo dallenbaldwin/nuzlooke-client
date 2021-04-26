@@ -10,7 +10,7 @@
             type="error"
             class="text-wrap"
          >
-            {{ error }}
+            {{ status ? `Status ${status}: ${error}` : error }}
          </v-alert>
       </v-fade-transition>
    </div>
@@ -23,15 +23,18 @@ export default {
    name: 'Errors',
    props: {
       errors: { required: true },
-      'max-width': { required: false, default: 900 },
+      'full-width': { required: false, default: false },
    },
    computed: {
+      status() {
+         if (this.errors && this.errors.status) return this.errors.status;
+      },
       errorMessages() {
          if (this.errors && this.errors.errors) return this.errors.errors;
       },
       width() {
-         if (this['max-width']) return this['max-width'];
-         else if (mobile()) return null;
+         if (mobile()) return null;
+         else if (this.fullWidth) return null;
          else return 262;
       },
    },

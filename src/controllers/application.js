@@ -8,7 +8,7 @@ export const saveSettings = async () => {
       username: store.state.username,
       app_settings: store.state.app_settings,
    });
-   if (response && response.error) return response;
+   if (response && response.errors) return response;
 };
 
 export const getValidationErrors = options => {
@@ -27,5 +27,5 @@ export const saveFilters = async (page, values) => {
    const response = await userController.updateUser({
       app_settings: store.state.app_settings,
    });
-   if (response && response.error) return response;
+   if (response && response.errors) return response;
 };

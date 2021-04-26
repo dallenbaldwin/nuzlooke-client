@@ -26,19 +26,19 @@ export const evolvePokemon = async (pokemon, evolvesTo) => {
       pokemon.nickname,
       pokemon.party_state
    );
-   if (evolved && evolved.error) return evolved;
+   if (evolved && evolved.errors) return evolved;
    evolved.id = pokemon.id;
    const update = await updatePokemonsAndGame(evolved);
-   if (update && update.error) return update;
+   if (update && update.errors) return update;
 };
 
 export const updatePokemonsAndGame = async pokemon => {
    updatePokemonInStore(pokemon);
    const updateDB = await updatePokemonsInDB();
-   if (updateDB && updateDB.error) return updateDB;
+   if (updateDB && updateDB.errors) return updateDB;
    userController.updateSnapshotPartyUrls(store.state.game.id);
    const updateUG = await userController.updateUserGames();
-   if (updateUG && updateUG.error) return updateUG;
+   if (updateUG && updateUG.errors) return updateUG;
 };
 
 export const sendToStorage = pokemon => {
@@ -64,7 +64,7 @@ export const updatePokemonsInDB = async () => {
    const update = await gameServices.updateGameById(store.state.game.id, {
       pokemons: store.state.game.pokemons,
    });
-   if (update && update.error) return update;
+   if (update && update.errors) return update;
 };
 
 export const pushNewPokemon = newPokemon => {

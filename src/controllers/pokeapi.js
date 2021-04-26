@@ -7,13 +7,13 @@ import store from '../store/store';
 export const buildUserPokemon = async (species, nickname, partyState) => {
    species = species.toLowerCase();
    const pokeData = await services.getPokemonBySpecies(species);
-   if (pokeData && pokeData.error) return pokeData;
+   if (pokeData && pokeData.errors) return pokeData;
    const speciesData = await services.get(pokeData.data.species.url);
-   if (speciesData && speciesData.error) return speciesData;
+   if (speciesData && speciesData.errors) return speciesData;
    const evoData = await services.get(speciesData.data.evolution_chain.url);
    const evolvesTo = getNextEvolution(evoData.chain, species);
    const evolvesToPokemon = await getValidEvolutions(evolvesTo);
-   if (evolvesToPokemon && evolvesToPokemon.error) return evolvesToPokemon;
+   if (evolvesToPokemon && evolvesToPokemon.errors) return evolvesToPokemon;
    const english = getEnglish(speciesData.data.names);
    return (
       UserPokemon.builder()
@@ -60,13 +60,13 @@ const getValidEvolutions = async evolutions => {
    const validEvolutions = [];
    for (let evolution of evolutions) {
       const pokeData = await services.getPokemonBySpecies(evolution.name);
-      if (pokeData && pokeData.error) return pokeData;
+      if (pokeData && pokeData.errors) return pokeData;
       const isValid = pokeData.data.game_indices
          .map(i => i.version.name)
          .includes(version);
       if (isValid) {
          const speciesData = await services.get(evolution.url);
-         if (speciesData && speciesData.error) return speciesData;
+         if (speciesData && speciesData.errors) return speciesData;
          const english = getEnglish(speciesData.data.names);
          if (english) validEvolutions.push(english);
       }

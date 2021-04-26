@@ -9,7 +9,7 @@ export const setEarnedBadge = async gym => {
    snapshot.gym_badge_icon_urls = gymBadgeUrls;
    store.commit('updateGameSnapshot', snapshot);
    const updateUGResponse = await userController.updateUserGames();
-   if (updateUGResponse.error) return updateUGResponse;
+   if (updateUGResponse.errors) return updateUGResponse;
    const updateGymResponse = await gameController.updateGymsInDB();
-   if (updateGymResponse.error) return updateGymResponse;
+   if (updateGymResponse.errors) return updateGymResponse;
 };

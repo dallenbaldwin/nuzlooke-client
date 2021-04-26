@@ -8,7 +8,7 @@ export const updateUserGames = async () => {
    const response = await services.updateUserById(store.state.userId, {
       games: store.state.userGames,
    });
-   if (response && response.error) return response;
+   if (response && response.errors) return response;
 };
 
 export const addGameSnapshot = snapshot => {
@@ -18,7 +18,7 @@ export const addGameSnapshot = snapshot => {
 // TODO error handling
 export const updateUser = async options => {
    const response = await services.updateUserById(store.state.userId, options);
-   if (response && response.error) return response;
+   if (response && response.errors) return response;
 };
 
 export const updateSnapshotPartyUrls = id => {
