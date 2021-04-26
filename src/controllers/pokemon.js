@@ -1,8 +1,6 @@
 import PartyState from '../constants/PartyState';
-import * as util from '../util/util';
 import * as gameServices from '../services/game';
 import * as userController from '../controllers/user';
-import UserPokemon from '../models/UserPokemon';
 import store from '../store/store';
 import Icons from '../constants/Icons';
 import * as pokeapiController from './pokeapi';
@@ -41,19 +39,22 @@ export const updatePokemonsAndGame = async pokemon => {
    if (updateUG && updateUG.errors) return updateUG;
 };
 
-export const sendToStorage = pokemon => {
+export const sendToStorage = async pokemon => {
    pokemon.party_state = PartyState.PC;
-   updatePokemonsAndGame(pokemon);
+   const response = await updatePokemonsAndGame(pokemon);
+   if (response && response.errors) return response;
 };
 
-export const sendToParty = pokemon => {
+export const sendToParty = async pokemon => {
    pokemon.party_state = PartyState.PARTY;
-   updatePokemonsAndGame(pokemon);
+   const response = await updatePokemonsAndGame(pokemon);
+   if (response && response.errors) return response;
 };
 
 export const sendToGraveyard = async pokemon => {
    pokemon.party_state = PartyState.GRAVEYARD;
-   await updatePokemonsAndGame(pokemon);
+   const response = await updatePokemonsAndGame(pokemon);
+   if (response && response.errors) return response;
 };
 
 export const updatePokemonInStore = pokemon => {

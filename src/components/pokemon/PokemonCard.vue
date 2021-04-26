@@ -40,71 +40,42 @@
                >
             </div>
          </v-card-text>
-         <!-- TODO componentize for error handling -->
-         <v-dialog v-model="graveyardData.flag" width="500">
-            <c-dialog-card
-               :props="graveyardData.dialogCard"
+         <!-- TODO v-dialog could be a slotted component... <c-dialog-header v-model :width :persistant :scrollable :full-screen> -->
+         <v-dialog v-model="graveyard" width="500">
+            <c-graveyard-pokemon
+               :pokemon="pokemon"
                v-on:close-dialog="closeDialog"
-               v-on:confirm-graveyard="confirmSendToGraveyard"
-            >
-               <v-slide-y-transition>
-                  <c-progress-spinner v-show="processingPokemon"></c-progress-spinner>
-               </v-slide-y-transition>
-               <v-slide-y-transition>
-                  <div v-show="!processingPokemon">
-                     <c-text-field
-                        v-model="graveyardData.faintedMessage"
-                        :label="
-                           `What happened to
-               ${graveyardData.pokemon ? graveyardData.pokemon.nickname : ''}?`
-                        "
-                     ></c-text-field>
-                  </div>
-               </v-slide-y-transition>
-            </c-dialog-card>
+            ></c-graveyard-pokemon>
          </v-dialog>
-         <v-dialog v-model="evolveData.flag" width="500">
-            <c-dialog-card
-               :props="evolveData.dialogCard"
+         <v-dialog v-model="evolve" width="500">
+            <c-evolve-pokemon
+               :pokemon="pokemon"
                v-on:close-dialog="closeDialog"
-               v-on:confirm-evolve="confirmEvolve"
-            >
-               <v-slide-y-transition>
-                  <c-progress-spinner v-show="processingPokemon"></c-progress-spinner>
-               </v-slide-y-transition>
-               <v-slide-y-transition>
-                  <div v-show="!processingPokemon">
-                     <div class="text-body mb-3">
-                        {{ evolveData.pokemon ? evolveData.pokemon.nickname : undefined }}
-                        can evolve into one of the following Pokemon. Which one is it
-                        evolving into?
-                     </div>
-                     <c-combobox
-                        label="Evolution"
-                        :items="evolutionPokemon"
-                        v-model="evolveData.evolvesTo"
-                     >
-                     </c-combobox>
-                  </div>
-               </v-slide-y-transition>
-            </c-dialog-card>
+            ></c-evolve-pokemon>
+         </v-dialog>
+         <v-dialog v-model="hasErrors" width="500" @click:outside="closeDialog">
+            <c-error-card :errors="errors" v-on:close-dialog="closeDialog"></c-error-card>
          </v-dialog>
       </v-card>
    </v-scale-transition>
 </template>
 
 <script>
-import DialogCard from '../../components/dialogs/DialogCard.vue';
 import PokeSprite from './PokeSprite.vue';
 import PokemonType from './PokemonType.vue';
-import ProgressSpinner from '../../components/ProgressSpinner.vue';
-import TextField from '../form-controls/TextField.vue';
 import Button from '../Button.vue';
-import Combobox from '../form-controls/Combobox.vue';
 import Icons from '../../constants/Icons';
 import PartyState from '../../constants/PartyState';
-import * as routeController from '../../controllers/route';
-import * as pokemonController from '../../controllers/pokemon';
+import { getRouteByPokemonId } from '../../controllers/route';
+import {
+   sendToStorage,
+   sendToParty,
+   getPartyLength,
+   PARTY_MAX_SIZE,
+} from '../../controllers/pokemon';
+import GraveyardPokemonVue from './GraveyardPokemon.vue';
+import EvolvePokemonVue from './EvolvePokemon.vue';
+import ErrorCardVue from '../dialogs/ErrorCard.vue';
 
 export default {
    name: 'PokemonCard',
@@ -112,47 +83,19 @@ export default {
       'c-poke-sprite': PokeSprite,
       'c-pokemon-type': PokemonType,
       'c-btn': Button,
-      'c-dialog-card': DialogCard,
-      'c-progress-spinner': ProgressSpinner,
-      'c-text-field': TextField,
-      'c-combobox': Combobox,
+      'c-graveyard-pokemon': GraveyardPokemonVue,
+      'c-evolve-pokemon': EvolvePokemonVue,
+      'c-error-card': ErrorCardVue,
    },
    props: {
       pokemon: { required: true },
    },
    data() {
       return {
-         processingPokemon: false,
-         evolveData: {
-            flag: false,
-            pokemon: null,
-            evolvesTo: null,
-            dialogCard: {
-               title: `Evolve ${this.pokemon.nickname}?`,
-               text: `Are you sure you want to evolve ${this.pokemon.nickname}? This action cannot be undone!`,
-               primaryBtn: {
-                  color: 'primary',
-                  icon: Icons.CONTROLS.EVOLVE,
-                  text: 'Evolve',
-                  action: 'confirm-evolve',
-               },
-            },
-         },
-         graveyardData: {
-            flag: false,
-            pokemon: null,
-            faintedMessage: null,
-            dialogCard: {
-               title: `Send ${this.pokemon.nickname} to the Graveyard?`,
-               text: `Are you sure you want to send ${this.pokemon.nickname} to the Graveyard? This action cannot be undone!`,
-               primaryBtn: {
-                  color: 'black',
-                  icon: Icons.CONTROLS.TOMBSTONE,
-                  text: 'Send to Graveyard',
-                  action: 'confirm-graveyard',
-               },
-            },
-         },
+         errors: null,
+         hasErrors: false,
+         evolve: false,
+         graveyard: false,
          buttons: [
             {
                label: 'Evolve',
@@ -184,60 +127,47 @@ export default {
    },
    methods: {
       closeDialog() {
-         this.graveyardData.pokemon = null;
-         this.graveyardData.flag = false;
-         this.evolveData.pokemon = null;
-         this.evolveData.flag = false;
-         this.processingPokemon = false;
+         this.graveyard = false;
+         this.evolve = false;
+         this.hasErrors = false;
+         this.errors = false;
       },
       clickEvolve() {
-         this.evolveData.evolvesTo = null;
-         this.evolveData.pokemon = this.pokemon;
-         this.evolveData.flag = true;
-      },
-      async confirmEvolve() {
-         this.processingPokemon = true;
-         await pokemonController.evolvePokemon(
-            this.evolveData.pokemon,
-            this.evolveData.evolvesTo
-         );
-         this.closeDialog();
+         this.evolve = true;
       },
       clickGraveyard() {
-         this.graveyardData.pokemon = this.pokemon;
-         this.graveyardData.flag = true;
+         this.graveyard = true;
       },
-      async confirmSendToGraveyard() {
-         this.processingPokemon = true;
-         this.graveyardData.pokemon.fainted_message = this.graveyardData.faintedMessage;
-         await pokemonController.sendToGraveyard(this.graveyardData.pokemon);
-         this.closeDialog();
+      async clickStorage() {
+         let errors = await sendToStorage(this.pokemon);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+         }
       },
-      clickStorage() {
-         pokemonController.sendToStorage(this.pokemon);
-      },
-      clickParty() {
-         pokemonController.sendToParty(this.pokemon);
+      async clickParty() {
+         let errors = await sendToParty(this.pokemon);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+         }
       },
       canEvolve() {
          return this.pokemon.evolves_to.filter(e => e).length > 0;
       },
       canSendToPC() {
-         return pokemonController.getPartyLength() !== 1;
+         return getPartyLength() !== 1;
       },
       canSendToParty() {
-         return pokemonController.getPartyLength() !== pokemonController.PARTY_MAX_SIZE;
+         return getPartyLength() !== PARTY_MAX_SIZE;
       },
    },
    computed: {
       gameFinished() {
          return this.$store.state.game.is_finished;
       },
-      evolutionPokemon() {
-         return this.evolveData.pokemon ? this.evolveData.pokemon.evolves_to : [];
-      },
       route() {
-         return routeController.getRouteByPokemonId(this.pokemon.id);
+         return getRouteByPokemonId(this.pokemon.id);
       },
       currentButtons() {
          return this.buttons
