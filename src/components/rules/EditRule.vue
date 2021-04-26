@@ -44,7 +44,7 @@
                label="Description"
                v-model="values.description"
             ></c-text-area>
-            <c-errors :errors="errors"></c-errors>
+            <c-errors v-if="hasErrors" :full-width="true" :errors="errors"></c-errors>
          </div>
       </v-slide-y-transition>
    </c-dialog-card>
@@ -57,7 +57,7 @@ import TextAreaVue from '../form-controls/TextArea.vue';
 import TextFieldVue from '../form-controls/TextField.vue';
 import ProgressSpinnerVue from '../ProgressSpinner.vue';
 import ComboboxVue from '../form-controls/Combobox.vue';
-import * as rulesController from '../../controllers/rules';
+import { getValidationErrors, updateRule } from '../../controllers/rules';
 import GameRules from '../../constants/GameRules';
 
 export default {
@@ -83,10 +83,8 @@ export default {
                action: 'confirm-edit',
             },
          },
-         errors: {
-            errors: [],
-            hasErrors: false,
-         },
+         errors: null,
+         hasErrors: false,
          values: {
             isUpdate: true,
             useStock: false,
@@ -108,16 +106,28 @@ export default {
    },
    methods: {
       closeDialog() {
+         this.errors = null;
+         this.hasErrors = false;
          this.processing = false;
          this.$emit('close-dialog');
       },
       async confirmEdit() {
-         this.errors = rulesController.getValidationErrors(this.values);
-         if (this.errors.hasErrors) return;
+         let errors = getValidationErrors(this.values);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+            return;
+         }
          this.processing = true;
          this.values.oldId = this.rule.id;
          this.values.oldLabel = this.rule.label;
-         await rulesController.updateRule(this.values);
+         errors = await updateRule(this.values);
+         if (errors) {
+            this.processing = false;
+            this.errors = errors;
+            this.hasErrors = true;
+            return;
+         }
          this.closeDialog();
       },
    },

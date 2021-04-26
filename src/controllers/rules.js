@@ -30,7 +30,6 @@ const buildDefaultRule = options => {
    return stockRule;
 };
 
-// TODO error handling
 export const createNewRule = async options => {
    let newRule;
    if (options.useStock) {
@@ -43,7 +42,6 @@ export const createNewRule = async options => {
    if (response && response.errors) return response;
 };
 
-// TODO error handling
 export const updateRule = async options => {
    if (options.useStock) {
       updateRuleById(options);
@@ -65,7 +63,6 @@ const updateRuleByLabel = options => {
    });
 };
 
-// TODO error handling
 export const deleteRule = async rule => {
    if (rule.id === 0) store.commit('deleteExistingRuleByLabel', rule);
    else store.commit('deleteExistingRuleById', rule);
@@ -99,8 +96,5 @@ export const getValidationErrors = options => {
       )
          errors.push('This Rule already exists');
    }
-   return {
-      errors: errors,
-      hasErrors: errors.length > 0,
-   };
+   if (errors.length > 0) return { errors: errors };
 };

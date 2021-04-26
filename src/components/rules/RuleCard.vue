@@ -19,7 +19,6 @@
             >Edit</c-btn
          >
       </v-card-actions>
-      <!-- TODO add error handling after making this into components -->
       <v-dialog v-model="editRule" width="500">
          <c-edit-rule
             :rule="gameRule"

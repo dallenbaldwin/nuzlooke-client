@@ -47,13 +47,7 @@
             ></c-text-area>
          </div>
       </v-slide-y-transition>
-      <v-dialog width="500" v-model="errors.hasErrors" @click:outside="closeError">
-         <c-error-card
-            v-on:close-dialog="closeError"
-            :errors="errors.errors"
-            :status="errors.status"
-         ></c-error-card>
-      </v-dialog>
+      <c-errors :errors="errors" v-if="hasErrors" :full-width="true"></c-errors>
    </c-dialog-card>
 </template>
 
@@ -64,9 +58,8 @@ import TextField from '../form-controls/TextField.vue';
 import TextArea from '../form-controls/TextArea.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
 import Errors from '../Errors.vue';
-import ErrorCard from '../dialogs/ErrorCard.vue';
 import Button from '../Button.vue';
-import * as rulesController from '../../controllers/rules';
+import { createNewRule, getValidationErrors } from '../../controllers/rules';
 import GameRules from '../../constants/GameRules';
 
 export default {
@@ -76,11 +69,10 @@ export default {
       'c-combobox': Combobox,
       'c-progress-spinner': ProgressSpinner,
       'c-text-area': TextArea,
-      'c-error': Errors,
+      'c-errors': Errors,
       'c-btn': Button,
       'c-text-field': TextField,
       'c-dialog-card': DialogCard,
-      'c-error-card': ErrorCard,
    },
    data() {
       return {
@@ -92,11 +84,8 @@ export default {
                action: 'create-rule',
             },
          },
-         errors: {
-            status: null,
-            errors: [],
-            hasErrors: false,
-         },
+         errors: null,
+         hasErrors: false,
          values: {
             label: null,
             description: null,
@@ -114,31 +103,30 @@ export default {
    },
    methods: {
       closeDialog() {
+         this.errors = null;
+         this.hasErrors = false;
          this.processingRule = false;
          this.values.label = null;
          this.values.description = null;
          this.values.stock = null;
-         this.closeError();
          this.$emit('close-dialog');
       },
       async confirmCreateRule() {
-         this.errors = rulesController.getValidationErrors(this.values);
-         if (this.errors.hasErrors) return;
+         let errors = getValidationErrors(this.values);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+            return;
+         }
          this.processingRule = true;
-         const response = await rulesController.createNewRule(this.values);
-         if (response) {
-            this.errors.errors.push(...response.error);
-            this.errors.status = response.status;
-            this.errors.hasErrors = true;
+         errors = await createNewRule(this.values);
+         if (errors) {
+            this.processingRule = false;
+            this.errors = errors;
+            this.hasErrors = true;
             return;
          }
          this.closeDialog();
-      },
-      closeError() {
-         this.processingRule = false;
-         this.errors.errors = [];
-         this.errors.status = null;
-         this.errors.hasErrors = false;
       },
    },
 };

@@ -8,13 +8,15 @@
       <v-slide-y-transition>
          <c-progress-spinner v-show="processing"></c-progress-spinner>
       </v-slide-y-transition>
+      <c-errors v-if="hasErrors" :full-width="true" :errors="errors"></c-errors>
    </c-dialog-card>
 </template>
 
 <script>
 import DialogCardVue from '../dialogs/DialogCard.vue';
 import ProgressSpinnerVue from '../ProgressSpinner.vue';
-import * as rulesController from '../../controllers/rules';
+import ErrorsVue from '../Errors.vue';
+import { deleteRule } from '../../controllers/rules';
 import Icons from '../../constants/Icons';
 
 export default {
@@ -22,12 +24,15 @@ export default {
    components: {
       'c-dialog-card': DialogCardVue,
       'c-progress-spinner': ProgressSpinnerVue,
+      'c-errors': ErrorsVue,
    },
    props: {
       rule: { required: true },
    },
    data() {
       return {
+         errors: null,
+         hasErrors: false,
          processing: false,
          dialogCard: {
             title: `Delete ${this.rule.label}?`,
@@ -48,11 +53,20 @@ export default {
    },
    methods: {
       closeDialog() {
+         this.errors = null;
+         this.hasErrors = false;
+         this.processing = false;
          this.$emit('close-dialog');
       },
       async confirmDelete() {
          this.processing = true;
-         await rulesController.deleteRule(this.rule);
+         let errors = await deleteRule(this.rule);
+         if (errors) {
+            this.processing = false;
+            this.errors = errors;
+            this.hasErrors = true;
+            return;
+         }
          this.closeDialog();
       },
    },
