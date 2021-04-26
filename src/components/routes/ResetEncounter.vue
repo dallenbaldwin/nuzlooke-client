@@ -9,12 +9,22 @@
             <c-progress-spinner></c-progress-spinner>
          </div>
       </v-slide-y-transition>
-      <v-dialog v-model="errors.hasErrors" width="500" @click:outside="closeError">
-         <c-error-card
-            :errors="errors.errors"
-            :status="errors.status"
-            v-on:close-dialog="closeError"
-         ></c-error-card>
+      <!-- I wanted so bad for this to be a component, but I couldn't get the errors to pass all the way down to the errors component consistently -->
+      <v-dialog v-model="hasErrors" width="500" @click:outside="closeDialog">
+         <c-dialog-card :props="errorCard" v-on:close-dialog="closeDialog">
+            <div class="ma-3">
+               This is awkward... Try again.
+            </div>
+            <div class="ma-3">
+               If the error(s) persists, note the error(s) and what you were doing when
+               they happened. Then contact our support team so we can look into the issue
+            </div>
+            <c-error-messages
+               v-if="hasErrors"
+               :full-width="true"
+               :errors="errors"
+            ></c-error-messages>
+         </c-dialog-card>
       </v-dialog>
    </c-dialog-card>
 </template>
@@ -22,12 +32,12 @@
 <script>
 import ProgressSpinner from '../ProgressSpinner.vue';
 import DialogCard from '../dialogs/DialogCard.vue';
-import ErrorCard from '../dialogs/ErrorCard.vue';
 import * as pokemonController from '../../controllers/pokemon';
 import EncounterResultConst from '../../constants/EncounterResultConst';
 import * as userController from '../../controllers/user';
 import * as gameController from '../../controllers/game';
 import * as routeController from '../../controllers/route';
+import ErrorMessagesVue from '../ErrorMessages.vue';
 
 export default {
    name: 'ResetEncounter',
@@ -37,7 +47,7 @@ export default {
    components: {
       'c-dialog-card': DialogCard,
       'c-progress-spinner': ProgressSpinner,
-      'c-error-card': ErrorCard,
+      'c-error-messages': ErrorMessagesVue,
    },
    data() {
       return {

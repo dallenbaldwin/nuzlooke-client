@@ -10,7 +10,11 @@
       <v-fade-transition>
          <div v-show="!processingGame">
             <c-text-field label="Name" v-model="values.label"></c-text-field>
-            <c-errors :full-width="true" v-if="hasErrors" :errors="errors"></c-errors>
+            <c-error-messages
+               :full-width="true"
+               v-if="hasErrors"
+               :errors="errors"
+            ></c-error-messages>
          </div>
       </v-fade-transition>
    </c-dialog-card>
@@ -20,14 +24,14 @@
 import { getValidationErrors, updateGameLabel } from '../../controllers/game';
 import { isUndefined } from '../../util/util';
 import DialogCardVue from '../dialogs/DialogCard.vue';
-import ErrorsVue from '../Errors.vue';
+import ErrorMessagesVue from '../ErrorMessages.vue';
 import TextFieldVue from '../form-controls/TextField.vue';
 import ProgressSpinnerVue from '../ProgressSpinner.vue';
 
 export default {
    name: 'EditGame',
    components: {
-      'c-errors': ErrorsVue,
+      'c-error-messages': ErrorMessagesVue,
       'c-progress-spinner': ProgressSpinnerVue,
       'c-text-field': TextFieldVue,
       'c-dialog-card': DialogCardVue,

@@ -8,23 +8,27 @@
       <v-slide-y-transition>
          <c-progress-spinner v-show="processing"></c-progress-spinner>
       </v-slide-y-transition>
-      <c-errors v-if="hasErrors" :full-width="true" :errors="errors"></c-errors>
+      <c-error-messages
+         v-if="hasErrors"
+         :full-width="true"
+         :errors="errors"
+      ></c-error-messages>
    </c-dialog-card>
 </template>
 
 <script>
 import DialogCardVue from '../dialogs/DialogCard.vue';
 import ProgressSpinnerVue from '../ProgressSpinner.vue';
-import ErrorsVue from '../Errors.vue';
 import { deleteRule } from '../../controllers/rules';
 import Icons from '../../constants/Icons';
+import ErrorMessagesVue from '../ErrorMessages.vue';
 
 export default {
    name: 'DeleteRule',
    components: {
       'c-dialog-card': DialogCardVue,
       'c-progress-spinner': ProgressSpinnerVue,
-      'c-errors': ErrorsVue,
+      'c-error-messages': ErrorMessagesVue,
    },
    props: {
       rule: { required: true },

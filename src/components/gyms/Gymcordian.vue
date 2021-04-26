@@ -64,12 +64,8 @@
             </v-row>
          </v-container>
       </v-expansion-panel-content>
-      <v-dialog v-model="errors.hasErrors" width="500" @click:outside="closeError">
-         <c-error-card
-            :errors="errors.errors"
-            :status="errors.status"
-            v-on:close-dialog="closeError"
-         ></c-error-card>
+      <v-dialog v-model="hasErrors" width="500" @click:outside="closeDialog">
+         <c-error-card :errors="errors" v-on:close-dialog="closeDialog"></c-error-card>
       </v-dialog>
    </v-expansion-panel>
 </template>
@@ -79,9 +75,10 @@ import BadgeSprite from './BadgeSprite.vue';
 import PokemonType from '../pokemon/PokemonType.vue';
 import Pokecordian from './Pokecordian.vue';
 import Button from '../Button.vue';
-import ErrorCard from '../dialogs/ErrorCard.vue';
 import * as util from '../../util/util';
-import * as gymController from '../../controllers/gym';
+import { setEarnedBadge } from '../../controllers/gym';
+import DialogCardVue from '../dialogs/DialogCard.vue';
+import ErrorCardVue from '../dialogs/ErrorCard.vue';
 
 export default {
    name: 'Gymcordian',
@@ -91,15 +88,19 @@ export default {
       'c-pokemon-type': PokemonType,
       'c-pokecordian': Pokecordian,
       'c-btn': Button,
-      'c-error-card': ErrorCard,
+      'c-error-card': ErrorCardVue,
+      'c-dialog-card': DialogCardVue,
    },
    data() {
       return {
          isDefeated: this.gym.is_defeated,
-         errors: {
-            hasErrors: false,
-            errors: [],
-            status: null,
+         hasErrors: false,
+         errors: null,
+         errorCard: {
+            title: `Error`,
+            cancelBtn: {
+               text: 'close',
+            },
          },
       };
    },
@@ -121,19 +122,17 @@ export default {
       // this throws an error in the console for some reason... everything works, the switch just doesn't like @change
       async setEarnedBadge() {
          this.gym.is_defeated = Boolean(this.isDefeated);
-         const earned = await gymController.setEarnedBadge(this.gym);
-         if (earned) {
+         let errors = await setEarnedBadge(this.gym);
+         if (errors) {
             this.gym.is_defeated = !this.gym.is_defeated;
             this.isDefeated = !this.isDefeated;
-            this.errors.hasErrors = true;
-            this.errors.status = earned.status;
-            this.errors.errors.push(...earned.error);
+            this.errors = errors;
+            this.hasErrors = true;
          }
       },
-      closeError() {
-         this.errors.errors = [];
-         this.errors.status = null;
-         this.errors.hasErrors = false;
+      closeDialog() {
+         this.errors = null;
+         this.hasErrors = false;
       },
    },
    beforeMount() {

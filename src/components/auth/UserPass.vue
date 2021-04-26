@@ -34,16 +34,16 @@
             </c-btn>
          </div>
       </div>
-      <c-errors v-if="hasErrors" :errors="errors"></c-errors>
+      <c-error-messages v-if="hasErrors" :errors="errors"></c-error-messages>
    </div>
 </template>
 
 <script>
 import Button from '../Button.vue';
-import Errors from '../Errors.vue';
 import Checkbox from '../form-controls/Checkbox.vue';
 import TextField from '../form-controls/TextField.vue';
 import * as authController from '../../controllers/auth';
+import ErrorMessagesVue from '../ErrorMessages.vue';
 
 export default {
    name: 'UserPass',
@@ -54,7 +54,7 @@ export default {
       'c-text-field': TextField,
       'c-btn': Button,
       'c-checkbox': Checkbox,
-      'c-errors': Errors,
+      'c-error-messages': ErrorMessagesVue,
    },
    computed: {},
    data() {

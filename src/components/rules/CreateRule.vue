@@ -47,7 +47,11 @@
             ></c-text-area>
          </div>
       </v-slide-y-transition>
-      <c-errors :errors="errors" v-if="hasErrors" :full-width="true"></c-errors>
+      <c-error-messages
+         :errors="errors"
+         v-if="hasErrors"
+         :full-width="true"
+      ></c-error-messages>
    </c-dialog-card>
 </template>
 
@@ -57,7 +61,7 @@ import Combobox from '../form-controls/Combobox.vue';
 import TextField from '../form-controls/TextField.vue';
 import TextArea from '../form-controls/TextArea.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
-import Errors from '../Errors.vue';
+import ErrorsMessagesVue from '../ErrorMessages.vue';
 import Button from '../Button.vue';
 import { createNewRule, getValidationErrors } from '../../controllers/rules';
 import GameRules from '../../constants/GameRules';
@@ -69,7 +73,7 @@ export default {
       'c-combobox': Combobox,
       'c-progress-spinner': ProgressSpinner,
       'c-text-area': TextArea,
-      'c-errors': Errors,
+      'c-error-messages': ErrorsMessagesVue,
       'c-btn': Button,
       'c-text-field': TextField,
       'c-dialog-card': DialogCard,

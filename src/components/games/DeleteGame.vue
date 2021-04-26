@@ -7,14 +7,18 @@
       <v-fade-transition>
          <c-progress-spinner v-show="processingGame"></c-progress-spinner>
       </v-fade-transition>
-      <c-errors :errors="errors" :full-width="true" v-if="hasErrors"></c-errors>
+      <c-error-messages
+         :errors="errors"
+         :full-width="true"
+         v-if="hasErrors"
+      ></c-error-messages>
    </c-dialog-card>
 </template>
 
 <script>
 import { deleteExistingGame } from '../../controllers/game';
 import DialogCardVue from '../dialogs/DialogCard.vue';
-import ErrorsVue from '../Errors.vue';
+import ErrorsMessagesVue from '../ErrorMessages.vue';
 import ProgressSpinnerVue from '../ProgressSpinner.vue';
 
 export default {
@@ -22,7 +26,7 @@ export default {
    components: {
       'c-dialog-card': DialogCardVue,
       'c-progress-spinner': ProgressSpinnerVue,
-      'c-errors': ErrorsVue,
+      'c-error-messages': ErrorsMessagesVue,
    },
    props: { game: { required: true } },
    data() {

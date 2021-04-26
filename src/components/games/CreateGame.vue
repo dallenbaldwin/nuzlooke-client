@@ -41,7 +41,11 @@
             </div>
          </div>
       </v-fade-transition>
-      <c-errors :errors="errors" :full-width="true" v-if="hasErrors"></c-errors>
+      <c-error-messages
+         :errors="errors"
+         :full-width="true"
+         v-if="hasErrors"
+      ></c-error-messages>
    </c-dialog-card>
 </template>
 
@@ -55,7 +59,7 @@ import Combobox from '../form-controls/Combobox.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
 import { isUndefined } from '../../util/util';
 import { getValidationErrors, createGame } from '../../controllers/game';
-import ErrorsVue from '../Errors.vue';
+import ErrorsMessagesVue from '../ErrorMessages.vue';
 
 export default {
    name: 'CreateGame',
@@ -66,7 +70,7 @@ export default {
       'c-text-field': TextField,
       'c-combobox': Combobox,
       'c-progress-spinner': ProgressSpinner,
-      'c-errors': ErrorsVue,
+      'c-error-messages': ErrorsMessagesVue,
    },
    data() {
       return {

@@ -23,19 +23,18 @@
             <span class="mx-6 text-h5">{{ provider.label }}</span>
          </v-card-text>
       </v-card>
-      <c-errors v-if="hasErrors" :errors="errors"></c-errors>
+      <c-error-messages v-if="hasErrors" :errors="errors"></c-error-messages>
    </div>
 </template>
 
 <script>
-import Errors from '../Errors.vue';
-import Icons from '../../constants/Icons';
-import * as authController from '../../controllers/auth';
+import { loginWithGoogle } from '../../controllers/auth';
+import ErrorsMessagesVue from '../ErrorMessages.vue';
 
 export default {
    name: 'LoginProviders',
    components: {
-      'c-errors': Errors,
+      'c-error-messages': ErrorsMessagesVue,
    },
    data() {
       return {
@@ -61,7 +60,7 @@ export default {
       },
       async withGoogle() {
          const GoogleUser = await this.$gAuth.signIn();
-         let errors = await authController.loginWithGoogle(GoogleUser);
+         let errors = await loginWithGoogle(GoogleUser);
          if (errors && errors.errors.includes('popup_closed_by_user')) return;
          else if (errors) {
             this.hasErrors = true;

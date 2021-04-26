@@ -61,10 +61,8 @@
 import ProgressSpinner from '../ProgressSpinner.vue';
 import TextField from '../form-controls/TextField.vue';
 import Button from '../Button.vue';
-import Errors from '../Errors.vue';
 import Icons from '../../constants/Icons';
 import Pages from '../../constants/Pages';
-import colors from 'vuetify/lib/util/colors';
 import FabBtn from './FabBtn.vue';
 import TabMap from '../../constants/TabMap';
 import * as authController from '../../controllers/auth';
@@ -79,7 +77,6 @@ export default {
    components: {
       AppSettings: () => import('../dialogs/AppSettings.vue'),
       'c-progress-spinner': ProgressSpinner,
-      'c-error': Errors,
       'c-text-field': TextField,
       'c-btn': Button,
       'c-fab-btn': FabBtn,

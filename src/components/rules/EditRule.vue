@@ -44,7 +44,11 @@
                label="Description"
                v-model="values.description"
             ></c-text-area>
-            <c-errors v-if="hasErrors" :full-width="true" :errors="errors"></c-errors>
+            <c-error-messages
+               v-if="hasErrors"
+               :full-width="true"
+               :errors="errors"
+            ></c-error-messages>
          </div>
       </v-slide-y-transition>
    </c-dialog-card>
@@ -52,18 +56,18 @@
 
 <script>
 import DialogCardVue from '../dialogs/DialogCard.vue';
-import ErrorsVue from '../Errors.vue';
 import TextAreaVue from '../form-controls/TextArea.vue';
 import TextFieldVue from '../form-controls/TextField.vue';
 import ProgressSpinnerVue from '../ProgressSpinner.vue';
 import ComboboxVue from '../form-controls/Combobox.vue';
 import { getValidationErrors, updateRule } from '../../controllers/rules';
 import GameRules from '../../constants/GameRules';
+import ErrorMessagesVue from '../ErrorMessages.vue';
 
 export default {
    name: 'EditRule',
    components: {
-      'c-errors': ErrorsVue,
+      'c-error-messages': ErrorMessagesVue,
       'c-text-area': TextAreaVue,
       'c-text-field': TextFieldVue,
       'c-dialog-card': DialogCardVue,

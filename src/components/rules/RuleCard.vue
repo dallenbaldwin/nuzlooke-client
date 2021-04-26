@@ -43,7 +43,6 @@ import TextArea from '../form-controls/TextArea.vue';
 import TextField from '../form-controls/TextField.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
 import Combobox from '../form-controls/Combobox.vue';
-import Errors from '../Errors.vue';
 import EditRule from './EditRule.vue';
 import DeleteRule from './DeleteRule.vue';
 
@@ -56,7 +55,6 @@ export default {
       'c-text-area': TextArea,
       'c-progress-spinner': ProgressSpinner,
       'c-combobox': Combobox,
-      'c-error': Errors,
       'c-edit-rule': EditRule,
       'c-delete-rule': DeleteRule,
    },

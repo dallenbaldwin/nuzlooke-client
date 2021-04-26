@@ -59,21 +59,17 @@
             </v-slide-y-transition>
          </div>
       </v-slide-y-transition>
-      <v-dialog v-model="errors.hasErrors" width="500" @click:outside="closeError">
-         <c-error-card
-            :errors="errors.errors"
-            :status="errors.status"
-            v-on:close-dialog="closeError"
-         ></c-error-card>
-      </v-dialog>
+      <c-error-messages
+         v-if="hasErrors"
+         :full-width="true"
+         :errors="errors"
+      ></c-error-messages>
    </c-dialog-card>
 </template>
 
 <script>
 import ProgressSpinner from '../ProgressSpinner.vue';
 import DialogCard from '../dialogs/DialogCard.vue';
-import ErrorCard from '../dialogs/ErrorCard.vue';
-import Errors from '../Errors.vue';
 import TextField from '../form-controls/TextField.vue';
 import Combobox from '../form-controls/Combobox.vue';
 import * as pokemonController from '../../controllers/pokemon';
@@ -84,6 +80,7 @@ import * as routeController from '../../controllers/route';
 import PartyState from '../../constants/PartyState';
 import EncounterResult from '../../models/EncounterResult';
 import * as pokeapiController from '../../controllers/pokeapi';
+import ErrorMessagesVue from '../ErrorMessages.vue';
 
 export default {
    name: 'NewEncounter',
@@ -93,10 +90,9 @@ export default {
    components: {
       'c-dialog-card': DialogCard,
       'c-progress-spinner': ProgressSpinner,
-      'c-errors': Errors,
+      'c-error-messages': ErrorMessagesVue,
       'c-text-field': TextField,
       'c-combobox': Combobox,
-      'c-error-card': ErrorCard,
    },
    data() {
       return {

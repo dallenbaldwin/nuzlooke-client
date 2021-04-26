@@ -102,12 +102,8 @@
       <v-dialog v-model="deleteGame" width="500" @click:outside="closeDialog">
          <c-delete-game :game="game" v-on:close-dialog="closeDialog"></c-delete-game>
       </v-dialog>
-      <v-dialog v-model="showErrors" width="500" @click:outside="closeDialog">
-         <c-error-card
-            v-if="errors"
-            :errors="errors"
-            v-on:close-dialog="closeDialog"
-         ></c-error-card>
+      <v-dialog v-model="hasErrors" width="500" @click:outside="closeDialog">
+         <c-error-card :errors="errors" v-on:close-dialog="closeDialog"></c-error-card>
       </v-dialog>
    </v-expansion-panel>
 </template>
@@ -117,7 +113,6 @@ import DialogCard from '../dialogs/DialogCard.vue';
 import Button from '../Button.vue';
 import PokeSprite from '../pokemon/PokeSprite.vue';
 import BadgeSprite from '../gyms/BadgeSprite.vue';
-import ErrorCard from '../dialogs/ErrorCard.vue';
 import DeleteGame from './DeleteGame.vue';
 import EditGame from './EditGame.vue';
 import FinishGame from './FinishGame.vue';
@@ -126,6 +121,7 @@ import Icons from '../../constants/Icons';
 import TabMap from '../../constants/TabMap';
 import Pages from '../../constants/Pages';
 import { mobile } from '../../util/util';
+import ErrorCardVue from '../dialogs/ErrorCard.vue';
 
 export default {
    name: 'Gamecordian',
@@ -135,14 +131,15 @@ export default {
       'c-btn': Button,
       'c-poke-sprite': PokeSprite,
       'c-badge-sprite': BadgeSprite,
-      'c-error-card': ErrorCard,
       'c-delete-game': DeleteGame,
       'c-edit-game': EditGame,
       'c-finish-game': FinishGame,
+      'c-error-card': ErrorCardVue,
    },
    data() {
       return {
          errors: null,
+         hasErrors: false,
          gameBtns: [
             {
                label: 'Pokemon',
@@ -169,7 +166,6 @@ export default {
                icon: Icons.PAGES.RULES,
             },
          ],
-         showErrors: false,
          editGame: false,
          deleteGame: false,
          finishGame: false,
@@ -195,7 +191,7 @@ export default {
       },
       closeDialog() {
          this.errors = null;
-         this.showErrors = false;
+         this.hasErrors = false;
          this.editGame = false;
          this.deleteGame = false;
          this.finishGame = false;
@@ -208,7 +204,7 @@ export default {
          const goToResponse = await goToGame(this.game.game_id, route);
          if (goToResponse) {
             this.errors = goToResponse;
-            this.showErrors = true;
+            this.hasErrors = true;
             return;
          }
       },

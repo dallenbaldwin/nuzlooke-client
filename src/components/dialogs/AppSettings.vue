@@ -16,7 +16,11 @@
                v-model="saveFilters"
                class="ma-3"
             ></v-checkbox> -->
-            <c-errors v-if="hasErrors" :full-width="true" :errors="errors"></c-errors>
+            <c-error-messages
+               v-if="hasErrors"
+               :full-width="true"
+               :errors="errors"
+            ></c-error-messages>
          </div>
       </v-fade-transition>
    </c-dialog-card>
@@ -24,17 +28,17 @@
 
 <script>
 import DialogCard from './DialogCard.vue';
-import Errors from '../Errors.vue';
 import TextField from '../form-controls/TextField.vue';
 import ProgressSpinner from '../ProgressSpinner.vue';
 import { getValidationErrors, saveSettings } from '../../controllers/application';
+import ErrorMessagesVue from '../ErrorMessages.vue';
 
 export default {
    name: 'AppSettings',
    components: {
       'c-dialog-card': DialogCard,
       'c-text-field': TextField,
-      'c-errors': Errors,
+      'c-error-messages': ErrorMessagesVue,
       'c-progress-spinner': ProgressSpinner,
    },
    props: {},
