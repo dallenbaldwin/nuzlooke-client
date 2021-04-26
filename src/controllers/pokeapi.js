@@ -1,9 +1,7 @@
 import * as services from '../services/pokeapi';
 import UserPokemon from '../models/UserPokemon';
-import { errorCatch } from '../util/util';
 import store from '../store/store';
 
-// TODO error handling at ... every step??
 export const buildUserPokemon = async (species, nickname, partyState) => {
    species = species.toLowerCase();
    const pokeData = await services.getPokemonBySpecies(species);
@@ -11,7 +9,8 @@ export const buildUserPokemon = async (species, nickname, partyState) => {
    const speciesData = await services.get(pokeData.data.species.url);
    if (speciesData && speciesData.errors) return speciesData;
    const evoData = await services.get(speciesData.data.evolution_chain.url);
-   const evolvesTo = getNextEvolution(evoData.chain, species);
+   if (evoData && evoData.errors) return evoData;
+   const evolvesTo = getNextEvolution(evoData.data.chain, species);
    const evolvesToPokemon = await getValidEvolutions(evolvesTo);
    if (evolvesToPokemon && evolvesToPokemon.errors) return evolvesToPokemon;
    const english = getEnglish(speciesData.data.names);

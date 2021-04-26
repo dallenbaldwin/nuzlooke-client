@@ -9,23 +9,11 @@
             <c-progress-spinner></c-progress-spinner>
          </div>
       </v-slide-y-transition>
-      <!-- I wanted so bad for this to be a component, but I couldn't get the errors to pass all the way down to the errors component consistently -->
-      <v-dialog v-model="hasErrors" width="500" @click:outside="closeDialog">
-         <c-dialog-card :props="errorCard" v-on:close-dialog="closeDialog">
-            <div class="ma-3">
-               This is awkward... Try again.
-            </div>
-            <div class="ma-3">
-               If the error(s) persists, note the error(s) and what you were doing when
-               they happened. Then contact our support team so we can look into the issue
-            </div>
-            <c-error-messages
-               v-if="hasErrors"
-               :full-width="true"
-               :errors="errors"
-            ></c-error-messages>
-         </c-dialog-card>
-      </v-dialog>
+      <c-error-messages
+         v-if="hasErrors"
+         :full-width="true"
+         :errors="errors"
+      ></c-error-messages>
    </c-dialog-card>
 </template>
 
@@ -52,10 +40,8 @@ export default {
    data() {
       return {
          processing: false,
-         errors: {
-            errors: [],
-            hasErrors: false,
-         },
+         errors: null,
+         hasErrors: false,
          dialogCard: {
             title: `Reset ${this.encounter.label}?`,
             text: `Are you sure you want to reset ${this.encounter.label}? Any associated Pokemon will be removed from your list. This action cannot be undone.`,
@@ -65,11 +51,14 @@ export default {
    },
    methods: {
       closeDialog() {
+         this.errors = null;
+         this.hasErrors = false;
+         this.processing = false;
          this.$emit('close-dialog');
       },
       async resetEncounter() {
          this.processing = true;
-         // TODO can i put this into a controller?
+         // TODO can i put this into a controller?. no this _SHOULD_ go in a controller
          let pokemon = pokemonController.getPokemonById(this.encounter.result.pokemon_id);
          if (pokemon) pokemonController.removeFromList(pokemon);
          this.encounter.result.pokemon_id = null;
@@ -78,28 +67,22 @@ export default {
          this.encounter.result.sprite_url = null;
          this.encounter.result.nickname = null;
          routeController.updateEncounterInStore(this.encounter);
-         const updatePERequest = await gameController.updateEncountersAndPokemonsInDB();
-         if (updatePERequest) {
-            this.errors.hasErrors = true;
-            this.errors.errors.push(...updatePERequest.error);
-            this.errors.status = updatePERequest.status;
+         let errors = await gameController.updateEncountersAndPokemonsInDB();
+         if (errors) {
+            this.processing = false;
+            this.errors = errors;
+            this.hasErrors = true;
             return;
          }
          userController.updateSnapshotPartyUrls(this.game.id);
-         const updateUGResponse = await userController.updateUserGames();
-         if (updateUGResponse) {
-            this.errors.hasErrors = true;
-            this.errors.errors.push(...updateUGResponse.error);
-            this.errors.status = updateUGResponse.status;
+         errors = await userController.updateUserGames();
+         if (errors) {
+            this.processing = false;
+            this.errors = errors;
+            this.hasErrors = true;
             return;
          }
          this.closeDialog();
-      },
-      closeError() {
-         this.processing = false;
-         this.errors.errors = [];
-         this.errors.hasErrors = false;
-         this.errors.status = null;
       },
    },
    computed: {

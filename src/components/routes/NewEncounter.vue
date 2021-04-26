@@ -106,11 +106,8 @@ export default {
          },
          id: this.encounter.id,
          label: this.encounter.label,
-         errors: {
-            hasErrors: false,
-            errors: [],
-            status: null,
-         },
+         errors: null,
+         hasErrors: false,
          dialogCard: {
             title: this.encounter.label,
             primaryBtn: { action: 'new-encounter' },
@@ -142,8 +139,8 @@ export default {
    methods: {
       closeDialog() {
          this.processing = false;
-         this.errors.hasErrors = false;
-         this.errors.errors = [];
+         this.errors = null;
+         this.hasErrors = false;
          this.result.constant = EncounterResultConst.AVAILABLE;
          this.result.species = null;
          this.result.nickname = null;
@@ -153,8 +150,12 @@ export default {
       },
       async newEncounter() {
          // validate for data errors
-         this.errors = routeController.getEncounterErrors(this.result);
-         if (this.errors.hasErrors) return;
+         let errors = routeController.getEncounterErrors(this.result);
+         if (errors) {
+            this.errors = errors;
+            this.hasErrors = true;
+            return;
+         }
          // ignore when they confirm on available
          if (routeController.isAvailable(this.result.constant)) {
             this.closeDialog();
@@ -162,7 +163,7 @@ export default {
          }
          // start process
          this.processing = true;
-         // TODO can i put this in the controller?
+         // TODO can i put this in the controller? no. this _SHOULD_ go in the controller
          // set result
          this.encounter.result = EncounterResult.builder()
             .withNickname(this.result.nickname)
@@ -175,6 +176,12 @@ export default {
             this.result.nickname,
             undefined
          );
+         if (newPokemon.errors) {
+            this.processing = false;
+            this.errors = newPokemon.errors;
+            this.hasErrors = true;
+            return;
+         }
          this.encounter.result.sprite_url = newPokemon.sprite_url;
          // handle capture situations
          if (routeController.isCaught(this.result.constant)) {
@@ -194,28 +201,22 @@ export default {
             pokemonController.pushNewPokemon(newPokemon);
          }
          routeController.updateEncounterInStore(this.encounter);
-         const updatePERequest = await gameController.updateEncountersAndPokemonsInDB();
-         if (updatePERequest) {
-            this.errors.hasErrors = true;
-            this.errors.errors.push(...updatePERequest.error);
-            this.errors.status = updatePERequest.status;
+         errors = await gameController.updateEncountersAndPokemonsInDB();
+         if (errors) {
+            this.processing = false;
+            this.hasErrors = true;
+            this.errors = errors;
             return;
          }
          userController.updateSnapshotPartyUrls(this.game.id);
-         const updateUGResponse = await userController.updateUserGames();
-         if (updateUGResponse) {
-            this.errors.hasErrors = true;
-            this.errors.errors.push(...updateUGResponse.error);
-            this.errors.status = updateUGResponse.status;
+         errors = await userController.updateUserGames();
+         if (errors) {
+            this.processing = false;
+            this.hasErrors = true;
+            this.errors = errors;
             return;
          }
          this.closeDialog();
-      },
-      closeError() {
-         this.processing = false;
-         this.errors.errors = [];
-         this.errors.hasErrors = false;
-         this.errors.status = null;
       },
    },
    computed: {

@@ -63,8 +63,5 @@ export const getEncounterErrors = (results, update = false) => {
          errors.push(`You must select a Pokemon`);
       }
    }
-   return {
-      errors: errors,
-      hasErrors: errors.length > 0,
-   };
+   if (errors.length > 0) return { errors: errors };
 };
