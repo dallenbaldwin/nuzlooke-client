@@ -40,7 +40,6 @@
                >
             </div>
          </v-card-text>
-         <!-- TODO v-dialog could be a slotted component... <c-dialog-header v-model :width :persistant :scrollable :full-screen> -->
          <v-dialog v-model="graveyard" width="500">
             <c-graveyard-pokemon
                :pokemon="pokemon"

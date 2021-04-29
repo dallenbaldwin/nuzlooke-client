@@ -163,7 +163,6 @@ export default {
          }
          // start process
          this.processing = true;
-         // TODO can i put this in the controller? no. this _SHOULD_ go in the controller
          // set result
          this.encounter.result = EncounterResult.builder()
             .withNickname(this.result.nickname)

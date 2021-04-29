@@ -58,7 +58,6 @@ export default {
       },
       async resetEncounter() {
          this.processing = true;
-         // TODO can i put this into a controller?. no this _SHOULD_ go in a controller
          let pokemon = pokemonController.getPokemonById(this.encounter.result.pokemon_id);
          if (pokemon) pokemonController.removeFromList(pokemon);
          this.encounter.result.pokemon_id = null;
