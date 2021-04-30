@@ -2,15 +2,14 @@ import * as services from '../services/pokeapi';
 import UserPokemon from '../models/UserPokemon';
 import store from '../store/store';
 
-export const buildUserPokemon = async (species, nickname, partyState) => {
-   species = species.toLowerCase();
-   const pokeData = await services.getPokemonBySpecies(species);
+export const buildUserPokemon = async (apiName, nickname, partyState) => {
+   const pokeData = await services.getPokemonBySpecies(apiName);
    if (pokeData && pokeData.errors) return pokeData;
    const speciesData = await services.get(pokeData.data.species.url);
    if (speciesData && speciesData.errors) return speciesData;
    const evoData = await services.get(speciesData.data.evolution_chain.url);
    if (evoData && evoData.errors) return evoData;
-   const evolvesTo = getNextEvolution(evoData.data.chain, species);
+   const evolvesTo = getNextEvolution(evoData.data.chain, apiName);
    const evolvesToPokemon = await getValidEvolutions(evolvesTo);
    if (evolvesToPokemon && evolvesToPokemon.errors) return evolvesToPokemon;
    const english = getEnglish(speciesData.data.names);

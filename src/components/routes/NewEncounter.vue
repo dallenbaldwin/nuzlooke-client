@@ -171,14 +171,14 @@ export default {
             .build();
          // pokeapi and set new user pokemon
          const newPokemon = await pokeapiController.buildUserPokemon(
-            this.result.species.text,
+            this.result.species.value,
             this.result.nickname,
             undefined
          );
          if (newPokemon.errors) {
             this.processing = false;
-            this.errors = newPokemon.errors;
             this.hasErrors = true;
+            this.errors = newPokemon;
             return;
          }
          this.encounter.result.sprite_url = newPokemon.sprite_url;
@@ -224,7 +224,7 @@ export default {
       },
       pokemons() {
          return this.encounter.pokemons.map(p =>
-            Object({ value: p.sprite_url, text: p.species })
+            Object({ value: p.api_name, text: p.species })
          );
       },
       partyIsFull() {
