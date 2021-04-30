@@ -14,7 +14,7 @@ export const get = async endpoint => {
          .build();
    } catch (err) {
       return APIResponse.builder()
-         .withError(err.response.data)
+         .withErrors([err.response.data])
          .withStatus(err.response.status)
          .build();
    }
@@ -30,7 +30,7 @@ export const getPokemonBySpecies = async (species = 'ditto') => {
          .build();
    } catch (err) {
       return APIResponse.builder()
-         .withError(err.response.data)
+         .withErrors([err.response.data])
          .withStatus(err.response.status)
          .build();
    }
