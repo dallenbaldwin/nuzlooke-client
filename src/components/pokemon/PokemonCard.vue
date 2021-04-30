@@ -40,21 +40,21 @@
                >
             </div>
          </v-card-text>
-         <v-dialog v-model="graveyard" width="500">
+         <c-dialog-wrapper v-model="graveyard">
             <c-graveyard-pokemon
                :pokemon="pokemon"
                v-on:close-dialog="closeDialog"
             ></c-graveyard-pokemon>
-         </v-dialog>
-         <v-dialog v-model="evolve" width="500">
+         </c-dialog-wrapper>
+         <c-dialog-wrapper v-model="evolve">
             <c-evolve-pokemon
                :pokemon="pokemon"
                v-on:close-dialog="closeDialog"
             ></c-evolve-pokemon>
-         </v-dialog>
-         <v-dialog v-model="hasErrors" width="500" @click:outside="closeDialog">
+         </c-dialog-wrapper>
+         <c-dialog-wrapper v-model="hasErrors" v-on:close-dialog="closeDialog">
             <c-error-card :errors="errors" v-on:close-dialog="closeDialog"></c-error-card>
-         </v-dialog>
+         </c-dialog-wrapper>
       </v-card>
    </v-scale-transition>
 </template>
@@ -75,6 +75,7 @@ import {
 import GraveyardPokemonVue from './GraveyardPokemon.vue';
 import EvolvePokemonVue from './EvolvePokemon.vue';
 import ErrorCardVue from '../dialogs/ErrorCard.vue';
+import DialogWrapperVue from '../dialogs/DialogWrapper.vue';
 
 export default {
    name: 'PokemonCard',
@@ -85,6 +86,7 @@ export default {
       'c-graveyard-pokemon': GraveyardPokemonVue,
       'c-evolve-pokemon': EvolvePokemonVue,
       'c-error-card': ErrorCardVue,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    props: {
       pokemon: { required: true },

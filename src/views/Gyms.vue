@@ -17,7 +17,7 @@
             ></c-gymcordian>
          </v-expansion-panels>
       </v-row>
-      <v-dialog v-model="filter.flag" width="500">
+      <c-dialog-wrapper v-model="filter.flag">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
             <c-checkbox
                v-model="filter.values.priority"
@@ -41,7 +41,7 @@
             >
             </c-combobox>
          </c-dialog-card>
-      </v-dialog>
+      </c-dialog-wrapper>
    </div>
 </template>
 
@@ -55,6 +55,7 @@ import Checkbox from '../components/form-controls/Checkbox.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import * as util from '../util/util';
 import PokemonTypes from '../constants/PokemonTypes';
+import DialogWrapperVue from '../components/dialogs/DialogWrapper.vue';
 
 export default {
    name: 'Gyms',
@@ -66,6 +67,7 @@ export default {
       'c-btn': Button,
       'c-toolbar': Toolbar,
       'c-checkbox': Checkbox,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
       return {

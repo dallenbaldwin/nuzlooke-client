@@ -51,9 +51,9 @@
             @click="$emit('add')"
          ></c-fab-btn>
       </v-speed-dial>
-      <v-dialog v-model="settings" width="500">
+      <c-dialog-wrapper v-model="settings">
          <app-settings v-on:close-dialog="settings = !settings"></app-settings>
-      </v-dialog>
+      </c-dialog-wrapper>
    </div>
 </template>
 
@@ -67,6 +67,7 @@ import FabBtn from './FabBtn.vue';
 import TabMap from '../../constants/TabMap';
 import * as authController from '../../controllers/auth';
 import * as util from '../../util/util';
+import DialogWrapperVue from '../dialogs/DialogWrapper.vue';
 
 export default {
    name: 'SpeedDial',
@@ -80,6 +81,7 @@ export default {
       'c-text-field': TextField,
       'c-btn': Button,
       'c-fab-btn': FabBtn,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
       return {

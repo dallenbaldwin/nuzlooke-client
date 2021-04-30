@@ -58,7 +58,7 @@
             </v-expansion-panel>
          </v-expansion-panels>
       </v-row>
-      <v-dialog v-model="filter.flag" width="500">
+      <c-dialog-wrapper v-model="filter.flag">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
             <c-sort v-if="mobile()" :items="sort.items" v-on:set-sort="setSort"></c-sort>
             <c-checkbox
@@ -85,13 +85,14 @@
             >
             </c-combobox>
          </c-dialog-card>
-      </v-dialog>
+      </c-dialog-wrapper>
    </div>
 </template>
 
 <script>
 import Button from '../components/Button.vue';
 import DialogCard from '../components/dialogs/DialogCard.vue';
+import DialogWrapperVue from '../components/dialogs/DialogWrapper.vue';
 import Checkbox from '../components/form-controls/Checkbox.vue';
 import Combobox from '../components/form-controls/Combobox.vue';
 import Sort from '../components/form-controls/Sort.vue';
@@ -119,6 +120,7 @@ export default {
       'c-toolbar': Toolbar,
       'c-sort': Sort,
       'c-checkbox': Checkbox,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
       return {

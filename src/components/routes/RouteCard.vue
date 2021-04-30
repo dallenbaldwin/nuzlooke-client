@@ -57,18 +57,18 @@
                Reset
             </c-btn>
          </v-card-actions>
-         <v-dialog v-model="newEncounter" width="500">
+         <c-dialog-wrapper v-model="newEncounter">
             <c-new-encounter
                :encounter="encounter"
                v-on:close-dialog="newEncounter = !newEncounter"
             ></c-new-encounter>
-         </v-dialog>
-         <v-dialog v-model="resetEncounter" width="500">
+         </c-dialog-wrapper>
+         <c-dialog-wrapper v-model="resetEncounter">
             <c-reset-encounter
                :encounter="encounter"
                v-on:close-dialog="resetEncounter = !resetEncounter"
             ></c-reset-encounter>
-         </v-dialog>
+         </c-dialog-wrapper>
       </v-card>
    </v-lazy>
 </template>
@@ -80,6 +80,7 @@ import DialogCard from '../../components/dialogs/DialogCard.vue';
 import ResetEncounter from './ResetEncounter.vue';
 import NewEncounter from './NewEncounter.vue';
 import EncounterResultConst from '../../constants/EncounterResultConst';
+import DialogWrapperVue from '../dialogs/DialogWrapper.vue';
 
 export default {
    name: 'RouteCard',
@@ -92,6 +93,7 @@ export default {
       'c-dialog-card': DialogCard,
       'c-reset-encounter': ResetEncounter,
       'c-new-encounter': NewEncounter,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
       return {

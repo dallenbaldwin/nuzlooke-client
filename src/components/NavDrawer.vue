@@ -60,9 +60,9 @@
             </v-list-item>
          </v-list>
       </v-navigation-drawer>
-      <v-dialog v-model="settings" width="500">
+      <c-dialog-wrapper v-model="settings">
          <c-app-settings v-on:close-dialog="settings = !settings"></c-app-settings>
-      </v-dialog>
+      </c-dialog-wrapper>
    </div>
 </template>
 
@@ -78,6 +78,7 @@ import GameVersions from '../constants/GameVersions';
 import Pages from '../constants/Pages';
 import * as authController from '../controllers/auth';
 import * as gameController from '../controllers/game';
+import DialogWrapperVue from './dialogs/DialogWrapper.vue';
 
 export default {
    name: 'NavDrawer',
@@ -87,6 +88,7 @@ export default {
       'c-combobox': Combobox,
       'c-btn': Button,
       'c-app-settings': AppSettings,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
       return {

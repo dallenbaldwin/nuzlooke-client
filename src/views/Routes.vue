@@ -13,7 +13,7 @@
             v-show="getFilter(encounter)"
          ></c-route-card>
       </v-row>
-      <v-dialog v-model="filter.flag" width="500">
+      <c-dialog-wrapper v-model="filter.flag">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
             <c-sort v-if="mobile()" :items="sort.items" v-on:set-sort="setSort"></c-sort>
             <c-combobox
@@ -41,7 +41,7 @@
                :multiple="true"
             ></c-combobox>
          </c-dialog-card>
-      </v-dialog>
+      </c-dialog-wrapper>
    </div>
 </template>
 
@@ -55,6 +55,7 @@ import Sort from '../components/form-controls/Sort.vue';
 import Button from '../components/Button.vue';
 import * as util from '../util/util';
 import PokemonTypes from '../constants/PokemonTypes';
+import DialogWrapperVue from '../components/dialogs/DialogWrapper.vue';
 
 export default {
    name: 'Routes',
@@ -66,6 +67,7 @@ export default {
       'c-btn': Button,
       'c-toolbar': Toolbar,
       'c-sort': Sort,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
       return {

@@ -19,7 +19,7 @@
             :gameRule="gameRule"
          ></c-rule-card>
       </v-row>
-      <v-dialog v-model="filter.flag" width="500">
+      <c-dialog-wrapper v-model="filter.flag">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
             <c-combobox
                :items="filter.isStockItems"
@@ -28,10 +28,10 @@
                v-model="filter.values.isStock"
             ></c-combobox>
          </c-dialog-card>
-      </v-dialog>
-      <v-dialog v-model="createRule" width="500">
+      </c-dialog-wrapper>
+      <c-dialog-wrapper v-model="createRule">
          <c-create-rule v-on:close-dialog="createRule = !createRule"></c-create-rule>
-      </v-dialog>
+      </c-dialog-wrapper>
    </div>
 </template>
 
@@ -42,6 +42,7 @@ import RuleCard from '../components/rules/RuleCard.vue';
 import CreateRule from '../components/rules/CreateRule.vue';
 import Toolbar from '../components/Toolbar.vue';
 import * as util from '../util/util';
+import DialogWrapperVue from '../components/dialogs/DialogWrapper.vue';
 
 export default {
    name: 'Rules',
@@ -51,6 +52,7 @@ export default {
       'c-toolbar': Toolbar,
       'c-combobox': Combobox,
       'c-create-rule': CreateRule,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
       return {

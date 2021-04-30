@@ -19,20 +19,20 @@
             >Edit</c-btn
          >
       </v-card-actions>
-      <v-dialog v-model="editRule" width="500">
+      <c-dialog-wrapper v-model="editRule">
          <c-edit-rule
             :rule="gameRule"
             v-on:close-dialog="closeDialog"
             @click:outside="closeDialog"
          ></c-edit-rule>
-      </v-dialog>
-      <v-dialog v-model="deleteRule" width="500">
+      </c-dialog-wrapper>
+      <c-dialog-wrapper v-model="deleteRule">
          <c-delete-rule
             :rule="gameRule"
             v-on:close-dialog="closeDialog"
             @click:outside="closeDialog"
          ></c-delete-rule>
-      </v-dialog>
+      </c-dialog-wrapper>
    </v-card>
 </template>
 
@@ -45,6 +45,7 @@ import ProgressSpinner from '../ProgressSpinner.vue';
 import Combobox from '../form-controls/Combobox.vue';
 import EditRule from './EditRule.vue';
 import DeleteRule from './DeleteRule.vue';
+import DialogWrapperVue from '../dialogs/DialogWrapper.vue';
 
 export default {
    name: 'RuleCard',
@@ -57,6 +58,7 @@ export default {
       'c-combobox': Combobox,
       'c-edit-rule': EditRule,
       'c-delete-rule': DeleteRule,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    props: {
       gameRule: { required: true },

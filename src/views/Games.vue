@@ -43,10 +43,10 @@
             ></c-gamecordian>
          </v-expansion-panels>
       </v-row>
-      <v-dialog v-model="createGame" width="500" scrollable>
+      <c-dialog-wrapper v-model="createGame">
          <c-create-game v-on:close-dialog="createGame = !createGame"></c-create-game>
-      </v-dialog>
-      <v-dialog v-model="filter.flag" width="500">
+      </c-dialog-wrapper>
+      <c-dialog-wrapper v-model="filter.flag">
          <c-dialog-card :props="filter.dialogCard" v-on:close-dialog="closeDialog">
             <c-sort v-if="mobile()" :items="sort.items" v-on:set-sort="setSort"></c-sort>
             <c-text-field label="Name" v-model="filter.values.label"></c-text-field>
@@ -70,7 +70,7 @@
             >
             </c-combobox>
          </c-dialog-card>
-      </v-dialog>
+      </c-dialog-wrapper>
    </v-container>
 </template>
 
@@ -87,6 +87,7 @@ import Icons from '../constants/Icons';
 import GameVersions from '../constants/GameVersions';
 import Sort from '../components/form-controls/Sort.vue';
 import * as authController from '../controllers/auth';
+import DialogWrapperVue from '../components/dialogs/DialogWrapper.vue';
 
 export default {
    name: 'Games',
@@ -99,6 +100,7 @@ export default {
       'c-toobar': Toolbar,
       'c-create-game': CreateGame,
       'c-sort': Sort,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
       return {

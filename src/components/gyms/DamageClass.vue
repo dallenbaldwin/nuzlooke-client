@@ -1,13 +1,5 @@
 <template>
    <v-chip outlined :color="DamageClass[upperClass].color" small class="mr-1">
-      <!-- <v-img
-         class="mr-1"
-         :lazy-src="Icons.MISC.POKEBALL"
-         :src="DamageClass[upperClass].icon"
-         contain
-         max-height="16"
-         max-width="16"
-      ></v-img> -->
       {{ damageClass }}
    </v-chip>
 </template>
