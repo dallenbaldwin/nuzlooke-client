@@ -17,6 +17,11 @@
             </c-combobox>
          </div>
       </v-slide-y-transition>
+      <c-error-messages
+         :errors="errors"
+         v-if="hasErrors"
+         :full-width="true"
+      ></c-error-messages>
    </c-dialog-card>
 </template>
 
@@ -26,6 +31,7 @@ import ProgressSpinner from '../../components/ProgressSpinner.vue';
 import DialogCard from '../../components/dialogs/DialogCard.vue';
 import { evolvePokemon } from '../../controllers/pokemon';
 import Icons from '../../constants/Icons';
+import ErrorMessagesVue from '../ErrorMessages.vue';
 
 export default {
    name: 'EvolvePokemon',
@@ -33,6 +39,7 @@ export default {
       'c-combobox': Combobox,
       'c-progress-spinner': ProgressSpinner,
       'c-dialog-card': DialogCard,
+      'c-error-messages': ErrorMessagesVue,
    },
    props: { pokemon: { required: true } },
    data() {
