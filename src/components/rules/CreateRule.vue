@@ -16,8 +16,7 @@
                   outlined
                   :color="values.useStock ? 'primary' : null"
                   class="ma-1"
-                  :class="mobile() ? 'text-caption' : ''"
-                  >Use Pre-defined</v-chip
+                  >{{ mobile() ? 'Pre-defined' : 'Use Pre-defined Rule' }}</v-chip
                >
                <v-chip
                   @click="values.useStock = !values.useStock"
@@ -25,8 +24,7 @@
                   outlined
                   :color="values.useStock ? null : 'primary'"
                   class="ma-1"
-                  :class="mobile() ? 'text-caption' : ''"
-                  >Use Custom</v-chip
+                  >{{ mobile() ? 'Custom' : 'Use Custom Rule' }}</v-chip
                >
             </div>
             <c-combobox
