@@ -4,7 +4,7 @@
       outlined
       elevation="1"
       max-width="350"
-      min-width="350"
+      min-width="300"
       rounded
    >
       <v-card-title class="d-flex">
