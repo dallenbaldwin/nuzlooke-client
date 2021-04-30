@@ -64,7 +64,7 @@ export default Object.freeze({
    ELECTRIC: PokemonType.builder()
       .withColor('#f3d23b')
       .withLabel('Electric')
-      .withIcon('https://cdn.bulbagarden.net/upload/7/7b/Electric_icon_SwSh.png')
+      .withIcon('https://cdn2.bulbagarden.net/upload/7/7b/Electric_icon_SwSh.png')
       .build(),
    PSYCHIC: PokemonType.builder()
       .withColor('#f97176')
