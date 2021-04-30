@@ -4,22 +4,21 @@ import './registerServiceWorker';
 import router from './router/router';
 import store from './store/store';
 import vuetify from './plugins/vuetify';
+
 import dotenv from 'dotenv';
-
 dotenv.config();
-
-Vue.config.productionTip = false;
 
 import globals from './mixins/globals';
 Vue.mixin(globals);
 
 import GoogleAuth from './services/google.js';
-
 Vue.use(GoogleAuth, {
    clientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
    scope: 'profile email',
    prompt: 'select_account',
 });
+
+Vue.config.productionTip = false;
 
 const startApp = () => {
    new Vue({
@@ -33,5 +32,12 @@ const startApp = () => {
 };
 
 // have to wait for facebook to start the app
-import { initFacebookSDK } from './services/facebook';
-initFacebookSDK().then(startApp);
+// import { initFacebookSDK } from './services/facebook';
+// initFacebookSDK()
+//    .catch(err => {
+//       console.log(err);
+//       startApp;
+//    })
+//    .then(startApp);
+
+startApp();
