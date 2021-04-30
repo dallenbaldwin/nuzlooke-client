@@ -9,7 +9,7 @@
          type="error"
          class="text-wrap"
       >
-         {{ status ? `Status ${status}: ${error}` : error }}
+         {{ status ? `${status}: ${error}` : error }}
       </v-alert>
    </div>
 </template>

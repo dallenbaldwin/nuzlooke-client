@@ -34,7 +34,7 @@ export default class APIResponse {
    static fromError(error) {
       let errors = error.response.data.error;
       return APIResponse.builder()
-         .withStatus(error.response.status)
+         .withStatus(`${error.response.status} ${error.response.statusText}`)
          .withErrors(typeof errors === 'string' ? [errors] : errors)
          .build();
    }
