@@ -43,10 +43,10 @@ export default {
          hasErrors: false,
          processingPokemon: false,
          faintedMessage: null,
-         faintedLabel: `What happened to ${this.computedName}?`,
+         faintedLabel: null,
          dialogCard: {
-            title: `Send ${this.computedName} to the Graveyard?`,
-            text: `Are you sure you want to send ${this.computedName} to the Graveyard? This action cannot be undone!`,
+            title: null,
+            text: null,
             primaryBtn: {
                color: 'black',
                icon: Icons.CONTROLS.TOMBSTONE,
@@ -81,6 +81,11 @@ export default {
          }
          this.closeDialog();
       },
+   },
+   mounted() {
+      this.faintedLabel = `What happened to ${this.computedName}?`;
+      this.dialogCard.title = `Send ${this.computedName} to the Graveyard?`;
+      this.dialogCard.text = `Are you sure you want to send ${this.computedName} to the Graveyard? This action cannot be undone!`;
    },
 };
 </script>
