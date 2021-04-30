@@ -121,7 +121,9 @@ export default {
    },
    methods: {
       toCreate(page) {
-         return `create ${page.replace('s', '')}`;
+         // hacky
+         if (this.tab) return 'create rule';
+         else return `create ${page.replace('s', '')}`;
       },
       goTo(route) {
          util.navigate({ name: route });
