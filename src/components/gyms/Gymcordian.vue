@@ -23,14 +23,11 @@
                </div>
             </v-row>
             <v-row class="d-flex flex-row justify-content-start">
-               <v-img
-                  :src="gym.leader.sprite_url"
-                  contain
-                  aspect-ratio="3/2"
+               <c-resource-image
                   max-width="100"
-                  :lazy-src="Icons.MISC.NUZLOOKE"
-                  position="center left"
-               ></v-img>
+                  :src="gym.leader.sprite_url"
+                  :alt="gym.leader.label"
+               ></c-resource-image>
                <div id="location" class="ma-3">
                   <div class="text-subtitle-2">
                      <v-icon left>mdi-map-marker</v-icon>{{ gym.location }}
@@ -64,9 +61,9 @@
             </v-row>
          </v-container>
       </v-expansion-panel-content>
-      <v-dialog v-model="hasErrors" width="500" @click:outside="closeDialog">
+      <c-dialog-wrapper v-model="hasErrors" v-on:close-dialog="closeDialog">
          <c-error-card :errors="errors" v-on:close-dialog="closeDialog"></c-error-card>
-      </v-dialog>
+      </c-dialog-wrapper>
    </v-expansion-panel>
 </template>
 
@@ -79,6 +76,8 @@ import * as util from '../../util/util';
 import { setEarnedBadge } from '../../controllers/gym';
 import DialogCardVue from '../dialogs/DialogCard.vue';
 import ErrorCardVue from '../dialogs/ErrorCard.vue';
+import ResourceImage from '../ResourceImage.vue';
+import DialogWrapperVue from '../dialogs/DialogWrapper.vue';
 
 export default {
    name: 'Gymcordian',
@@ -90,6 +89,8 @@ export default {
       'c-btn': Button,
       'c-error-card': ErrorCardVue,
       'c-dialog-card': DialogCardVue,
+      'c-resource-image': ResourceImage,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
       return {

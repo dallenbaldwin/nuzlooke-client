@@ -31,16 +31,12 @@
             <v-row class="d-flex justify-space-around">
                <div id="box-art" class="ma-3">
                   <div>{{ game.version.label }}</div>
-                  <v-img
+                  <c-resource-image
                      class="mt-2"
-                     :alt="game.version.label"
-                     :lazy-src="Icons.MISC.NUZLOOKE"
-                     :src="game.version.artwork_url"
-                     max-height="150"
                      max-width="150"
-                     position="center left"
-                     contain
-                  ></v-img>
+                     :src="game.version.cover_art"
+                     :alt="game.version.label"
+                  ></c-resource-image>
                </div>
                <div id="party" class="ma-3">
                   <div>Party</div>
@@ -93,18 +89,18 @@
             </v-row>
          </v-container>
       </v-expansion-panel-content>
-      <v-dialog v-model="finishGame" width="500" @click:outside="closeDialog">
+      <c-dialog-wrapper v-model="finishGame" v-on:close-dialog="closeDialog">
          <c-finish-game :game="game" v-on:close-dialog="closeDialog"></c-finish-game>
-      </v-dialog>
-      <v-dialog v-model="editGame" width="500" @click:outside="closeDialog">
+      </c-dialog-wrapper>
+      <c-dialog-wrapper v-model="editGame" v-on:close-dialog="closeDialog">
          <c-edit-game :game="game" v-on:close-dialog="closeDialog"></c-edit-game>
-      </v-dialog>
-      <v-dialog v-model="deleteGame" width="500" @click:outside="closeDialog">
+      </c-dialog-wrapper>
+      <c-dialog-wrapper v-model="deleteGame" v-on:close-dialog="closeDialog">
          <c-delete-game :game="game" v-on:close-dialog="closeDialog"></c-delete-game>
-      </v-dialog>
-      <v-dialog v-model="hasErrors" width="500" @click:outside="closeDialog">
+      </c-dialog-wrapper>
+      <c-dialog-wrapper v-model="hasErrors" v-on:close-dialog="closeDialog">
          <c-error-card :errors="errors" v-on:close-dialog="closeDialog"></c-error-card>
-      </v-dialog>
+      </c-dialog-wrapper>
    </v-expansion-panel>
 </template>
 
@@ -122,6 +118,8 @@ import TabMap from '../../constants/TabMap';
 import Pages from '../../constants/Pages';
 import { mobile } from '../../util/util';
 import ErrorCardVue from '../dialogs/ErrorCard.vue';
+import ResourceImageVue from '../ResourceImage.vue';
+import DialogWrapperVue from '../dialogs/DialogWrapper.vue';
 
 export default {
    name: 'Gamecordian',
@@ -135,6 +133,8 @@ export default {
       'c-edit-game': EditGame,
       'c-finish-game': FinishGame,
       'c-error-card': ErrorCardVue,
+      'c-resource-image': ResourceImageVue,
+      'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
       return {
