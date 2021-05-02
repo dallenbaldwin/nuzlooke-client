@@ -5,12 +5,12 @@
       </v-row>
       <v-row>
          <v-col>
-            <div class="ma-3 text-h3">About Nuzlooke</div>
+            <div class="ma-3 text-h3 text-left">About Nuzlooke</div>
          </v-col>
       </v-row>
       <v-row id="about">
          <v-col>
-            <div class="ma-3 text-h4">Why Nuzlooke?</div>
+            <div class="ma-3 text-h4 text-left">Why Nuzlooke?</div>
             <div class="ma-3">
                Hi! I'm Dallen. I'm the
                <a
@@ -75,7 +75,7 @@
       </v-row>
       <v-row id="terms-service">
          <v-col>
-            <div class="ma-3 text-h4">Terms of Service</div>
+            <div class="ma-3 text-h4 text-left">Terms of Service</div>
             <div class="ma-3">
                Nuzlooke is a small project. Be cool. Please don't make me write a formal
                Terms of Service
@@ -84,7 +84,7 @@
       </v-row>
       <v-row id="privacy-policy">
          <v-col>
-            <div class="ma-3 text-h4">
+            <div class="ma-3 text-h4 text-left">
                Privacy Policy <small class="text-caption">5/2021</small>
             </div>
             <div class="ma-3 text-h5">What data does Nuzlooke collect and store?</div>
@@ -135,14 +135,14 @@
                   </li>
                </ul>
             </div>
-            <div class="ma-3 text-h5">
+            <div class="ma-3 text-h5 text-left">
                Does Nuzlooke share data with 3rd Parties?
             </div>
             <div class="ma-3">
                No. The only useful data would be your email address and 3rd Parties don't
                need Nuzlooke to get an email address
             </div>
-            <div class="ma-3 text-h5">How does Nuzlooke make money?</div>
+            <div class="ma-3 text-h5 text-left">How does Nuzlooke make money?</div>
             <div class="ma-3">
                It doesn't. If you'd like to buy me a meal, family sized pack of Sour Patch
                Watermelons, or SweeTARTS Ropes... that'd be cool...
@@ -160,7 +160,7 @@
       </v-row>
       <v-row id="data-deletion">
          <v-col>
-            <div class="ma-3 text-h4">Data Deletion Instructions</div>
+            <div class="ma-3 text-h4 text-left">Data Deletion Instructions</div>
             <div class="ma-3">
                Nuzlooke is a pretty small scale application completely managed by me. I am
                the development team, support team, marketing team, President, and CEO.
