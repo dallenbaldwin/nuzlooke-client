@@ -1,79 +1,74 @@
 <template>
    <div>
-      <v-card
-         @click="authenticate(provider.label)"
-         v-for="(provider, i) of providers"
-         :key="i"
-         min-width="262"
-         class="ma-3"
-         outlined
-         elevation="1"
-      >
-         <v-card-text class="d-flex flex-row align-center">
-            <v-icon v-if="provider.icon" x-large :color="provider.color">
-               {{ provider.icon }}
-            </v-icon>
-            <v-img
-               v-if="provider.label === 'Google'"
-               src="../../../public/img/google.svg"
-               contain
-               max-height="40"
-               max-width="40"
-            ></v-img>
-            <span class="mx-6 text-h5">{{ provider.label }}</span>
-         </v-card-text>
-      </v-card>
+      <c-login-provider v-google-signin-button="googleClientId" label="Google">
+         <v-img
+            src="../../../public/img/google.svg"
+            contain
+            max-height="40"
+            max-width="40"
+         ></v-img>
+      </c-login-provider>
+      <c-login-provider v-facebook-signin-button="facebookClientId" label="Facebook">
+         <v-icon x-large color="#1778F2">
+            {{ Icons.BRANDS.FACEBOOK }}
+         </v-icon>
+      </c-login-provider>
       <c-error-messages v-if="hasErrors" :errors="errors"></c-error-messages>
    </div>
 </template>
 
 <script>
-import { loginWithGoogle } from '../../controllers/auth';
+import { loginWithGoogle, loginWithFacebook } from '../../controllers/auth';
+import GoogleSignInButton from 'vue-google-signin-button-directive';
+import FacebookSignInButton from '../../services/FacebookSignInBtn';
 import ErrorsMessagesVue from '../ErrorMessages.vue';
+import LoginProviderVue from './LoginProvider.vue';
 
 export default {
    name: 'LoginProviders',
    components: {
       'c-error-messages': ErrorsMessagesVue,
+      'c-login-provider': LoginProviderVue,
+   },
+   directives: {
+      GoogleSignInButton,
+      FacebookSignInButton,
    },
    data() {
       return {
+         googleClientId: process.env.VUE_APP_GOOGLE_CLIENT_ID,
+         facebookClientId: process.env.VUE_APP_FACEBOOK_CLIENT_ID,
          errors: null,
          hasErrors: false,
-         providers: [
-            {
-               label: 'Google',
-            },
-            // {
-            //    label: 'Facebook',
-            //    icon: Icons.BRANDS.FACEBOOK,
-            //    color: '#1778F2',
-            // },
-         ],
       };
    },
    methods: {
-      authenticate(provider) {
-         this.errors = null;
-         if (provider === 'Google') return this.withGoogle();
-         else if (provider === 'Facebook') return this.withFacebook();
-      },
-      async withGoogle() {
-         const GoogleUser = await this.$gAuth.signIn();
-         let errors = await loginWithGoogle(GoogleUser);
-         if (errors && errors.errors.includes('popup_closed_by_user')) return;
-         else if (errors) {
+      async OnGoogleAuthSuccess(idToken) {
+         let errors = await loginWithGoogle(idToken);
+         if (errors) {
             this.hasErrors = true;
             this.errors = errors;
          }
       },
-      async withFacebook() {
-         alert('facebook!');
+      OnGoogleAuthFail(err) {
+         if (err.error === 'popup_closed_by_user') return;
+         this.hasErrors = true;
+         this.errors = { errors: [err.error] };
+      },
+      async OnFacebookAuthSuccess(idToken) {
+         let errors = await loginWithFacebook(idToken);
+         if (errors) {
+            this.hasErrors = true;
+            this.errors = errors;
+         }
+      },
+      OnFacebookAuthFail(err) {
+         this.hasErrors = true;
+         this.errors = { errors: [err] };
       },
    },
 };
 // https://developers.google.com/identity/branding-guidelines
-// https://jasonwatmore.com/post/2020/09/25/vue-facebook-login-tutorial-example
 </script>
 
 <style></style>

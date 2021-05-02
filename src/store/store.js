@@ -16,6 +16,7 @@ export default new Vuex.Store({
       isLoggedIn: false,
       app_settings: {},
       token: null,
+      fbToken: null,
    },
    mutations: {
       selectGame: set('game'),
@@ -24,6 +25,7 @@ export default new Vuex.Store({
       setUserGames: set('userGames'),
       setIsLoggedIn: set('isLoggedIn'),
       setToken: set('token'),
+      setFbToken: set('fbToken'),
       setSaveFilters(state, payload) {
          state.app_settings.save_filters = payload;
       },
@@ -42,6 +44,7 @@ export default new Vuex.Store({
          state.userGames = null;
          state.app_settings = {};
          state.token = null;
+         state.fbToken = null;
       },
       exitGame(state) {
          state.game = null;

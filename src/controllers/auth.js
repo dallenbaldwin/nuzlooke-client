@@ -1,5 +1,4 @@
 import Pages from '../constants/Pages';
-import APIResponse from '../models/APIResponse';
 import User from '../models/User';
 import * as services from '../services/auth';
 import store from '../store/store';
@@ -20,8 +19,6 @@ const isEmail = email => {
 };
 
 const login = response => {
-   if (response.errors) return response;
-   response = response.data;
    store.commit('login', {
       id: response.id,
       username: response.username || undefined,
@@ -32,7 +29,8 @@ const login = response => {
    util.navigate({ name: Pages.GAMES });
 };
 
-export const logout = () => {
+export const logout = async () => {
+   if (store.state.fbToken) await logoutFacebook();
    store.commit('exitGame');
    store.commit('logout');
    util.navigate({ name: Pages.HOME });
@@ -56,7 +54,24 @@ export const authenticate = async obj => {
    return login(response);
 };
 
-export const loginWithGoogle = async googleUser => {
-   const response = await services.oauth('google', googleUser);
-   return login(response);
+export const loginWithGoogle = async token => {
+   const response = await services.oauth('google', { token: token });
+   if (response && response.errors) return response;
+   login(response.data);
+};
+
+export const loginWithFacebook = async token => {
+   const response = await services.oauth('facebook', { token: token });
+   if (response && response.errors) return response;
+   store.commit('setFbToken', token);
+   login(response.data);
+};
+
+export const logoutFacebook = async () => {
+   await new Promise(resolve => {
+      FB.logout(response => {
+         console.log('logging out of facebook...');
+         resolve();
+      });
+   });
 };
