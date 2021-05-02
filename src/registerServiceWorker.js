@@ -20,8 +20,8 @@ if (process.env.NODE_ENV === 'production') {
          console.log('New content is downloading.');
       },
       updated() {
-         let refresh = confirm('New content is available. Would you like to refresh?');
-         if (refresh) window.location.reload();
+         if (confirm('New content is available. Would you like to refresh?'))
+            window.location.reload();
       },
       offline() {
          alert('No internet connection found. Some services may not be available.');
