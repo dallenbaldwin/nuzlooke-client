@@ -5,7 +5,7 @@
       :src="computedImg"
       aspect-ratio="3/2"
       :max-width="maxWidth"
-      :lazy-src="Icons.MISC.NUZLOOKE"
+      :lazy-src="require(Icons.MISC.NUZLOOKE)"
       position="center left"
       @error="handleError"
    ></v-img>
