@@ -7,8 +7,9 @@
       ></c-nav-drawer>
       <v-main>
          <v-container>
-            <v-snackbar bottom :value="updateExists" :timeout="-1" color="primary">
+            <v-snackbar bottom :value="updateExists" :timeout="-1">
                An update is available!
+               <v-spacer></v-spacer>
                <c-btn :icon="Icons.CONTROLS.EXCLAIM" color="success" @click="refreshApp"
                   >update</c-btn
                >
