@@ -7,12 +7,17 @@
       ></c-nav-drawer>
       <v-main>
          <v-container>
-            <v-snackbar bottom :value="updateExists" :timeout="-1">
+            <v-snackbar outlined top :value="updateExists" :timeout="-1">
                An update is available!
-               <v-spacer></v-spacer>
-               <c-btn :icon="Icons.CONTROLS.EXCLAIM" color="success" @click="refreshApp"
-                  >update</c-btn
-               >
+               <template v-slot:action="{ attrs }">
+                  <c-btn
+                     :icon="Icons.CONTROLS.EXCLAIM"
+                     color="success"
+                     @click="refreshApp"
+                     v-bind="attrs"
+                     >update</c-btn
+                  >
+               </template>
             </v-snackbar>
             <router-view ref="eventBus"> </router-view>
          </v-container>
