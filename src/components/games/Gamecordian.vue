@@ -31,12 +31,16 @@
             <v-row class="d-flex justify-space-around">
                <div id="box-art" class="ma-3">
                   <div>{{ game.version.label }}</div>
-                  <c-resource-image
+                  <v-img
                      class="mt-2"
                      max-width="150"
-                     :image="game.version.cover_art"
-                     :alt-text="game.version.label"
-                  ></c-resource-image>
+                     contain
+                     :alt="game.version.label"
+                     :src="game.version.cover_art"
+                     aspect-ratio="3/2"
+                     :lazy-src="Icons.MISC.NUZLOOKE"
+                     position="center left"
+                  ></v-img>
                </div>
                <div id="party" class="ma-3">
                   <div>Party</div>
@@ -118,7 +122,6 @@ import TabMap from '../../constants/TabMap';
 import Pages from '../../constants/Pages';
 import { mobile } from '../../util/util';
 import ErrorCardVue from '../dialogs/ErrorCard.vue';
-import ResourceImageVue from '../ResourceImage.vue';
 import DialogWrapperVue from '../dialogs/DialogWrapper.vue';
 
 export default {
@@ -133,7 +136,6 @@ export default {
       'c-edit-game': EditGame,
       'c-finish-game': FinishGame,
       'c-error-card': ErrorCardVue,
-      'c-resource-image': ResourceImageVue,
       'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
