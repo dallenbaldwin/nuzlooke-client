@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'production') {
       },
       updated(registration) {
          console.log('New content is available; please refresh.');
-         document.dispatchEvent(new CustomEvent('swUpdated', { detail: registration }));
+         // document.dispatchEvent(new CustomEvent('swUpdated', { detail: registration }));
       },
       offline() {
          alert('No internet connection found. Some services may not be available.');

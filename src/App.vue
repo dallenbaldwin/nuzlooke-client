@@ -7,7 +7,7 @@
       ></c-nav-drawer>
       <v-main>
          <v-container>
-            <v-snackbar outlined top :value="updateExists" :timeout="-1">
+            <!-- <v-snackbar outlined top :value="updateExists" :timeout="-1">
                An update is available!
                <template v-slot:action="{ attrs }">
                   <c-btn
@@ -18,7 +18,7 @@
                      >update</c-btn
                   >
                </template>
-            </v-snackbar>
+            </v-snackbar> -->
             <router-view ref="eventBus"> </router-view>
          </v-container>
       </v-main>
@@ -29,14 +29,14 @@
 import ButtonVue from './components/Button.vue';
 import NavDrawer from './components/NavDrawer.vue';
 import Pages from './constants/Pages';
-import swUpdate from './mixins/swUpdate';
+// import swUpdate from './mixins/swUpdate';
 
 export default {
    components: {
       'c-nav-drawer': NavDrawer,
       'c-btn': ButtonVue,
    },
-   mixins: [swUpdate],
+   // mixins: [swUpdate],
    name: 'App',
    data() {
       return { debug: true };
