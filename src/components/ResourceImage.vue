@@ -2,7 +2,7 @@
    <v-img
       contain
       :alt="altText"
-      :src="image"
+      :src="require(image)"
       aspect-ratio="3/2"
       :max-width="maxWidth"
       :lazy-src="Icons.MISC.NUZLOOKE"
@@ -17,14 +17,6 @@ export default {
       'alt-text': { required: true },
       image: { required: true },
       'max-width': { required: true },
-   },
-   data() {
-      return {};
-   },
-   computed: {},
-   methods: {},
-   mounted() {
-      this.$forceUpdate();
    },
 };
 </script>
