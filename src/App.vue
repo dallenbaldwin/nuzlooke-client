@@ -30,8 +30,6 @@ import ButtonVue from './components/Button.vue';
 import NavDrawer from './components/NavDrawer.vue';
 import Pages from './constants/Pages';
 import swUpdate from './mixins/swUpdate';
-import { mobile } from './util/util';
-import screenfull from 'screenfull';
 
 export default {
    components: {
@@ -55,13 +53,6 @@ export default {
       navClickFilter() {
          this.$refs.eventBus.clickFilter();
       },
-   },
-   created() {
-      if (mobile()) {
-         if (screenfull.isEnabled) {
-            screenfull.request();
-         }
-      }
    },
 };
 </script>
