@@ -9,18 +9,28 @@
          <v-container>
             <router-view ref="eventBus"> </router-view>
          </v-container>
+         <v-snackbar bottom :value="updateExists" :timeout="-1" color="primary">
+            An update is available!
+            <c-btn :icon="Icons.CONTROLS.EXCLAIM" color="success" @click="refreshApp"
+               >update</c-btn
+            >
+         </v-snackbar>
       </v-main>
    </v-app>
 </template>
 
 <script>
+import ButtonVue from './components/Button.vue';
 import NavDrawer from './components/NavDrawer.vue';
 import Pages from './constants/Pages';
+import swUpdate from './mixins/swUpdate';
 
 export default {
    components: {
       'c-nav-drawer': NavDrawer,
+      'c-btn': ButtonVue,
    },
+   mixins: [swUpdate],
    name: 'App',
    data() {
       return { debug: true };

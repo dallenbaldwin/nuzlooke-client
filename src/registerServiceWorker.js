@@ -19,9 +19,9 @@ if (process.env.NODE_ENV === 'production') {
       updatefound() {
          console.log('New content is downloading.');
       },
-      updated() {
-         if (confirm('New content is available. Would you like to refresh?'))
-            window.location.reload();
+      updated(registration) {
+         console.log('New content is available; please refresh.');
+         document.dispatchEvent(new CustomEvent('swUpdated', { detail: registration }));
       },
       offline() {
          alert('No internet connection found. Some services may not be available.');
