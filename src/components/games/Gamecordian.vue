@@ -31,16 +31,11 @@
             <v-row class="d-flex justify-space-around">
                <div id="box-art" class="ma-3">
                   <div>{{ game.version.label }}</div>
-                  <v-img
-                     class="mt-2"
+                  <c-resource-image
+                     :alt-text="game.version.label"
+                     :image="game.version.cover_art"
                      max-width="150"
-                     contain
-                     :alt="game.version.label"
-                     :src="game.version.cover_art"
-                     aspect-ratio="3/2"
-                     :lazy-src="Icons.MISC.NUZLOOKE"
-                     position="center left"
-                  ></v-img>
+                  ></c-resource-image>
                </div>
                <div id="party" class="ma-3">
                   <div>Party</div>
@@ -123,6 +118,7 @@ import Pages from '../../constants/Pages';
 import { mobile } from '../../util/util';
 import ErrorCardVue from '../dialogs/ErrorCard.vue';
 import DialogWrapperVue from '../dialogs/DialogWrapper.vue';
+import ResourceImageVue from '../ResourceImage.vue';
 
 export default {
    name: 'Gamecordian',
@@ -137,6 +133,7 @@ export default {
       'c-finish-game': FinishGame,
       'c-error-card': ErrorCardVue,
       'c-dialog-wrapper': DialogWrapperVue,
+      'c-resource-image': ResourceImageVue,
    },
    data() {
       return {
