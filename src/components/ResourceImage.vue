@@ -1,23 +1,21 @@
 <template>
-   <div>
-      <v-img
-         contain
-         :alt="alt"
-         :src="src"
-         aspect-ratio="3/2"
-         :max-width="maxWidth"
-         :lazy-src="Icons.MISC.NUZLOOKE"
-         position="center left"
-      ></v-img>
-   </div>
+   <v-img
+      contain
+      :alt="altText"
+      :src="image"
+      aspect-ratio="3/2"
+      :max-width="maxWidth"
+      :lazy-src="Icons.MISC.NUZLOOKE"
+      position="center left"
+   ></v-img>
 </template>
 
 <script>
 export default {
    name: 'ResourceImage',
    props: {
-      alt: { required: true },
-      src: { required: true },
+      'alt-text': { required: true },
+      image: { required: true },
       'max-width': { required: true },
    },
    data() {
@@ -25,7 +23,9 @@ export default {
    },
    computed: {},
    methods: {},
-   mounted() {},
+   mounted() {
+      this.$forceUpdate();
+   },
 };
 </script>
 

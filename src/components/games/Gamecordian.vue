@@ -34,8 +34,8 @@
                   <c-resource-image
                      class="mt-2"
                      max-width="150"
-                     :src="game.version.cover_art"
-                     :alt="game.version.label"
+                     :image="game.version.cover_art"
+                     :alt-text="game.version.label"
                   ></c-resource-image>
                </div>
                <div id="party" class="ma-3">

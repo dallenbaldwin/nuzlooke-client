@@ -25,8 +25,8 @@
             <v-row class="d-flex flex-row justify-content-start">
                <c-resource-image
                   max-width="100"
-                  :src="gym.leader.sprite_url"
-                  :alt="gym.leader.label"
+                  :image="gym.leader.sprite_url"
+                  :alt-text="gym.leader.label"
                ></c-resource-image>
                <div id="location" class="ma-3">
                   <div class="text-subtitle-2">
