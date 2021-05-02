@@ -42,7 +42,7 @@ export default Object.freeze({
       DEFAULT: 'mdi-gamepad-square',
    },
    MISC: {
-      NUZLOOKE: './img/icons/mstile-70x70.png',
+      NUZLOOKE: './img/nuzlooke.png',
       POKEBALL: './img/poke-ball.png',
    },
 });
