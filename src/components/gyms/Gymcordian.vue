@@ -23,11 +23,15 @@
                </div>
             </v-row>
             <v-row class="d-flex flex-row justify-content-start">
-               <c-resource-image
+               <v-img
+                  contain
+                  :alt="gym.leader.label"
+                  :src="gym.leader.sprite_url"
+                  aspect-ratio="3/2"
                   max-width="100"
-                  :image="gym.leader.sprite_url"
-                  :alt-text="gym.leader.label"
-               ></c-resource-image>
+                  :lazy-src="Icons.MISC.NUZLOOKE"
+                  position="center left"
+               ></v-img>
                <div id="location" class="ma-3">
                   <div class="text-subtitle-2">
                      <v-icon left>mdi-map-marker</v-icon>{{ gym.location }}
@@ -76,7 +80,6 @@ import * as util from '../../util/util';
 import { setEarnedBadge } from '../../controllers/gym';
 import DialogCardVue from '../dialogs/DialogCard.vue';
 import ErrorCardVue from '../dialogs/ErrorCard.vue';
-import ResourceImage from '../ResourceImage.vue';
 import DialogWrapperVue from '../dialogs/DialogWrapper.vue';
 
 export default {
@@ -89,7 +92,6 @@ export default {
       'c-btn': Button,
       'c-error-card': ErrorCardVue,
       'c-dialog-card': DialogCardVue,
-      'c-resource-image': ResourceImage,
       'c-dialog-wrapper': DialogWrapperVue,
    },
    data() {
