@@ -27,7 +27,15 @@
                Nuzlooke | A Nuzlocke Manager aims to be the best Nuzlocke companion
                application out there.
             </p>
-            <div class="text-h4">Features</div>
+            <div class="text-h4 d-flex flex-row">
+               Features
+               <v-spacer></v-spacer>
+               <span>
+                  <v-btn fab x-small dark @click="navigate({ name: Pages.ABOUT })">
+                     <v-icon>{{ Icons.PAGES.ABOUT }}</v-icon>
+                  </v-btn>
+               </span>
+            </div>
             <v-list>
                <v-list-item v-for="feature of features" :key="feature.icon">
                   <v-list-item-icon>

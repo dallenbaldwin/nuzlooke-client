@@ -8,4 +8,5 @@ export default Object.freeze({
    RULES: 'rules',
    ROUTES: 'routes',
    GYMS: 'gyms',
+   ABOUT: 'about',
 });

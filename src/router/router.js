@@ -9,6 +9,7 @@ import Pokemon from '../views/Pokemon';
 import Routes from '../views/Routes';
 import Gyms from '../views/Gyms';
 import Rules from '../views/Rules';
+import About from '../views/About';
 import Pages from '../constants/Pages';
 import store from '../store/store';
 
@@ -60,6 +61,11 @@ const routes = [
       name: 'gyms',
       component: Gyms,
    },
+   {
+      path: '/about',
+      name: 'about',
+      component: About,
+   },
 ];
 
 const router = new VueRouter({
@@ -68,7 +74,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
    // redirect to login page if not logged in and trying to access a restricted page
-   const publicPages = [Pages.HOME, Pages.LOGIN, Pages.REGISTER];
+   const publicPages = [Pages.HOME, Pages.LOGIN, Pages.REGISTER, Pages.ABOUT];
    if (!publicPages.includes(to.name) && !store.state.isLoggedIn) {
       return next('/login');
    }

@@ -1,8 +1,7 @@
 <template>
    <v-app :class="mobile() ? '' : 'c-mw'">
-      <!-- <v-app> -->
       <c-nav-drawer
-         v-if="mobile()"
+         v-if="mobile() && notHome"
          v-on:add="navClickAdd"
          v-on:filter="navClickFilter"
       ></c-nav-drawer>
@@ -16,6 +15,7 @@
 
 <script>
 import NavDrawer from './components/NavDrawer.vue';
+import Pages from './constants/Pages';
 
 export default {
    components: {
@@ -24,6 +24,11 @@ export default {
    name: 'App',
    data() {
       return { debug: true };
+   },
+   computed: {
+      notHome() {
+         return this.$route.name != Pages.HOME;
+      },
    },
    methods: {
       navClickAdd() {

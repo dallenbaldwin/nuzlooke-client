@@ -1,7 +1,6 @@
 export default Object.freeze({
    BRANDS: {
       GOOGLE: 'mdi-google',
-      APPLE: 'mdi-apple',
       FACEBOOK: 'mdi-facebook',
    },
    CONTROLS: {
@@ -33,6 +32,7 @@ export default Object.freeze({
       REGISTER: 'mdi-account',
       HOME: 'mdi-home',
       GAMES: 'mdi-format-list-bulleted',
+      ABOUT: 'mdi-information-variant',
    },
    CONSOLES: {
       GAMEBOY: 'mdi-nintendo-game-boy',

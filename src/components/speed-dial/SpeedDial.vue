@@ -92,9 +92,10 @@ export default {
             'ADD-TABS': [TabMap.RULES],
             APPSETTINGS: [Pages.GAMES, Pages.GAME],
             LOGOUT: [Pages.GAME, Pages.GAMES],
-            HOME: [Pages.LOGIN, Pages.REGISTER],
-            SIGNIN: [Pages.HOME, Pages.REGISTER],
-            REGISTER: [Pages.HOME, Pages.LOGIN],
+            HOME: [Pages.LOGIN, Pages.REGISTER, Pages.ABOUT],
+            SIGNIN: [Pages.HOME, Pages.REGISTER, Pages.ABOUT],
+            ABOUT: [Pages.HOME],
+            REGISTER: [Pages.HOME, Pages.LOGIN, Pages.ABOUT],
             GAMES: [Pages.GAME],
          },
          links: [
@@ -115,6 +116,12 @@ export default {
                icon: Icons.PAGES.REGISTER,
                route: Pages.REGISTER,
                btnSupport: 'REGISTER',
+            },
+            {
+               label: 'About',
+               icon: Icons.PAGES.ABOUT,
+               route: Pages.ABOUT,
+               btnSupport: 'ABOUT',
             },
          ],
       };
