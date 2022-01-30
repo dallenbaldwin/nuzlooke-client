@@ -3,7 +3,7 @@
    "version": "0.1.0",
    "private": true,
    "scripts": {
-      "serve": "vue-cli-service serve --https true",
+      "serve": "vue-cli-service serve",
       "build": "vue-cli-service build"
    },
    "dependencies": {
@@ -23,7 +23,7 @@
       "@vue/cli-plugin-router": "~4.5.0",
       "@vue/cli-plugin-vuex": "~4.5.0",
       "@vue/cli-service": "~4.5.0",
-      "sass": "^1.32.0",
+      "sass": "~1.32.0",
       "sass-loader": "^10.0.0",
       "vue-cli-plugin-vuetify": "~2.2.2",
       "vue-template-compiler": "^2.6.11",
