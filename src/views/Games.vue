@@ -16,7 +16,7 @@
       <v-row>
          <div class="ma-3 text-h4">Welcome back {{ username }}</div>
       </v-row>
-      <v-row v-if="games.length === 0">
+      <v-row v-if="!games || games.length === 0">
          <div class="ma-3 text-body">
             It looks like you don't have any games... You should create a new game from
             the menu!
@@ -222,7 +222,7 @@ export default {
       },
    },
    mounted() {
-      this.setSort({ value: null, dir: 'asc' });
+      // this.setSort({ value: null, dir: 'asc' });
    },
 };
 </script>
